@@ -1,8 +1,17 @@
 Glk API Specification
 
-API version 0.3
+API version 0.4
 
 Andrew Plotkin <erkyrath@eblong.com>
+
+Copyright 1998 by Andrew Plotkin. You have permission to display,
+download, and print this document, provided that you do so for
+personal, non-commercial use only. You may not modify or distribute
+this document without the author's written permission.
+
+This document and further Glk information can be found at:
+http://www.eblong.com/zarf/glk/
+
 
 0        Introduction
 0.1      What Glk Is
@@ -14,53 +23,67 @@ Andrew Plotkin <erkyrath@eblong.com>
 1.1      Your Program's Main Function
 1.2      Exiting Your Program
 1.3      The Interrupt Handler
-1.4      Opaque Objects
-1.4.1    Identifiers
-1.4.2    Rocks
-1.4.3    Iterating Through Opaque Objects
-1.5      The Gestalt System
-1.6      The Version Number
-1.7      Other API Conventions
-1.8      Character Encoding
-1.8.1    Output
-1.8.2    Line Input
-1.8.3    Character Input
-1.8.4    Upper and Lower Case
-2        Windows
-2.1      Window Arrangement
-2.2      Window Opening, Closing, and Constraints
-2.3      Changing Window Constraints
-2.4      A Note on Display Style
-2.5      The Types of Windows
-2.5.1    Blank Windows
-2.5.2    Pair Windows
-2.5.3    Text Buffer Windows
-2.5.4    Text Grid Windows
-2.6      Echo Streams
-2.7      Other Window Functions
-3        Events
-3.1      Character Input Events
-3.2      Line Input Events
-3.3      Mouse Input Events
-3.4      Timer Events
-3.5      Window Arrangement Events
-3.6      Other Events
-4        Streams
-4.1      How To Print
-4.2      How To Read
-4.3      Closing Streams
-4.4      Stream Positions
-4.5      Styles
-4.5.1    Suggesting the Appearance of Styles
-4.5.2    Testing the Appearance of Styles
-4.6      The Types of Streams
-4.6.1    Window Streams
-4.6.2    Memory Streams
-4.6.3    File Streams
-4.7      Other Stream Functions
-5        File References
-5.1      The Types of File References
-5.2      Other File Reference Functions
+1.4      The Tick Thing
+1.5      Basic Types
+1.6      Opaque Objects
+1.6.1    Identifiers
+1.6.2    Rocks
+1.6.3    Iterating Through Opaque Objects
+1.7      The Gestalt System
+1.8      The Version Number
+1.9      Other API Conventions
+2        Character Encoding
+2.1      Output
+2.2      Line Input
+2.3      Character Input
+2.4      Upper and Lower Case
+3        Windows
+3.1      Window Arrangement
+3.2      Window Opening, Closing, and Constraints
+3.3      Changing Window Constraints
+3.4      A Note on Display Style
+3.5      The Types of Windows
+3.5.1    Blank Windows
+3.5.2    Pair Windows
+3.5.3    Text Buffer Windows
+3.5.4    Text Grid Windows
+3.6      Echo Streams
+3.7      Other Window Functions
+4        Events
+4.1      Character Input Events
+4.2      Line Input Events
+4.3      Mouse Input Events
+4.4      Timer Events
+4.5      Window Arrangement Events
+4.6      Other Events
+5        Streams
+5.1      How To Print
+5.2      How To Read
+5.3      Closing Streams
+5.4      Stream Positions
+5.5      Styles
+5.5.1    Suggesting the Appearance of Styles
+5.5.2    Testing the Appearance of Styles
+5.6      The Types of Streams
+5.6.1    Window Streams
+5.6.2    Memory Streams
+5.6.3    File Streams
+5.7      Other Stream Functions
+6        File References
+6.1      The Types of File References
+6.2      Other File Reference Functions
+7        Porting, Adapting, and Other Messy Bits
+7.1      Startup Options
+7.2      Going Outside the Glk API
+7.2.1    Memory Management
+7.2.2    String Manipulation
+7.2.3    File Handling
+7.2.4    Private Extensions to Glk
+7.3      Glk and the Virtual Machine
+7.3.1    Implementing a Higher Layer Over Glk
+7.3.2    Glk as a VM's Native API
+8        Appendix
+8.1      Function Call Selectors
 
 
 0: Introduction
@@ -153,6 +176,9 @@ machine part. The "machine" is just portable C code.
 It is not inconceivable that a new IF virtual machine might be designed
 to go along with Glk. This VM would use Glk as its interface; each Glk
 call would correspond to an input/output opcode of the VM.
+
+For more discussion of this approach, see section 7.3, "Glk and the
+Virtual Machine".
 
 0.4: What Does Glk Not Do?
 
@@ -294,10 +320,50 @@ Initially there is no interrupt handler. You can reset to not having any
 by calling glk_set_interrupt_handler(NULL).
 
 You should not try to interact with the player in your interrupt
-handler. Do not call glk_select(). Anything you print to a window may
-not be visible to the player.
+handler. Do not call glk_select() or glk_select_poll(). Anything you
+print to a window may not be visible to the player.
 
-1.4: Opaque Objects
+1.4: The Tick Thing
+
+Many platforms have some annoying thing that has to be done every so
+often, or the gnurrs come from the voodvork out and eat your computer.
+
+Well, not really. But you should call glk_tick() every so often, just in
+case.
+
+    void glk_tick(void);
+
+This call is fast; in fact, on average, it does nothing at all. So you
+can call it often. [[In a virtual machine interpreter, once per opcode
+is appropriate. In a program with lots of computation, pick a comparable
+rate.]]
+
+glk_tick() does not try to update the screen, or check for player input,
+or any other interface task. For that, you should call glk_select() or
+glk_select_poll(). See section 4, "Events".
+
+1.5: Basic Types
+
+For simplicity, all the arguments used in Glk calls are of a very few
+types.
+
+    * 32-bit unsigned integer. Unsigned integers are used wherever
+possible, which is nearly everywhere. This type is called "glui32".
+    * A few identifier classes which are the same as "glui32", but have
+their own type names for clarity. See section 1.6, "Opaque Objects".
+    * 32-bit signed integer. This type is called "glsi32". Rarely used.
+    * Pointer to 32-bit integer.
+    * Pointer to a structure which consists entirely of 32-bit integers.
+[[This avoids padding problems, except possibly at the end of
+structures.]]
+    * Unsigned char. This is used only for Latin-1 text characters; see
+section 2, "Character Encoding".
+    * Pointer to char. Sometimes this means a null-terminated string;
+sometimes an unterminated buffer, with length as a separate gui32
+argument. The documentation says which.
+    * Pointer to void. When nothing else will do.
+
+1.6: Opaque Objects
 
 Glk keeps track of a few classes of special objects. These are opaque to
 your program; you always refer to them using 32-bit unsigned integer
@@ -319,7 +385,7 @@ creation will fail (due to lack of memory, or some other OS error.) When
 this happens, the allocation function will return 0 instead of a valid
 integer identifier. You should always test for this possibility.
 
-1.4.1: Identifiers
+1.6.1: Identifiers
 
 It is worth spending a bit of time on the identifiers used to refer to
 these objects.
@@ -331,7 +397,7 @@ object identifier as an argument, it is illegal to pass in 0 unless the
 function definition says otherwise.
 
 The glk.h file defines types "winid_t", "strid_t", "frefid_t" to store
-identifiers. These are all the same as "uint32".
+identifiers. These are all the same as "glui32".
 
 Identifiers can be anything (except 0). Some Glk library implementations
 may use consecutive integers starting with 1; others may use native C or
@@ -350,7 +416,7 @@ and then open a new window, the new window's id may be 4. [[Or it may
 not. So when you destroy an object, you should assume that its id is
 invalid forever after.]]
 
-1.4.2: Rocks
+1.6.2: Rocks
 
 Every one of these objects (window, stream, or file reference) has a
 "rock" value. This is simply a 32-bit integer value which you provide,
@@ -361,13 +427,13 @@ it back to you when you ask for it.]]
 [[If you don't know what to use the rocks for, provide 0 and forget
 about it.]]
 
-1.4.3: Iterating Through Opaque Objects
+1.6.3: Iterating Through Opaque Objects
 
 For each class of opaque objects, there is an iterate function, which
 you can use to obtain a list of all existing objects of that class. It
 takes the form
 
-    uint32 glk_CLASS_iterate(uint32 obj, uint32 *rockptr);
+    glui32 glk_CLASS_iterate(glui32 obj, glui32 *rockptr);
 
 Calling glk_CLASS_iterate(0, r) returns the first object; calling
 glk_CLASS_iterate(obj, r) returns the next object, until there aren't
@@ -397,7 +463,7 @@ object, the rule is that glk_CLASS_iterate(obj, r) has a fixed result,
 and iterating through the results as above will list every object
 exactly once.
 
-1.5: The Gestalt System
+1.7: The Gestalt System
 
 The "Gestalt" mechanism (cheerfully stolen from the Mac OS) is a system
 by which the Glk API can be upgraded without making your life
@@ -410,8 +476,8 @@ presence without trying to infer them from a version number.
 The basic idea is that you can request information about the
 capabilities of the API, by calling the Gestalt functions:
 
-    uint32 glk_gestalt(uint32 sel, uint32 val);
-    uint32 glk_gestalt_ext(uint32 sel, uint32 val, void *ptr);
+    glui32 glk_gestalt(glui32 sel, glui32 val);
+    glui32 glk_gestalt_ext(glui32 sel, glui32 val, void *ptr);
 
 The selector (the "sel" argument) tells which capability you are
 requesting information about; the other two arguments are additional
@@ -435,12 +501,12 @@ to write information to a large structure which z points at. You should
 consult the documentation for x and ensure that z points at a
 sufficiently large structure, or else pass NULL to z.)
 
-1.6: The Version Number
+1.8: The Version Number
 
 For an example of the Gestalt mechanism, consider the selector
 gestalt_Version. If you do
 
-    uint32 res;
+    glui32 res;
     res = glk_gestalt(gestalt_Version, 0);
 
 res will be set to a 32-bit number which encodes the version of the Glk
@@ -449,22 +515,22 @@ version number; the next 8 bits stores the minor version number; the low
 8 bits stores an even more minor version number, if any. [[So the
 version number 78.2.11 would be encoded as 0x004E020B.]]
 
-The current Glk specification version is 0.3, so this selector will
-return 0x00000300.
+The current Glk specification version is 0.4, so this selector will
+return 0x00000400.
 
-    uint32 res;
+    glui32 res;
     res = glk_gestalt_ext(gestalt_Version, 0, NULL);
 
 does exactly the same thing; in fact, both the second and third
 arguments are ignored for this selector. (However, it is prudent to pass
 0 and NULL, in case of future changes.)
 
-1.7: Other API Conventions
+1.9: Other API Conventions
 
 The glk.h header file is the same on all platforms, with the sole
-exception of the typedef of uint32. This will always be defined as a
-32-bit unsigned integer type, which may be "long" or "int" or some other
-C definition.
+exception of the typedef of glui32 and glsi32. These will always be
+defined as 32-bit unsigned and signed integer types, which may be "long"
+or "int" or some other C definition.
 
 Note that all constants are #defines, and all functions are actual
 function declarations (as opposed to macros.) [[There are a few places
@@ -484,7 +550,7 @@ the space pointed to by the argument. Unless the function says
 otherwise, it is legal to pass a NULL pointer to indicate that you do
 not care about that value.
 
-1.8: Character Encoding
+2: Character Encoding
 
 Glk uses the Latin-1 Unicode encoding, and keeps it holy.
 
@@ -496,7 +562,7 @@ equivalent.
 
 Glk uses different parts of the Latin-1 encoding for different purposes.
 
-1.8.1: Output
+2.1: Output
 
 When you are sending text to a window, or to a file open in text mode,
 you can print any of the printable Latin-1 characters: 32 to 126, 160 to
@@ -513,7 +579,7 @@ something illegal has occurred. The library may skip illegal characters
 entirely; but you should not rely on this.]]
 
 Note that when you are sending data to a file open in binary mode, you
-can print any byte value, without restriction. See section 4.6.3, "File
+can print any byte value, without restriction. See section 5.6.3, "File
 Streams".
 
 A particular implementation of Glk may not be able to display all the
@@ -526,7 +592,7 @@ character (such as a bullet or question mark, or even an octal code.)
 You can test for this by using the gestalt_CharOutput selector. If you
 set ch to a character code (from 0 to 255), and call
 
-    uint32 res, len;
+    glui32 res, len;
     res = glk_gestalt_ext(gestalt_CharOutput, ch, &len);
 
 then res will be one of the following values:
@@ -542,15 +608,15 @@ may not be precise, and it may not be distinguishable from other,
 similar characters. (Examples: "ae" for the one-character "ae" ligature,
 "e" for an accented "e", "|" for a broken vertical bar.)
 
-In all cases, len (the value pointed at by the third argument) will be
-the number of actual glyphs which will be used to represent the
+In all cases, len (the glui32 value pointed at by the third argument)
+will be the number of actual glyphs which will be used to represent the
 character. In the case of gestalt_CharOutput_ExactPrint, this will
 always be 1; for gestalt_CharOutput_CannotPrint, it may be 0 (nothing
 printed) or higher; for gestalt_CharOutput_ApproxPrint, it may be 1 or
 higher. This information may be useful when printing text in a
 fixed-width font.
 
-[[As described in section 1.7, "Other API Conventions", you may skip
+[[As described in section 1.9, "Other API Conventions", you may skip
 this information by passing NULL as the third argument in
 glk_gestalt_ext(), or by calling glk_gestalt() instead.]]
 
@@ -566,9 +632,9 @@ then (by the definition of C/C++) ch will be *sign-extended* to
     res = glk_gestalt(gestalt_CharOutput, (unsigned char)ch);
 instead.]]
 
-1.8.2: Line Input
+2.2: Line Input
 
-You can request that the player enter a line of text. See section 3.2,
+You can request that the player enter a line of text. See section 4.2,
 "Line Input Events".
 
 This text will be placed in a buffer of your choice. There is no length
@@ -585,7 +651,7 @@ ASCII characters (32 to 126.)
 You can test for this by using the gestalt_LineInput selector. If you
 set ch to a character code (from 0 to 255), and call
 
-    uint32 res;
+    glui32 res;
     res = glk_gestalt(gestalt_LineInput, ch);
 
 then res will be TRUE (1) if that character can be typed by the player
@@ -593,9 +659,9 @@ in line input, and FALSE (0) if not. Note that if ch is a nonprintable
 character (0 to 31, 127 to 159), or if ch is outside the range 0 to 255,
 then this is guaranteed to return FALSE.
 
-1.8.3: Character Input
+2.3: Character Input
 
-You can request that the player hit a single key. See section 3.1,
+You can request that the player hit a single key. See section 4.1,
 "Character Input Events".
 
 The character code which is returned can be any value from 0 to 255. The
@@ -650,7 +716,7 @@ You can test for this by using the gestalt_CharInput selector. If you
 set ch to a character code (from 0 to 255) or a special code (from
 0xFFFFFFFF down), and call
 
-    uint32 res;
+    glui32 res;
     res = glk_gestalt(gestalt_CharInput, ch);
 
 then res will be TRUE (1) if that character can be typed by the player
@@ -674,7 +740,7 @@ you want to use, *including* the arrow keys and return, and be prepared
 to use different keys in your interface if gestalt_CharInput says they
 are not available.]]
 
-1.8.4: Upper and Lower Case
+2.4: Upper and Lower Case
 
 You can convert characters from upper to lower case with two Glk utility
 functions:
@@ -690,7 +756,7 @@ characters. That is, if you call glk_char_to_lower() on a lower-case
 character, or a character which is not a letter, you'll get the argument
 back unchanged.
 
-2: Windows
+3: Windows
 
 On most platforms, the program/library combination will appear to the
 player in a window -- either a window which covers the entire screen, or
@@ -701,7 +767,7 @@ divide into panels for various purposes. It is these panels which I will
 refer to as "windows" hereafter.
 
 You refer to a window using an unsigned 32-bit integer identifier. See
-section 1.4.1, "Identifiers".
+section 1.6.1, "Identifiers".
 
 A window has a type. Currently there are three window types:
 
@@ -715,12 +781,16 @@ the grid.
 nor output. [[They exist mostly to be an example of a "generic" window.
 You are unlikely to want to use them.]]
 
+As Glk is an expanding system, more window types may be added in the
+future. Therefore, it is important to remember that not all window types
+will necessarily be available under all Glk libraries.
+
 There is one other special type of window, the pair window. Pair windows
 are created by Glk as part of the system of window arrangement. You
-cannot create them yourself. See section 2.5.2, "Pair Windows".
+cannot create them yourself. See section 3.5.2, "Pair Windows".
 
 Every window has a rock. This is a value you provide when the window is
-created; you can use it however you want. See section 1.4.2, "Rocks".
+created; you can use it however you want. See section 1.6.2, "Rocks".
 
 When Glk starts up, there are no windows.
 
@@ -731,12 +801,12 @@ all the Glk windows that you create. But at first, this screen space is
 empty and unused.]]
 
 Without a window, you cannot do any kind of input or output; so the
-first thing you'll want to do is create one. See section 2.2, "Window
+first thing you'll want to do is create one. See section 3.2, "Window
 Opening, Closing, and Constraints".
 
 You can create as many windows as you want, of any types. You control
 their arrangement and sizes through a fairly flexible system of calls.
-See section 2.1, "Window Arrangement".
+See section 3.1, "Window Arrangement".
 
 You can close any windows you want. You can even close all the windows,
 which returns you to the original startup state.
@@ -747,11 +817,11 @@ of an entire line of text. It is legal to request input from several
 windows at the same time. The library will have some interface mechanism
 for the player to control which window he is typing in.
 
-2.1: Window Arrangement
+3.1: Window Arrangement
 
 The Way of Window Arrangement is fairly complicated. I'll try to explain
 it coherently. [[If you are reading this document to get an overview of
-Glk, by all means skip forward to section 2.5, "The Types of Windows".
+Glk, by all means skip forward to section 3.5, "The Types of Windows".
 Come back here later.]]
 
 Originally, there are no windows. You can create a window, which will
@@ -889,14 +959,14 @@ There are Glk functions to determine the root window, and to determine
 the parent of any given window. Note that every window's parent is a
 pair window. (Except for the root window, which has no parent.)
 
-2.2: Window Opening, Closing, and Constraints
+3.2: Window Opening, Closing, and Constraints
 
-    winid_t glk_window_open(winid_t split, uint32 method, uint32 size,
-uint32 wintype, uint32 rock);
+    winid_t glk_window_open(winid_t split, glui32 method, glui32 size,
+glui32 wintype, glui32 rock);
 
 If there are no windows, the first three arguments are meaningless.
 split *must* be zero, and method and size are ignored. wintype is the
-type of window you're creating, and rock is the rock (see section 1.4.2,
+type of window you're creating, and rock is the rock (see section 1.6.2,
 "Rocks").
 
 If any windows exist, new windows must be created by splitting existing
@@ -1098,7 +1168,7 @@ opening a window. It is legal to close all your windows, or to close the
 root window (which does the same thing.)
 
 The result argument is filled with the output character count of the
-window stream. See section 4, "Streams" and section 4.3, "Closing
+window stream. See section 5, "Streams" and section 5.3, "Closing
 Streams".
 
 When you close a window (and it is not the root window), the other
@@ -1147,23 +1217,23 @@ height for its upper child, so it defaults to zero.
 [[This may seem to be an inconvenient choice. That is deliberate. You
 should not leave a pair window with no key, and the zero-height default
 reminds you not to. You can use glk_window_set_arrangement() to set a
-new split measurement and key window. See section 2.3, "Changing Window
+new split measurement and key window. See section 3.3, "Changing Window
 Constraints".]]
 
-2.3: Changing Window Constraints
+3.3: Changing Window Constraints
 
 There are library functions to change and to measure the size of a
 window. 
 
-    void glk_window_get_size(winid_t win, uint32 *widthptr, uint32
+    void glk_window_get_size(winid_t win, glui32 *widthptr, glui32
 *heightptr);
-    void glk_window_set_arrangement(winid_t win, uint32 method, uint32
+    void glk_window_set_arrangement(winid_t win, glui32 method, glui32
 size, winid_t keywin);
-    void glk_window_get_arrangement(winid_t win, uint32 *methodptr,
-uint32 *sizeptr, winid_t *keywinptr);
+    void glk_window_get_arrangement(winid_t win, glui32 *methodptr,
+glui32 *sizeptr, winid_t *keywinptr);
 
 glk_window_get_size() simply returns the actual size of the window, in
-its measurement system. As described in section 1.7, "Other API
+its measurement system. As described in section 1.9, "Other API
 Conventions", either widthptr or heightptr can be NULL, if you only want
 one measurement. [[Or, in fact, both, if you want to waste time.]]
 
@@ -1232,7 +1302,7 @@ can't move A above D, or change O2 to a vertical split where A is left
 or right of D. [[To get this effect you could close one of the windows,
 and re-split the other one with glk_window_open().]]
 
-2.4: A Note on Display Style
+3.4: A Note on Display Style
 
 The way windows are displayed is, of course, entirely up to the Glk
 library; it depends on what is natural for the player's machine. The
@@ -1259,12 +1329,12 @@ If there's enough space, the requested size and the real size will be
 identical; but you should not rely on this. Call glk_window_get_size()
 and check.
 
-2.5: The Types of Windows
+3.5: The Types of Windows
 
 This is a technical description of all the window types, and exactly how
 they behave.
 
-2.5.1: Blank Windows
+3.5.1: Blank Windows
 
 A blank window is always blank. It supports no input and no output. (You
 can call glk_window_get_stream() on it, as you can with any window, but
@@ -1277,7 +1347,7 @@ window.
 starts up, there are no windows at all, not even a window of the blank
 type.]]
 
-2.5.2: Pair Windows
+3.5.2: Pair Windows
 
 A pair window is completely filled by the two windows it contains. It
 supports no input and no output, and it has no size.
@@ -1291,7 +1361,7 @@ every window contained within the pair window.
 
 It is legal to split a pair window when you call glk_window_open().
 
-2.5.3: Text Buffer Windows
+3.5.3: Text Buffer Windows
 
 A text buffer window contains a linear stream of text. It supports
 output; when you print to it, the new text is added to the end. There is
@@ -1360,7 +1430,7 @@ If you call glk_cancel_line_event(), the same thing happens; whatever
 text the user was composing is visible at the end of the buffer text,
 followed by a newline.
 
-2.5.4: Text Grid Windows
+3.5.4: Text Grid Windows
 
 A text grid contains a rectangular array of characters, in a fixed-width
 font. Its size is the number of columns and rows of the array.
@@ -1379,12 +1449,12 @@ of a line, it goes to the beginning of the next line. The library makes
 
 [[Note that printing fancy characters may cause the cursor to advance
 more than one position per character. (For example, the "ae" ligature
-may print as two characters.) See section 1.8.1, "Output", for how to
-test this situation.]]
+may print as two characters.) See section 2.1, "Output", for how to test
+this situation.]]
 
 You can set the cursor position with glk_window_move_cursor().
 
-    void glk_window_move_cursor(winid_t win, uint32 xpos, uint32 ypos);
+    void glk_window_move_cursor(winid_t win, glui32 xpos, glui32 ypos);
 
 If you move the cursor right past the end of a line, it wraps; the next
 character which is printed will appear at the beginning of the next
@@ -1394,6 +1464,11 @@ If you move the cursor below the last line, or when the cursor reaches
 the end of the last line, it goes "off the screen" and further output
 has no effect. You must call glk_window_move_cursor() or
 glk_window_clear() to move the cursor back into the visible region.
+
+[[Note that the arguments of glk_window_move_cursor are unsigned ints.
+This is okay, since there are no negative positions. If you try to pass
+a negative value, Glk will interpret it as a huge positive value, and it
+will wrap or go off the last line.]]
 
 When a text grid window is resized smaller, the bottom or right area is
 thrown away, but the remaining area stays unchanged. When it is resized
@@ -1423,7 +1498,7 @@ the window, and the output cursor will be positioned at the beginning of
 the *next* row. Again, if you glk_cancel_line_event(), the same thing
 happens.
 
-2.6: Echo Streams
+3.6: Echo Streams
 
 Every window has an associated window stream; you print to the window by
 printing to this stream. However, it is possible to attach a second
@@ -1472,24 +1547,24 @@ stream. That would create an infinite loop, and is nearly certain to
 crash the Glk library. It is similarly illegal to create a longer loop
 (two or more windows echoing to each other.)
 
-2.7: Other Window Functions
+3.7: Other Window Functions
 
-    winid_t glk_window_iterate(winid_t win, uint32 *rockptr);
+    winid_t glk_window_iterate(winid_t win, glui32 *rockptr);
 
 This function can be used to iterate through the list of all open
-windows (including pair windows.) See section 1.4.3, "Iterating Through
+windows (including pair windows.) See section 1.6.3, "Iterating Through
 Opaque Objects".
 
 As that section describes, the order in which windows are returned is
 arbitrary. The root window is not necessarily first, nor is it
 necessarily last.
 
-    uint32 glk_window_get_rock(winid_t win);
+    glui32 glk_window_get_rock(winid_t win);
 
 This returns the window's rock value. Pair windows always have rock 0;
 all other windows return whatever rock you created them with.
 
-    uint32 glk_window_get_type(winid_t win);
+    glui32 glk_window_get_type(winid_t win);
 
 This returns the window's type (wintype_...)
 
@@ -1522,7 +1597,7 @@ It is illegal to erase a window which has line input pending.
     strid_t glk_window_get_stream(winid_t win);
 
 This returns the stream which is associated with the window. (See
-section 4.6.1, "Window Streams".) Every window has a stream which can be
+section 5.6.1, "Window Streams".) Every window has a stream which can be
 printed to, but this may not be useful, depending on the window type.
 [[For example, printing to a blank window's stream has no effect.]]
 
@@ -1533,9 +1608,9 @@ equivalent to
 
     glk_stream_set_current(glk_window_get_stream(win)).
 
-See section 4, "Streams".
+See section 5, "Streams".
 
-3: Events
+4: Events
 
 As described above, all player input is handed to your program by the
 glk_select() call, in the form of events. You should write at least one
@@ -1544,13 +1619,14 @@ event loop to retrieve these events.
     void glk_select(event_t *event);
 
     typedef struct event_struct {
-        uint32 type;
+        glui32 type;
         winid_t win;
-        uint32 val1, val2;
+        glui32 val1, val2;
     } event_t;
 
 This causes the program to wait for an event, and then store it in the
-structure pointed to by the argument. The argument may not be NULL.
+structure pointed to by the argument. Unlike most Glk functions that
+take pointers, the argument of glk_select() may not be NULL.
 
 Most of the time, you only get the events that you request. However,
 there are some events which can arrive at any time. This is why you must
@@ -1572,7 +1648,51 @@ never returns it.
     * evtype_Arrange: An event signalling that the sizes of some windows
 have changed.
 
-3.1: Character Input Events
+You can also inquire if an event is available, without stopping to wait
+for one to occur.
+
+    void glk_select_poll(event_t *event);
+
+This checks if an internally-spawned event is available. If so, it
+stores it in the structure pointed to by event. If not, it sets
+event->type to evtype_None. Either way, it returns almost immediately.
+
+The first question you now ask is, what is an internally-spawned event?
+glk_select_poll() does *not* check for or return evtype_CharInput,
+evtype_LineInput, or evtype_MouseInput events. It is intended for you to
+test conditions which may have occurred while you are computing, and not
+interfacing with the player. For example, time may pass during slow
+computations; you can use glk_select_poll() to see if a evtype_Timer
+event has occured. (See section 4.4, "Timer Events".)
+
+At the moment, glk_select_poll() only checks for evtype_Timer and
+possibly evtype_Arrange events. But see section 4.6, "Other Events".
+
+The second question is, what does it mean that glk_select_poll() returns
+"almost immediately"? In some Glk libraries, text that you send to a
+window is buffered; it does not actually appear until you request player
+input with glk_select(). glk_select_poll() attends to this
+buffer-flushing task in the same way. (Although it does not do the "Hit
+any key to scroll down" waiting which may be done in glk_select();
+that's a player-input task.)
+
+Similarly, on multitasking platforms, glk_select() may yield time to
+other processes; and glk_select_poll() does this as well.
+
+The upshot of this is that you should not call glk_select_poll() very
+often. If you are not doing much work between player inputs, you should
+not need to call it at all. [[For example, in a virtual machine
+interpreter, you should not call glk_select_poll() after every opcode.]]
+However, if you are doing intense computation, you may wish to call
+glk_select_poll() every so often to yield time to other processes. And
+if you are printing intermediate results during this computation, you
+should glk_select_poll() every so often, so that you can be certain your
+output will be displayed before the next glk_select().
+
+[[However, you should call glk_tick() often -- once per opcode in a VM
+interpreter. See section 1.4, "The Tick Thing".]]
+
+4.1: Character Input Events
 
 You can request character input from text buffer and text grid windows.
 
@@ -1596,15 +1716,14 @@ another character from that window.
 
 In the event structure, win tells what window the event came from. val1
 tells what character was entered; this will be a code from 0 to 255, or
-a special keycode. (See section 1.8.3, "Character Input".) val2 will be
-0.
+a special keycode. (See section 2.3, "Character Input".) val2 will be 0.
 
-3.2: Line Input Events
+4.2: Line Input Events
 
 You can request line input from text buffer and text grid windows.
 
-    void glk_request_line_event(winid_t win, void *buf, uint32 maxlen,
-uint32 initlen);
+    void glk_request_line_event(winid_t win, void *buf, glui32 maxlen,
+glui32 initlen);
 
 A window cannot have requests for both character and line input at the
 same time. It is illegal to call glk_request_line_event() if the window
@@ -1654,7 +1773,7 @@ pending. [[This is because the window may be displaying and editing the
 player's input, and printing anything would make life unnecessarily
 complicated for the library.]]
 
-3.3: Mouse Input Events
+4.3: Mouse Input Events
 
 On some platforms, Glk can recognize when the mouse (or other pointer)
 is used to select a spot in a window. You can request mouse input only
@@ -1709,12 +1828,13 @@ text buffer. More likely, you would print text in a special "link" style
 with a rock value; if the player clicked in such text, you would get a
 mouse event with that rock value.]]
 
-3.4: Timer Events
+4.4: Timer Events
 
 You can request that an event be sent at fixed intervals, regardless of
-what the player does.
+what the player does. Unlike input events, timer events can be tested
+for with glk_select_poll() as well as glk_select().
 
-    void glk_request_timer_events(uint32 millisecs);
+    void glk_request_timer_events(glui32 millisecs);
 
 It is possible that the library does not support timer events. You can
 check this with the gestalt_Timer selector.
@@ -1731,10 +1851,10 @@ and mouse events, timer events will continue until you shut them off.
 You do not have to re-request them every time you get one. Call
 glk_request_timer_events(0) to stop getting timer events.
 
-The rule is that when you call glk_select(), if it has been more than N
-milliseconds since the last timer event, and there is no player input,
-glk_select() will return an event whose type is evtype_Timer. (win,
-val1, and val2 will all be 0.)
+The rule is that when you call glk_select() or glk_select_poll(), if it
+has been more than N milliseconds since the last timer event, and (for
+glk_select()) if there is no player input, you will receive an event
+whose type is evtype_Timer. (win, val1, and val2 will all be 0.)
 
 Timer events do not stack up. If you spend 10N milliseconds doing
 computation, and then call glk_select(), you will not get ten timer
@@ -1755,7 +1875,7 @@ operating system, talk to Wind River.]]
 [[I don't have to tell you that a millisecond is one thousandth of a
 second, do I?]]
 
-3.5: Window Arrangement Events
+4.5: Window Arrangement Events
 
 Some platforms allow the player to resize the Glk window during play.
 This will naturally change the sizes of your windows. If this occurs,
@@ -1785,7 +1905,15 @@ windows would then be different "sizes" in the metric of rows and
 columns, which is the important metric and the only one you have access
 to.]]
 
-3.6: Other Events
+Arrangement events, like timer events, can be returned by
+glk_select_poll(). But this will not occur on all platforms. You must be
+ready to receive an arrangement event when you call glk_select_poll(),
+but it is possible that it will not arrive until the next time you call
+glk_select(). [[This is because on some platforms, window resizing is
+handled as part of player input; on others, it can be triggered by an
+external process such as a window manager.]]
+
+4.6: Other Events
 
 There are currently no other event types defined by Glk. (The
 "evtype_None" constant is a placeholder, and is never returned by
@@ -1796,7 +1924,8 @@ It is possible that new event types will be defined in the future.
 [[For example, the Z-machine has a "sound interrupt" mechanism; you can
 set a routine to be called when a given sound is finished playing. If
 Glk is extended to support sound, a sound-finished event might be
-defined. Note that this neatly avoids the problem of reentrant
+defined. It would be available from both glk_select() and
+glk_select_poll(). Note that this neatly avoids the problem of reentrant
 interpreter design, which complicates the Z-machine.]]
 
 [[This is also why you must put calls to glk_select() in loops. If you
@@ -1807,7 +1936,22 @@ you might not get a CharInput event back. You could get some
 not-yet-defined event which happened to occur before the player hit a
 key. Or, for that matter, a window arrangement event.]]
 
-4: Streams
+[[It is not generally necessary to put a call to glk_select_poll() in a
+loop. You usually call glk_select_poll() to update the display or test
+if an event is available, not to wait for a particular event. However,
+if you were using those sound-finished events, and several sounds were
+playing, it might be important to make sure you knew about all sounds
+completed at any particular time. You would do this with
+    glk_select_poll(&ev);
+    while (ev.type != evtype_None) {
+        /* handle event */
+        glk_select_poll(&ev);
+    }
+Once glk_select_poll() returns evtype_None, you should *not* call it
+again immediately. Do some work first. If you want to wait for an event,
+use glk_select(), not a loop of glk_select_poll().]]
+
+5: Streams
 
 All character output in Glk is done through streams. Every window has an
 output stream associated with it. You can also write to files on disk;
@@ -1831,8 +1975,12 @@ A stream is opened with a particular file mode:
 the end of whatever already existed in the destination, instead of
 replacing it.
 
+[[In the stdio library, using fopen(), filemode_Write would be mode "w";
+filemode_Read would be mode "r"; filemode_ReadWrite would be mode "r+;
+filemode_WriteAppend would be mode "a".]]
+
 For information on opening streams, see the discussion of each specific
-type of stream in section 4.6, "The Types of Streams". Remember that it
+type of stream in section 5.6, "The Types of Streams". Remember that it
 is always possible that opening a stream will fail, in which case the
 creation function will return 0.
 
@@ -1865,13 +2013,13 @@ set to anything.
 
 Returns the current stream, or 0 if there is none.
 
-4.1: How To Print
+5.1: How To Print
 
     void glk_put_char(unsigned char ch);
 
 This prints one character to the current stream. As always, the
 character is assumed to be in the Latin-1 character encoding. See
-section 1.8, "Character Encoding".
+section 2, "Character Encoding".
 
     void glk_put_string(char *s);
 
@@ -1883,7 +2031,7 @@ exactly equivalent to
 
 However, it may be more efficient.
 
-    void glk_put_buffer(char *buf, uint32 len);
+    void glk_put_buffer(char *buf, glui32 len);
 
 This prints a block of characters to the current stream. It is exactly
 equivalent to
@@ -1895,36 +2043,45 @@ However, it may be more efficient.
 
     void glk_put_char_stream(strid_t str, unsigned char ch);
     void glk_put_string_stream(strid_t str, char *s);
-    void glk_put_buffer_stream(strid_t str, char *buf, uint32 len);
+    void glk_put_buffer_stream(strid_t str, char *buf, glui32 len);
 
 These are the same functions, except that you specify a stream to print
 to, instead of using the current stream. Again, it is illegal for str to
 be 0 or any other invalid id, or the id of an input-only stream.
 
-4.2: How To Read
+5.2: How To Read
 
-    uint32 glk_get_char_stream(strid_t str);
+    glui32 glk_get_char_stream(strid_t str);
 
 This reads one character from the given stream. (There is no notion of a
 "current input stream.") It is illegal for str to be 0 or any other
 invalid id, or the id of an output-only stream.
 
 The result will be between 0 and 255; as always, Glk assumes the Latin-1
-encoding. See section 1.8, "Character Encoding". If the end of the
-stream has been reached, the result will be -1 (0xFFFFFFFF).
+encoding. See section 2, "Character Encoding". If the end of the stream
+has been reached, the result will be -1 (0xFFFFFFFF).
 
-    void glk_get_line_stream(strid_t str, char *buf, uint32 len);
-    void glk_get_buffer_stream(strid_t str, char *buf, uint32 len);
+    glui32 glk_get_buffer_stream(strid_t str, char *buf, glui32 len);
 
-[[WORK: Not yet implemented. Return the number of chars read?]]
+This reads len characters from the given stream, unless the end of
+stream is reached first. No terminal null is placed in the buffer. It
+returns the number of characters actually read.
 
-4.3: Closing Streams
+    glui32 glk_get_line_stream(strid_t str, char *buf, glui32 len);
+
+This reads characters from the given stream, until either len-1
+characters have been read or a newline has been read. It then puts a
+terminal null ('\0') character on the end. It returns the number of
+characters actually read, including the newline (if there is one) but
+not including the terminal null.
+
+5.3: Closing Streams
 
     void glk_stream_close(strid_t str, stream_result_t *result);
 
     typedef struct stream_result_struct {
-        uint32 readcount;
-        uint32 writecount;
+        glui32 readcount;
+        glui32 writecount;
     } stream_result_t;
 
 This closes the stream str. The result argument points to a structure
@@ -1935,15 +2092,15 @@ If str is the current output stream, the current output stream is set to
 0 (none.)
 
 You cannot close window streams; use glk_window_close() instead. See
-section 2.2, "Window Opening, Closing, and Constraints".
+section 3.2, "Window Opening, Closing, and Constraints".
 
-4.4: Stream Positions
+5.4: Stream Positions
 
 You can set the position of the read/write mark in a stream. [[Which
 makes one wonder why they're called "streams" in the first place. Oh
 well.]]
 
-    uint32 glk_stream_get_position(strid_t str);
+    glui32 glk_stream_get_position(strid_t str);
 
 This returns the position of the mark. For memory streams and binary
 file streams, this is exactly the number of bytes read or written from
@@ -1953,7 +2110,7 @@ ambiguous, since (for example) writing one byte to a text file may store
 more than one character in the platform's native encoding. You can only
 be sure that the position increases as you read or write to the file.
 
-    void glk_stream_set_position(strid_t str, uint32 pos, uint32
+    void glk_stream_set_position(strid_t str, glsi32 pos, glui32
 seekmode);
 
 This sets the position of the mark. The position is controlled by pos,
@@ -1969,7 +2126,7 @@ position within the file.)
 It is illegal to specify a position before the beginning or after the
 end of the file.
 
-4.5: Styles
+5.5: Styles
 
 You can send style-changing commands to an output stream. After a style
 change, new text which is printed to that stream will be given the new
@@ -1981,7 +2138,7 @@ the style changes will have no effect.
 
 [[Note that every stream and window has its own idea of the "current
 style." Sending a style command to one window or stream does not affect
-any others.]] [[Except for a window's echo stream; see section 2.6,
+any others.]] [[Except for a window's echo stream; see section 3.6,
 "Echo Streams".]]
 
 The styles are intended to distinguish meaning and use, not formatting.
@@ -1989,7 +2146,8 @@ There is *no* standard definition of what each style will look like.
 That is left up to the Glk library, which will choose an appearance
 appropriate for the platform's interface and the player's preferences.
 
-There are currently eleven styles defined.
+There are currently eleven styles defined. More may be defined in the
+future.
 
     * style_Normal: The style of normal or body text. A new window or
 stream always starts with style_Normal as the current style.
@@ -2043,22 +2201,26 @@ italics or underlining, not center-justified or indented.]]
 game players. It's not fixed by this specification. That's natural
 language for you.]]
 
-    void glk_set_style(uint32 val);
+    void glk_set_style(glui32 val);
 
-This changes the style of the current output stream.
+This changes the style of the current output stream. val should be one
+of the values listed above. However, any value is actually legal; if the
+interpreter does not recognize the style value, it will treat it as
+style_Normal. [[This policy allows for the future definition of styles
+without breaking old Glk libraries.]]
 
-    void glk_set_style_stream(strid_t str, uint32 val);
+    void glk_set_style_stream(strid_t str, glui32 val);
 
 This changes the style of the stream str.
 
-4.5.1: Suggesting the Appearance of Styles
+5.5.1: Suggesting the Appearance of Styles
 
 There are no guarantees of how styles will look, but you can make
 suggestions.
 
-    void glk_stylehint_set(uint32 wintype, uint32 styl, uint32 hint,
-uint32 val);
-    void glk_stylehint_clear(uint32 wintype, uint32 styl, uint32 hint);
+    void glk_stylehint_set(glui32 wintype, glui32 styl, glui32 hint,
+glsi32 val);
+    void glk_stylehint_clear(glui32 wintype, glui32 styl, glui32 hint);
 
 These functions set and clear hints about the appearance of one style
 for a particular type of window. You can also set wintype to
@@ -2088,7 +2250,8 @@ appearance of a style from what it would ordinarily be. The most common
 case when this is appropriate is for the styles style_User1 and
 style_User2. 
 
-There are currently nine style hints defined.
+There are currently nine style hints defined. More may be defined in the
+future.
 
     * stylehint_Indentation: How much to indent lines of text in the
 given style. May be a negative number, to shift the text out (left)
@@ -2124,7 +2287,12 @@ red.]]
     * stylehint_BackColor: The background color behind the text. This is
 encoded the same way as stylehint_TextColor.
 
-4.5.2: Testing the Appearance of Styles
+Again, when passing a style hint to a Glk function, any value is
+actually legal. If the interpreter does not recognize the stylehint
+value, it will ignore it. [[This policy allows for the future definition
+of style hints without breaking old Glk libraries.]]
+
+5.5.2: Testing the Appearance of Styles
 
 You can suggest the appearance of a window's style before the window is
 created; after the window is created, you can test the style's actual
@@ -2141,15 +2309,15 @@ signalled. If you test the appearance of styles at the beginning of your
 program, you must keep in mind the possibility that the player will
 change them later.]]
 
-    uint32 glk_style_distinguish(winid_t win, uint32 styl1, uint32
+    glui32 glk_style_distinguish(winid_t win, glui32 styl1, glui32
 styl2);
 
 This returns TRUE (1) if the two styles are visually distinguishable in
 the given window. If they are not, it returns FALSE (0). The exact
 meaning of this is left to the library to determine.
 
-    uint32 glk_style_measure(winid_t win, uint32 styl, uint32 hint,
-uint32 *result);
+    glui32 glk_style_measure(winid_t win, glui32 styl, glui32 hint,
+glui32 *result);
 
 This tries to test an attribute of one style in the given window. The
 library may not be able to determine the attribute; if not, this returns
@@ -2175,12 +2343,12 @@ angle.
     * stylehint_Proportional: 1 for proportional-width fonts, or 0 for
 fixed-width.
     * stylehint_TextColor, stylehint_BackColor: These are values from
-0x00000000 to 0x00FFFFFF, encoded as described in section 4.5.1,
+0x00000000 to 0x00FFFFFF, encoded as described in section 5.5.1,
 "Suggesting the Appearance of Styles".
 
-4.6: The Types of Streams
+5.6: The Types of Streams
 
-4.6.1: Window Streams
+5.6.1: Window Streams
 
 Every window has an output stream associated with it. This is created
 automatically, with filemode_Write, when you open the window. You get it
@@ -2190,14 +2358,14 @@ A window stream cannot be closed with glk_stream_close(). It is closed
 automatically when you close its window with glk_window_close().
 
 Only printable characters (including newline) may be printed to a window
-stream. See section 1.8, "Character Encoding".
+stream. See section 2, "Character Encoding".
 
-4.6.2: Memory Streams
+5.6.2: Memory Streams
 
 You can open a stream which reads from or writes into a space in memory.
 
-    strid_t glk_stream_open_memory(void *buf, uint32 buflen, uint32
-fmode, uint32 rock);
+    strid_t glk_stream_open_memory(void *buf, glui32 buflen, glui32
+fmode, glui32 rock);
 
 fmode must be filemode_Read, filemode_Write, or filemode_ReadWrite.
 
@@ -2226,11 +2394,11 @@ until the stream is closed. The library may store the data there as it
 is written, or deposit it all in a lump when the stream is closed. It is
 illegal to change the contents of the buffer while the stream is open.
 
-4.6.3: File Streams
+5.6.3: File Streams
 
 You can open a stream which reads from or writes to a disk file.
 
-    strid_t glk_stream_open_file(frefid_t fileref, uint32 fmode, uint32
+    strid_t glk_stream_open_file(frefid_t fileref, glui32 fmode, glui32
 rock);
 
 fileref indicates the file which will be opened. fmode can be any of
@@ -2243,24 +2411,24 @@ the file mark is set to the end of the file.
 
 The file may be read or written in text or binary mode; this is
 determined by the fileref argument. Similarly, platform-dependent
-attributes such as file type are determined by fileref. See section 5,
+attributes such as file type are determined by fileref. See section 6,
 "File References".
 
-4.7: Other Stream Functions
+5.7: Other Stream Functions
 
-    strid_t glk_stream_iterate(strid_t str, uint32 *rockptr);
+    strid_t glk_stream_iterate(strid_t str, glui32 *rockptr);
 
-This iterates through all the existing streams. See section 1.4.3,
+This iterates through all the existing streams. See section 1.6.3,
 "Iterating Through Opaque Objects".
 
-    uint32 glk_stream_get_rock(strid_t str);
+    glui32 glk_stream_get_rock(strid_t str);
 
-This retrieves the streams's rock value. See section 1.4.2, "Rocks".
+This retrieves the streams's rock value. See section 1.6.2, "Rocks".
 
-5: File References
+6: File References
 
 You deal with disk files using file references. Each fileref has an
-unsigned 32-bit integer identifier; see section 1.4.1, "Identifiers".
+unsigned 32-bit integer identifier; see section 1.6.1, "Identifiers".
 
 A file reference contains platform-specific information about the name
 and location of the file, and possibly its type, if the platform has a
@@ -2308,13 +2476,13 @@ binary mode is appropriate for fileusage_SavedGame and probably for
 fileusage_InputRecord. fileusage_Data files may be text or binary,
 depending on what you use them for.
 
-5.1: The Types of File References
+6.1: The Types of File References
 
 There are three different functions for creating a fileref, depending on
 how you wish to specify it. Remember that it is always possible that a
 fileref creation will fail and return 0.
 
-    frefid_t glk_fileref_create_temp(uint32 usage, uint32 rock);
+    frefid_t glk_fileref_create_temp(glui32 usage, glui32 rock);
 
 This creates a reference to a temporary file. It is always a new file
 (one which does not yet exist). The file (once created) will be
@@ -2326,8 +2494,8 @@ deleted automatically when the program exits, or at some later time, say
 when the machine is turned off or rebooted. You do not have to worry
 about deleting it yourself.
 
-    frefid_t glk_fileref_create_by_prompt(uint32 usage, uint32 fmode,
-uint32 rock);
+    frefid_t glk_fileref_create_by_prompt(glui32 usage, glui32 fmode,
+glui32 rock);
 
 This creates a reference to a file by asking the player to locate it.
 The library may simply prompt the player to type a name, or may use a
@@ -2352,7 +2520,7 @@ option. If the player chooses this, glk_fileref_create_by_prompt() will
 return 0. This is a major reason why you should make sure the return
 value is valid before you use it.]]
 
-    frefid_t glk_fileref_create_by_name(uint32 usage, char *name, uint32
+    frefid_t glk_fileref_create_by_name(glui32 usage, char *name, glui32
 rock);
 
 This creates a reference to a file with a specific name. The file will
@@ -2377,7 +2545,7 @@ starting with a letter. You can then be reasonably sure that the
 resulting filename will display all the characters you specify -- in
 some form.
 
-5.2: Other File Reference Functions
+6.2: Other File Reference Functions
 
     void glk_fileref_destroy(frefid_t fref);
 
@@ -2389,22 +2557,375 @@ It is legal to destroy a fileref after opening a file with it (while the
 file is still open.) The fileref is only used for the opening operation,
 not for accessing the file stream.
 
-    frefid_t glk_fileref_iterate(frefid_t fref, uint32 *rockptr);
+    frefid_t glk_fileref_iterate(frefid_t fref, glui32 *rockptr);
 
-This iterates through all the existing filerefs. See section 1.4.3,
+This iterates through all the existing filerefs. See section 1.6.3,
 "Iterating Through Opaque Objects".
 
-    uint32 glk_fileref_get_rock(frefid_t fref);
+    glui32 glk_fileref_get_rock(frefid_t fref);
 
-This retrieves the fileref's rock value. See section 1.4.2, "Rocks".
+This retrieves the fileref's rock value. See section 1.6.2, "Rocks".
 
     void glk_fileref_delete_file(frefid_t fref);
 
 This deletes the file referred to by fref. It does not destroy the
 fileref itself.
 
-    uint32 glk_fileref_does_file_exist(frefid_t fref);
+    glui32 glk_fileref_does_file_exist(frefid_t fref);
 
 This returns TRUE (1) if the fileref refers to an existing file, and
 FALSE (0) if not.
 
+7: Porting, Adapting, and Other Messy Bits
+
+Life is not perfect, and neither are our toys. In a world of perfect
+toys, a Glk program could compile with any Glk library and run without
+human intervention. Guess what.
+
+7.1: Startup Options
+
+One large grey area is starting up, startup files, and other program
+options. It is easy to assume that all C programs run with the (argc,
+argv) model -- that all the information they need comes as an array of
+strings at startup time. This is sometimes true. But in a GUI system,
+files are often opened by clicking, options are specified in dialog
+boxes, and so on; and this does not necessarily happen at the beginning
+of main().
+
+Therefore, Glk does not try to pass an (argc, argv) list to your
+glk_main(). Nor does it provide a portable API for startup files and
+options. [[Doing that well would require API calls to parse command-line
+arguments of various types, and then also design and handle dialog
+boxes. It would go far beyond the level of complexity which Glk aspires
+to.]]
+
+Instead, startup files and options are handled in an *entirely
+platform-dependent* manner. You, as the author of a Glk program, must
+describe how your program should behave. As your program is ported to
+various Glk libraries, each porter must decide how to implement that
+behavior on the platform in question. The library should store the
+options and files in global variables, where your glk_main() routine can
+read them.
+
+It is reasonable to modularize this code, and call it the "startup
+code". But the startup code is not necessarily a single function, and it
+certainly does not have well-defined arguments such as an (argc, argv)
+list. You can consider that your startup behavior is divided into the
+messy part, which is nonportable and goes in the startup code, and the
+clean part, which is entirely Glk-portable and goes at the beginning of
+glk_main().
+
+This is not as much of a mess as it sounds. Many programs, and almost
+all IF programs, follow one of a few simple models.
+
+    * The simple model: There are no startup files. The program just
+starts running when invoked.
+    * The game-file model: The program begins running when it is handed
+a single file of a particular type. On command-line systems, this comes
+as a filename in a command-line option. On GUI systems, it will usually
+be a platform-native event which contains a file reference.
+
+Any Glk library will be able to support these two models, probably
+through compile-time options. The details will vary. [[For one notable
+case, the Mac Glk library has two possible behaviors when compiled with
+the game-file model. If the player double-clicks a game file, the
+library calls glk_main() immediately. If the player double-clicks the
+application icon, the library allows the player to wait, perhaps
+adjusting preferences; it only calls glk_main() after the game file is
+selected through a file dialog.]]
+
+[[In fact, if life were this simple, it would be worth adding these
+models to the Glk API somehow. Unfortunately, it's not. Consider AGT:
+the "game file" is actually about ten separate files with related
+filenames, in the same directory. Glk does not contain API calls to do
+precise file and pathname manipulation; it is too complicated an area to
+support. So this situation must be handled non-portably.]]
+
+More complicated models are also possible. You might want to accept
+files through GUI events at any time, not just at startup. This could be
+handled by defining a new Glk event type, and having the library send
+such an event when a platform-native icon-click is detected. You would
+then have to decide how the situation should be handled in a
+command-line Glk library. But that is inherent in your task as a program
+author.
+
+Options and preferences are a separate problem. Most often, a
+command-line library will handle them with command-line arguments, and a
+GUI library will handle them with a dialog box. Ideally, you should
+describe how both cases should behave -- list the command-line
+arguments, and perhaps how they could be labelled in a dialog. [[This is
+unlikely to be very complicated. Although who knows.]]
+
+Remember that the Glk library is likely to have some options of its own
+-- matters of display styles and so on. A command-line library will
+probably have a simple API to extract its own options and pass the rest
+on to the startup code.
+
+7.2: Going Outside the Glk API
+
+Nonportable problems are not limited to the start of execution. There is
+also the question of OS services which are not represented in Glk. The
+ANSI C libraries are so familiar that they seem universal, but they are
+actually not necessarily present. Palmtop platforms such as the Pilot
+are particularly good at leaving out ANSI libraries.
+
+7.2.1: Memory Management
+
+Everyone uses malloc(), realloc(), and free(). However, some platforms
+have a native memory-management API which may be more suitable in
+porting your program.
+
+The malloc() system is simple; it can probably be implemented as a layer
+on top of whatever native API is available. So you don't absolutely have
+to worry about this. However, it can't hurt to group all your malloc()
+and free() calls in one part of your program, so that a porter can
+easily change them all if it turns out to be a good idea.
+
+7.2.2: String Manipulation
+
+This is more of a nuisance, because the set of string functions varies
+quite a bit between platforms. Consider bcopy(), memcpy(), and
+memmove(); stricmp() and strcasecmp(); strchr() and index(); and so on.
+And again, on a palmtop machine, none of these may be available. The
+maximally safe course is to implement what you need yourself. [[See the
+model.c program for an example; it implements its own str_eq() and
+str_len().]] 
+
+The maximally safe course is also a pain in the butt, and may well be
+inefficient (a platform may have a memcpy() which is highly optimized
+for large moves.) That's porting in the big city.
+
+[[By the way, the next person I see who #defines memmove() as memcpy()
+when a real memmove() isn't available, gets slapped in the face with a
+lead-lined rubber salmon.]]
+
+7.2.3: File Handling
+
+This is the real nuisance, because Glk provides a limited set of stream
+and file functions. And yet there are all these beautiful ANSI stdio
+calls, which have all these clever tricks -- ungetc(), fast macro
+fgetc(), formatted fprintf(), not to mention the joys of direct pathname
+manipulation. Why bother with the Glk calls?
+
+The problem is, the stdio library really isn't always the best choice.
+The Pilot and Newton simply don't use stdio. The Mac has a stdio library
+built on top of its native file API, but it's a large extra library
+which porters may not wish to link in.
+
+There's also the problem of hooking into the Glk API. Window output goes
+through Glk streams. [[It would have been lovely to use the stdio API
+for that, but it's not generally possible.]]
+
+As usual, it's a judgement call. If you have a large existing pile of
+source code which you're porting, and it uses a lot of icky stdio
+features like ungetc(), it may be better not to bother changing
+everything to the Glk file API. If you're starting from scratch, using
+the Glk calls will probably be cleaner.
+
+7.2.4: Private Extensions to Glk
+
+Sometimes -- hopefully rarely -- there's stuff you just gotta do.
+
+Explicit pathname modification is one possible case. Creating or
+deleting directories. New Glk event types caused by interface events.
+Control over pull-down menus.
+
+Like startup code, you just have to decide what you want, and ask your
+porters to port it. These are the non-portable parts of your task. As I
+said, that's porting in the big city.
+
+If an extension or new function is so useful that everyone is
+implementing it, I'll consider adding it to the Glk API (as an optional
+capability, with a Gestalk selector and everything.) I'm flexible. In a
+morally correct manner, of course.
+
+7.3: Glk and the Virtual Machine
+
+Most IF games are built on a virtual machine, such as the Z-machine or
+the TADS runtime structure. Building a virtual machine which uses Glk as
+its interface is somewhat more complicated than writing a single Glk
+program.
+
+The question to ask is: what API will be exported to the game author --
+the person writing a program to run on the VM?
+
+7.3.1: Implementing a Higher Layer Over Glk
+
+Thus far, each virtual machine has had its own built-in I/O API. Most of
+them have identical basic capabilities -- read lines of input, display a
+stream of output, show a status line of some sort, and so on. This
+commonality, of course, is the ground from which Glk sprouted in the
+first place.
+
+If the I/O API is a subset of the capabilities of Glk, it can be
+implemented as a layer on top of Glk. In this way, an existing VM can
+often be ported to Glk without any change visible to the author.
+Standard TADS can be ported in this way; the V5/8 Z-machine can as well
+(with the sole exception, as far as I know, of colored text.)
+
+7.3.2: Glk as a VM's Native API
+
+The other approach is to use Glk as the virtual machine's own I/O API,
+and provide it directly to the game author. This is inherently more
+powerful, since it allows access to all of Glk, instead of a subset. As
+Glk is designed to be easily expandable, and will gain new (optional)
+capabilities over time, this approach also allows a VM to gain
+capabilities over time without much upheaval.
+
+[[To a certain extent, Glk was designed for this use more than any
+other. For example, this is why all Glk function arguments are either
+pointers or 32-bit integers, and why all Glk API structures are
+effectively arrays of 32-bit integers. It is also why the iterator
+functions exist; a VM's entire memory space may be reset by an "undo" or
+"restore" command, and it would then have to, ah, take inventory of its
+streams and windows and filerefs.]]
+
+[[This is also another reason why Glk provides file API calls. A VM can
+provide Glk as the game author's entire access to the file system, as
+well as the author's entire access to the display system. The VM will
+then be simpler, more modular, not as tied into the native OS -- all
+that good stuff.]]
+
+The mechanics of this are tricky, because Glk has many API calls, and
+more will be added over time.
+
+In a VM with a limited number of opcodes, it may be best to allocate a
+single "Glk" opcode, with a variable number of arguments, the first of
+which is a function selector. Allow at least 16 bits for this selector;
+there may be more than 256 Glk calls someday. (For a list of standard
+selectors for Glk calls, see section 8.1, "Function Call Selectors".)
+
+In a VM with a large opcode space, you could reserve a 16-bit range of
+opcodes for Glk.
+
+It may also be feasible to extend the function-call mechanism in some
+way, to include the range of Glk functions.
+
+In any case, the API still has to be exported to the game author in
+whatever language is compiled to the VM. Ideally, this can be done as a
+set of function calls. [[But it doesn't have to be. The Inform compiler,
+for example, can accept assembly opcodes in-line with Inform source
+code. It's nearly as convenient to let the author type in opcodes as
+function calls.]]
+
+There is a further complication when new calls are added to Glk. This
+should not be a major problem. The compiler is mapping Glk calls
+one-to-one to its own functions or opcodes, so this should be a matter
+of adding to a fixed list somewhere in the compiler and releasing an
+upgrade.
+
+Alternatively, if the compiler has some way to define new opcodes, even
+this much effort is not necessary. [[The Inform compiler is designed
+this way; the game author can define new opcodes and use them. So if a
+new call has been added to Glk, and it has been implemented in the
+interpreter with a known selector, it can be used in Inform immediately,
+without a compiler upgrade.]]
+
+8: Appendix
+
+8.1: Function Call Selectors
+
+When you are writing a program which uses the Glk library directly, it
+is linked with the usual compiler linking tools. However, in a VM, Glk
+calls may be referred to by opcodes or other numerical selectors.
+Therefore it is convenient to define an standard selector value for
+every Glk call.
+
+These values, and the values used for future Glk calls, are integers in
+the range 0x0001 to 0xFFFF (1 to 65535). The values are not sequential;
+they are divided into groups, roughly by category. Zero is not the
+selector of any Glk call, so it may be used for a null value.
+
+    * 0x0001: glk_exit
+    * 0x0002: glk_set_interrupt_handler
+    * 0x0003: glk_tick
+    * 0x0004: glk_gestalt
+    * 0x0005: glk_gestalt_ext
+    * 0x0020: glk_window_iterate
+    * 0x0021: glk_window_get_rock
+    * 0x0022: glk_window_get_root
+    * 0x0023: glk_window_open
+    * 0x0024: glk_window_close
+    * 0x0025: glk_window_get_size
+    * 0x0026: glk_window_set_arrangement
+    * 0x0027: glk_window_get_arrangement
+    * 0x0028: glk_window_get_type
+    * 0x0029: glk_window_get_parent
+    * 0x002A: glk_window_clear
+    * 0x002B: glk_window_move_cursor
+    * 0x002C: glk_window_get_stream
+    * 0x002D: glk_window_set_echo_stream
+    * 0x002E: glk_window_get_echo_stream
+    * 0x002F: glk_set_window
+    * 0x0040: glk_stream_iterate
+    * 0x0041: glk_stream_get_rock
+    * 0x0042: glk_stream_open_file
+    * 0x0043: glk_stream_open_memory
+    * 0x0044: glk_stream_close
+    * 0x0045: glk_stream_set_position
+    * 0x0046: glk_stream_get_position
+    * 0x0047: glk_stream_set_current
+    * 0x0048: glk_stream_get_current
+    * 0x0060: glk_fileref_create_temp
+    * 0x0061: glk_fileref_create_by_name
+    * 0x0062: glk_fileref_create_by_prompt
+    * 0x0063: glk_fileref_destroy
+    * 0x0064: glk_fileref_iterate
+    * 0x0065: glk_fileref_get_rock
+    * 0x0066: glk_fileref_delete_file
+    * 0x0067: glk_fileref_does_file_exist
+    * 0x0080: glk_put_char
+    * 0x0081: glk_put_char_stream
+    * 0x0082: glk_put_string
+    * 0x0083: glk_put_string_stream
+    * 0x0084: glk_put_buffer
+    * 0x0085: glk_put_buffer_stream
+    * 0x0086: glk_set_style
+    * 0x0087: glk_set_style_stream
+    * 0x0090: glk_get_char_stream
+    * 0x0091: glk_get_line_stream
+    * 0x0092: glk_get_buffer_stream
+    * 0x00A0: glk_char_to_lower
+    * 0x00A1: glk_char_to_upper
+    * 0x00B0: glk_stylehint_set
+    * 0x00B1: glk_stylehint_clear
+    * 0x00B2: glk_style_distinguish
+    * 0x00B3: glk_style_measure
+    * 0x00C0: glk_select
+    * 0x00C1: glk_select_poll
+    * 0x00D0: glk_request_line_event
+    * 0x00D1: glk_cancel_line_event
+    * 0x00D2: glk_request_char_event
+    * 0x00D3: glk_cancel_char_event
+    * 0x00D4: glk_request_mouse_event
+    * 0x00D5: glk_cancel_mouse_event
+    * 0x00D6: glk_request_timer_events
+
+Note that glk_main() does not have a selector, because it's provided by
+your program, not the library.
+
+You can use the gestalt_FunctionNameToID and gestalt_FunctionIDToName
+gestalt selectors to find Glk functions at run-time. [[I'm not sure
+there's an immediate use for this, but I have a nagging feeling there is
+one.]]
+
+    glui32 res;
+    char *str = "window_open";
+    res = glk_gestalt_ext(gestalt_FunctionNameToID, 0, str);
+
+This will return the selector associated with the given function name;
+in this case, 0x0023, or 35 decimal. Note that str should be a
+null-terminated string, containing a function name without the "glk_"
+prefix. If the Glk library does not implement any such function, this
+returns 0.
+
+    glui32 res;
+    glui32 id = 0x0023;
+    char *str;
+    res = glk_gestalt_ext(gestalt_FunctionIdToName, id, &str);
+
+This will return a string containing the name of the function with the
+given id; in this case, "window_open". A pointer to the string is placed
+in the location specified in the third argument, and TRUE is returned.
+(The string itself is in static storage.) If the Glk library does not
+implement a function with the given selector, FALSE is returned.
