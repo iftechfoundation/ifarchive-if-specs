@@ -1,6 +1,6 @@
 Glk API Specification
 
-API version 0.51
+API version 0.52
 
 Andrew Plotkin <erkyrath@eblong.com>
 
@@ -55,7 +55,8 @@ This document and further Glk information can be found at:
 4.4      Timer Events
 4.5      Window Arrangement Events
 4.6      Window Redrawing Events
-4.7      Other Events
+4.7      Sound Notification Events
+4.8      Other Events
 5        Streams
 5.1      How To Print
 5.2      How To Read
@@ -77,37 +78,43 @@ This document and further Glk information can be found at:
 7.2      Graphics in Graphics Windows
 7.3      Graphics in Text Buffer Windows
 7.4      Testing for Graphics Capabilities
-8        Porting, Adapting, and Other Messy Bits
-8.1      Startup Options
-8.2      Going Outside the Glk API
-8.2.1    Memory Management
-8.2.2    String Manipulation
-8.2.3    File Handling
-8.2.4    Private Extensions to Glk
-8.3      Glk and the Virtual Machine
-8.3.1    Implementing a Higher Layer Over Glk
-8.3.2    Glk as a VM's Native API
-9        Appendices
-9.1      The Dispatch Layer
-9.1.1    How This Works
-9.1.2    Interrogating the Interface
-9.1.3    Dispatching
-9.1.3.1  Basic Types
-9.1.3.2  References
-9.1.3.3  Structures
-9.1.3.4  Arrays
-9.1.3.5  Return Values
-9.1.4    Getting Argument Prototypes
-9.1.5    Functions the Library Must Provide
-9.1.5.1  Opaque Object Registry
-9.1.5.2  Retained Array Registry
-9.1.6    Table of Selectors
-9.2      The Blorb Layer
-9.2.1    How This Works
-9.2.2    What the Program Does
-9.2.3    What the Library Does
-9.2.4    What the Blorb Layer Does
-9.2.5    Blorb Errors
+8        Sound
+8.1      Sound Resources
+8.2      Creating and Destroying Sound Channels
+8.3      Playing Sounds
+8.4      Other Sound Channel Functions
+8.5      Testing for Sound Capabilities
+9        Porting, Adapting, and Other Messy Bits
+9.1      Startup Options
+9.2      Going Outside the Glk API
+9.2.1    Memory Management
+9.2.2    String Manipulation
+9.2.3    File Handling
+9.2.4    Private Extensions to Glk
+9.3      Glk and the Virtual Machine
+9.3.1    Implementing a Higher Layer Over Glk
+9.3.2    Glk as a VM's Native API
+10       Appendices
+10.1     The Dispatch Layer
+10.1.1   How This Works
+10.1.2   Interrogating the Interface
+10.1.3   Dispatching
+10.1.3.1 Basic Types
+10.1.3.2 References
+10.1.3.3 Structures
+10.1.3.4 Arrays
+10.1.3.5 Return Values
+10.1.4   Getting Argument Prototypes
+10.1.5   Functions the Library Must Provide
+10.1.5.1 Opaque Object Registry
+10.1.5.2 Retained Array Registry
+10.1.6   Table of Selectors
+10.2     The Blorb Layer
+10.2.1   How This Works
+10.2.2   What the Program Does
+10.2.3   What the Library Does
+10.2.4   What the Blorb Layer Does
+10.2.5   Blorb Errors
 
 
 0: Introduction
@@ -198,7 +205,7 @@ It is not inconceivable that a new IF virtual machine might be designed
 to go along with Glk. This VM would use Glk as its interface; each Glk
 call would correspond to an input/output opcode of the VM.
 
-For more discussion of this approach, see section 8.3, "Glk and the
+For more discussion of this approach, see section 9.3, "Glk and the
 Virtual Machine".
 
 0.4: What Does Glk Not Do?
@@ -422,6 +429,8 @@ Currently, these classes are:
     a file reference is a pathname; on the Mac, an FSSpec. Actually
     there's a little more information included, such as file type and
     whether it is a text or binary file.]]
+    * Sound channels: Audio output channels. [[Not all Glk libraries
+    support sound.]]
 
 [[Note that there may be more object classes in future versions of the
 Glk API.]]
@@ -431,16 +440,17 @@ creation will fail (due to lack of memory, or some other OS error.) When
 this happens, the allocation function will return NULL (0) instead of
 a valid pointer. You should always test for this possibility.
 
-NULL is never the identifier of any object (window, stream, or file
-reference). The value NULL is often used to indicate "no object" or
-"nothing", but it is not a valid reference. If a Glk function takes an
-object reference as an argument, it is illegal to pass in NULL unless
-the function definition says otherwise.
+NULL is never the identifier of any object (window, stream, file
+reference, or sound channel). The value NULL is often used to indicate
+"no object" or "nothing", but it is not a valid reference. If a Glk
+function takes an object reference as an argument, it is illegal to pass
+in NULL unless the function definition says otherwise.
 
-The glk.h file defines types "winid_t", "strid_t", "frefid_t" to
-store references. These are pointers to struct glk_window_struct,
-glk_stream_struct, and glk_fileref_struct respectively. It is, of course,
-illegal to pass one kind of pointer to a function which expects another.
+The glk.h file defines types "winid_t", "strid_t", "frefid_t", "schanid_t"
+to store references. These are pointers to struct glk_window_struct,
+glk_stream_struct, glk_fileref_struct, and glk_schannel_struct
+respectively. It is, of course, illegal to pass one kind of pointer to
+a function which expects another.
 
 [[This is how you deal with opaque objects from a C program. If you
 are using Glk through a virtual machine, matters will probably be
@@ -449,11 +459,11 @@ objects of some sort.]]
 
 1.6.1: Rocks
 
-Every one of these objects (window, stream, or file reference) has a
-"rock" value. This is simply a 32-bit integer value which you provide,
-for your own purposes, when you create the object. [[The library -- so
-to speak -- stuffs this value under a rock for safe-keeping, and gives
-it back to you when you ask for it.]]
+Every one of these objects (window, stream, file reference, or sound
+channel) has a "rock" value. This is simply a 32-bit integer value which
+you provide, for your own purposes, when you create the object. [[The
+library -- so to speak -- stuffs this value under a rock for safe-keeping,
+and gives it back to you when you ask for it.]]
 
 [[If you don't know what to use the rocks for, provide 0 and forget
 about it.]]
@@ -559,8 +569,8 @@ major version number; the next 8 bits stores the minor version number;
 the low 8 bits stores an even more minor version number, if any. [[So
 the version number 78.2.11 would be encoded as 0x004E020B.]]
 
-The current Glk specification version is 0.51, so this selector will
-return 0x00000501.
+The current Glk specification version is 0.52, so this selector will
+return 0x00000502.
 
 
     glui32 res;
@@ -1572,6 +1582,12 @@ ints. This is okay, since there are no negative positions. If you try to
 pass a negative value, Glk will interpret it as a huge positive value,
 and it will wrap or go off the last line.]]
 
+[[Also note that the output cursor is *not* necessarily visible. In
+particular, when you are requesting line or character input in a grid
+window, you cannot rely on the cursor position to prompt the player where
+input is indicated. You should print some character prompt at that spot --
+a ">" character, for example.]]
+
 When a text grid window is resized smaller, the bottom or right area is
 thrown away, but the remaining area stays unchanged. When it is resized
 larger, the new bottom or right area is filled with blanks. [[You may
@@ -1824,8 +1840,9 @@ not interfacing with the player. For example, time may pass during slow
 computations; you can use glk_select_poll() to see if a evtype_Timer
 event has occured. (See section 4.4, "Timer Events".)
 
-At the moment, glk_select_poll() only checks for evtype_Timer and possibly
-evtype_Arrange events. But see section 4.7, "Other Events".
+At the moment, glk_select_poll() checks for evtype_Timer, and possibly
+evtype_Arrange and evtype_SoundNotify events. But see section 4.8,
+"Other Events".
 
 The second question is, what does it mean that glk_select_poll()
 returns "almost immediately"? In some Glk libraries, text that you
@@ -2101,20 +2118,21 @@ Events".
 For more about redraw events and how they affect graphics windows,
 see section 3.5.5, "Graphics Windows".
 
-4.7: Other Events
+4.7: Sound Notification Events
+
+On platforms that support sound, you can request to receive an
+evtype_SoundNotify event when a sound finishes playing. See section 8.3,
+"Playing Sounds".
+
+4.8: Other Events
 
 There are currently no other event types defined by Glk. (The
 "evtype_None" constant is a placeholder, and is never returned by
 glk_select().)
 
-It is possible that new event types will be defined in the future.
-
-[[For example, the Z-machine has a "sound interrupt" mechanism; you can
-set a routine to be called when a given sound is finished playing. If Glk
-is extended to support sound, a sound-finished event might be defined. It
-would be available from both glk_select() and glk_select_poll(). Note
-that this neatly avoids the problem of reentrant interpreter design,
-which complicates the Z-machine.]]
+It is possible that new event types will be defined in the future. [[For
+example, if video or animation capabilities are added to Glk, there
+would probably be some sort of completion event for them.]]
 
 [[This is also why you must put calls to glk_select() in loops. If you
 tried to read a character by simply writing
@@ -2128,10 +2146,10 @@ key. Or, for that matter, a window arrangement event.]]
 
 [[It is not generally necessary to put a call to glk_select_poll() in a
 loop. You usually call glk_select_poll() to update the display or test
-if an event is available, not to wait for a particular event. However,
-if you were using those sound-finished events, and several sounds were
-playing, it might be important to make sure you knew about all sounds
-completed at any particular time. You would do this with
+if an event is available, not to wait for a particular event. However, if
+you are using sound notification events, and several sounds are playing,
+it might be important to make sure you knew about all sounds completed
+at any particular time. You would do this with
 
     glk_select_poll(&ev);
     while (ev.type != evtype_None) {
@@ -2168,7 +2186,7 @@ though there is no Glk call to explicitly open standard input. On the
 Mac, data in a Mac resource may be available through a resource-reading
 stream.]] You do not need to worry about the origin of such streams; just
 read or write them as usual. For information about how platform-specific
-streams come to be, see section 8.1, "Startup Options".
+streams come to be, see section 9.1, "Startup Options".
 
 A stream is opened with a particular file mode:
 
@@ -2283,6 +2301,10 @@ have been read or a newline has been read. It then puts a terminal null
 ('\0') character on the end. It returns the number of characters actually
 read, including the newline (if there is one) but not including the
 terminal null.
+
+It is usually more efficient to read several characters at once with
+glk_get_buffer_stream() or glk_get_line_stream(), as opposed to calling
+glk_get_char_stream() several times.
 
 5.3: Closing Streams
 
@@ -2644,7 +2666,7 @@ This iterates through all the existing streams. See section 1.6.2,
 
     glui32 glk_stream_get_rock(strid_t str);
 
-This retrieves the streams's rock value. See section 1.6.1, "Rocks".
+This retrieves the stream's rock value. See section 1.6.1, "Rocks".
 
 6: File References
 
@@ -2699,9 +2721,9 @@ depending on what you use them for.
 
 6.1: The Types of File References
 
-There are three different functions for creating a fileref, depending
-on how you wish to specify it. Remember that it is always possible that
-a fileref creation will fail and return NULL.
+There are four different functions for creating a fileref, depending on
+how you wish to specify it. Remember that it is always possible that a
+fileref creation will fail and return NULL.
 
     frefid_t glk_fileref_create_temp(glui32 usage, glui32 rock);
 
@@ -2765,6 +2787,27 @@ The most conservative approach is to pass a string of no more than
 starting with a letter. You can then be reasonably sure that the resulting
 filename will display all the characters you specify -- in some form.
 
+    frefid_t glk_fileref_create_from_fileref(glui32 usage, frefid_t fref,
+    glui32 rock);
+
+This copies an existing file reference, but changes the usage. (The
+original fileref is not modified.)
+
+The use of this function can be tricky. If you change the type of the
+fileref (fileusage_Data, fileusage_SavedGame, etc), the new reference may
+or may not point to the same actual disk file. [[This generally depends
+on whether the platform uses suffixes to indicate file type.]] If you
+do this, and open both file references for writing, the results are
+unpredictable. It is safest to change the type of a fileref only if it
+refers to a nonexistent file.
+
+If you change the mode of a fileref (fileusage_TextMode,
+fileusage_BinaryMode), but leave the rest of the type unchanged, the
+new fileref will definitely point to the same disk file as the old one.
+
+Obviously, if you write to a file in text mode and then read from it in
+binary mode, the results are platform-dependent.
+
 6.2: Other File Reference Functions
 
     void glk_fileref_destroy(frefid_t fref);
@@ -2822,9 +2865,9 @@ of Glk. A Glk library does not have to understand Blorb, but it is more
 likely to understand Blorb than any other format.
 
 [[Glk does not specify the exact format of images, but Blorb does. Images
-in a Blorb archive must be PNG files. More formats may be added if
-real-world experience shows it to be desirable. However, that is in the
-domain of the Blorb specification. The Glk spec, and Glk programming,
+in a Blorb archive must be PNG or JPEG files. More formats may be added
+if real-world experience shows it to be desirable. However, that is in
+the domain of the Blorb specification. The Glk spec, and Glk programming,
 will not change.]]
 
 At present, images can only be drawn in graphics windows and text
@@ -3060,13 +3103,200 @@ library to implement the graphics functions as stubs that do nothing
 (or cause run-time errors). Since no program will call the stubs without
 testing gestalt_Graphics, this is sufficient.]]
 
-8: Porting, Adapting, and Other Messy Bits
+8: Sound
+
+As with graphics, so with sound. Sounds, however, obviously don't appear
+in windows. To play a sound in Glk, you must first create a sound channel
+to hold it. This is an entirely new class of opaque objects; there are
+create and destroy and iterate and get_rock functions for channels,
+just as there are for windows and streams and filerefs.
+
+A channel can be playing exactly one sound at a time. If you want to
+play more than one sound simultaneously, you need more than one sound
+channel. On the other hand, a single sound can be played on several
+channels at the same time, or overlapping itself.
+
+Sound is an optional capability in Glk.
+
+8.1: Sound Resources
+
+As with images, sounds are kept in resources, and your program does not
+have to worry about the formatting or storage. A resource is referred
+to by an integer identifier.
+
+A resource can theoretically contain any kind of sound data, of
+any length. A resource can even be infinitely long. [[This would be
+represented by some sound encoding with a built-in repeat-forever flag --
+but that is among the details which are hidden from you.]] A resource
+can also contain two or more channels of sound (stereo data). Do not
+confuse such in-sound channels with Glk sound channels. A single Glk
+sound channel suffices to play any sound, even stereo sounds.
+
+[[Again, Blorb is the official resource-storage format of Glk. Sounds
+in Blorb files can be encoded as AIFF, MOD, or MOD song data. See the
+Blorb specification for details.]]
+
+8.2: Creating and Destroying Sound Channels
+
+    schanid_t glk_schannel_create(glui32 rock);
+
+This creates a sound channel, about as you'd expect.
+
+Remember that it is possible that the library will be unable to create
+a new channel, in which case glk_schannel_create() will return NULL.
+
+    void glk_schannel_destroy(schanid_t chan);
+
+Destroy the channel. If the channel is playing a sound, the sound stops
+immediately (with no notification event).
+
+8.3: Playing Sounds
+
+    glui32 glk_schannel_play(schanid_t chan, glui32 snd)
+
+Begin playing the given sound on the channel. If the channel was already
+playing a sound (even the same one), the old sound is stopped (with no
+notification event).
+
+This returns 1 if the sound actually started playing, and 0 if there was
+any problem. [[The most obvious problem is if there is no sound resource
+with the given identifier. But other problems can occur. For example,
+the MOD-playing facility in a library might be unable to handle two
+MODs at the same time, in which case playing a MOD resource would fail
+if one was already playing.]]
+
+    glui32 glk_schannel_play_ext(schanid_t chan, glui32 snd, glui32
+    repeats, glui32 notify);
+
+This works the same as glk_schannel_play(), but lets you specify
+additional options. glk_schannel_play(chan, snd) is exactly equivalent
+to glk_schannel_play_ext(chan, snd, 1, 0).
+
+The repeats value is the number of times the sound should be repeated. A
+repeat value of -1 (or rather 0xFFFFFFFF) means that the sound should
+repeat forever. A repeat value of 0 means that the sound will not be
+played at all; nothing happens. (Although a previous sound on the channel
+will be stopped, and the function will return 1.)
+
+The notify value should be nonzero in order to request a sound
+notification event. If you do this, when the sound is completed, you
+will get an event with type evtype_SoundNotify. The window will be NULL,
+val1 will be the sound's resource id, and val2 will be the nonzero value
+you passed as notify.
+
+If you request sound notification, and the repeat value is greater
+than one, you will get the event only after the *last* repetition. If
+the repeat value is 0 or -1, you will never get a notification event
+at all. Similarly, if the sound is stopped or interrupted, or if the
+channel is destroyed while the sound is playing, there will be no
+notification event.
+
+Not all libraries support sound notification. You should test the
+gestalt_SoundNotify selector before you rely on it; see section 8.5,
+"Testing for Sound Capabilities".
+
+    void glk_schannel_stop(schanid_t chan);
+
+Stops any sound playing in the channel. No notification event is
+generated, even if you requested one. If no sound is playing, this has
+no effect.
+
+    void glk_schannel_set_volume(schanid_t chan, glui32 vol);
+
+Sets the volume in the channel. When you create a channel, it has full
+volume, represented by the value 0x10000. Half volume would be 0x8000,
+three-quarters volume would be 0xC000, and so on. A volume of zero
+represents silence, although the sound is still considered to be playing.
+
+You can call this function between sounds, or while a sound is
+playing. The effect is immediate.
+
+You can overdrive the volume of a channel by setting a volume greater than
+0x10000. However, this is not recommended; the library may be unable to
+increase the volume past full, or the sound may become distorted. You
+should always create sound resources with the maximum volume you will
+need, and then call glk_schannel_set_volume() to reduce the volume
+when appropriate.
+
+Not all libraries support this function. You should test the
+gestalt_SoundVolume selector before you rely on it; see section 8.5,
+"Testing for Sound Capabilities".
+
+    void glk_sound_load_hint(glui32 snd, glui32 flag);
+
+This gives the library a hint about whether the given sound should
+be loaded or not. If the flag is nonzero, the library may preload the
+sound or do other initialization, so that glk_schannel_play() will be
+faster. If the flag is zero, the library may release memory or other
+resources associated with the sound. Calling this function is always
+optional, and it has no effect on what the library actually plays.
+
+8.4: Other Sound Channel Functions
+
+    schanid_t glk_schannel_iterate(schanid_t chan, glui32 *rockptr);
+
+This function can be used to iterate through the list of all open
+channels. See section 1.6.2, "Iterating Through Opaque Objects".
+
+As that section describes, the order in which channels are returned
+is arbitrary.
+
+    glui32 glk_schannel_get_rock(schanid_t chan);
+
+This retrieves the channel's rock value. See section 1.6.1, "Rocks".
+
+8.5: Testing for Sound Capabilities
+
+Before calling Glk sound functions, you should use the following gestalt
+selectors.
+
+
+    glui32 res;
+    res = glk_gestalt(gestalt_Sound, 0);
+
+
+This returns 1 if the overall suite of sound functions is
+available. This includes glk_schannel_create(), glk_schannel_destroy(),
+glk_schannel_iterate(), glk_schannel_get_rock(), glk_schannel_play(),
+glk_schannel_play_ext(), glk_schannel_stop(), glk_schannel_set_volume(),
+and glk_sound_load_hint().
+
+If this selector returns 0, you should not try to call these
+functions. They may have no effect, or they may cause a run-time error.
+
+If you are writing a C program, there is an additional complication. A
+library which does not support sound may not implement the sound functions
+at all. Even if you put gestalt tests around your sound calls, you may
+get link-time errors. If the glk.h file is so old that it does not declare
+the sound functions and constants, you may even get compile-time errors.
+
+To avoid this, you can perform a preprocessor test for the existence
+of GLK_MODULE_SOUND. If this is defined, so are all the functions and
+constants described in this section. If not, not.
+
+
+    glui32 res;
+    res = glk_gestalt(gestalt_SoundVolume, 0);
+
+
+This selector returns 1 if the glk_schannel_set_volume() function
+works. If it returns zero, glk_schannel_set_volume() has no effect.
+
+
+    glui32 res;
+    res = glk_gestalt(gestalt_SoundNotify, 0);
+
+
+This selector returns 1 if the library supports sound notification
+events. If it returns zero, you will never get such events.
+
+9: Porting, Adapting, and Other Messy Bits
 
 Life is not perfect, and neither are our toys. In a world of perfect
 toys, a Glk program could compile with any Glk library and run without
 human intervention. Guess what.
 
-8.1: Startup Options
+9.1: Startup Options
 
 One large grey area is starting up, startup files, and other program
 options. It is easy to assume that all C programs run with the (argc,
@@ -3144,7 +3374,7 @@ own -- matters of display styles and so on. A command-line library will
 probably have a simple API to extract its own options and pass the rest
 on to the startup code.
 
-8.2: Going Outside the Glk API
+9.2: Going Outside the Glk API
 
 Nonportable problems are not limited to the start of execution. There is
 also the question of OS services which are not represented in Glk. The
@@ -3152,7 +3382,7 @@ ANSI C libraries are so familiar that they seem universal, but they are
 actually not necessarily present. Palmtop platforms such as the Pilot
 are particularly good at leaving out ANSI libraries.
 
-8.2.1: Memory Management
+9.2.1: Memory Management
 
 Everyone uses malloc(), realloc(), and free(). However, some platforms
 have a native memory-management API which may be more suitable in porting
@@ -3164,7 +3394,7 @@ to worry about this. However, it can't hurt to group all your malloc()
 and free() calls in one part of your program, so that a porter can easily
 change them all if it turns out to be a good idea.
 
-8.2.2: String Manipulation
+9.2.2: String Manipulation
 
 This is more of a nuisance, because the set of string functions varies
 quite a bit between platforms. Consider bcopy(), memcpy(), and memmove();
@@ -3181,7 +3411,7 @@ for large moves.) That's porting in the big city.
 when a real memmove() isn't available, gets slapped in the face with a
 lead-lined rubber salmon.]]
 
-8.2.3: File Handling
+9.2.3: File Handling
 
 This is the real nuisance, because Glk provides a limited set of
 stream and file functions. And yet there are all these beautiful ANSI
@@ -3204,7 +3434,7 @@ like ungetc(), it may be better not to bother changing everything to the
 Glk file API. If you're starting from scratch, using the Glk calls will
 probably be cleaner.
 
-8.2.4: Private Extensions to Glk
+9.2.4: Private Extensions to Glk
 
 Sometimes -- hopefully rarely -- there's stuff you just gotta do.
 
@@ -3221,7 +3451,7 @@ it, I'll consider adding it to the Glk API (as an optional capability,
 with a Gestalt selector and everything.) I'm flexible. In a morally
 correct manner, of course.
 
-8.3: Glk and the Virtual Machine
+9.3: Glk and the Virtual Machine
 
 Most IF games are built on a virtual machine, such as the Z-machine or the
 TADS runtime structure. Building a virtual machine which uses Glk as its
@@ -3230,7 +3460,7 @@ interface is somewhat more complicated than writing a single Glk program.
 The question to ask is: what API will be exported to the game author --
 the person writing a program to run on the VM?
 
-8.3.1: Implementing a Higher Layer Over Glk
+9.3.1: Implementing a Higher Layer Over Glk
 
 Thus far, each virtual machine has had its own built-in I/O API. Most of
 them have identical basic capabilities -- read lines of input, display
@@ -3244,7 +3474,7 @@ often be ported to Glk without any change visible to the author. Standard
 TADS can be ported in this way; the V5/8 Z-machine can as well (with
 the sole exception, as far as I know, of colored text.)
 
-8.3.2: Glk as a VM's Native API
+9.3.2: Glk as a VM's Native API
 
 The other approach is to use Glk as the virtual machine's own I/O
 API, and provide it directly to the game author. This is inherently
@@ -3280,7 +3510,7 @@ In a VM with a limited number of opcodes, it may be best to allocate a
 single "Glk" opcode, with a variable number of arguments, the first of
 which is a function selector. Allow at least 16 bits for this selector;
 there may be more than 256 Glk calls someday. (For a list of standard
-selectors for Glk calls, see section 9.1.6, "Table of Selectors".)
+selectors for Glk calls, see section 10.1.6, "Table of Selectors".)
 
 In a VM with a large opcode space, you could reserve a 16-bit range of
 opcodes for Glk.
@@ -3309,11 +3539,11 @@ without a compiler upgrade.]]
 
 Or, you can provide a completely dynamic interface to the Glk API. This is
 the province of the Glk dispatch layer, which is not part of Glk proper;
-it rests on top. See section 9.1, "The Dispatch Layer".
+it rests on top. See section 10.1, "The Dispatch Layer".
 
-9: Appendices
+10: Appendices
 
-9.1: The Dispatch Layer
+10.1: The Dispatch Layer
 
 The material described in this section is not part of the Glk API per
 se. It is an external layer, lying on top of Glk, which allows a program
@@ -3333,7 +3563,7 @@ to read it. If you are implementing a Glk library, you should also read
 it. (There are some additional interfaces which your library must support
 for the dispatch layer to work right.)
 
-9.1.1: How This Works
+10.1.1: How This Works
 
 The dispatch layer is implemented in a C source file, gi_dispa.c, and its
 header, gi_dispa.h. This code is platform-independent -- it is identical
@@ -3356,7 +3586,7 @@ way. You may also make use of gidispatch_prototype(), which gives you
 the proper format of that list for each function. Ancilliary functions
 let you enumerate the functions and constants in the Glk API.
 
-9.1.2: Interrogating the Interface
+10.1.2: Interrogating the Interface
 
 These are the ancilliary functions that let you enumerate.
 
@@ -3364,10 +3594,10 @@ These are the ancilliary functions that let you enumerate.
 
 This returns the number of opaque object classes used by the library. You
 will need to know this if you want to keep track of opaque objects as
-they are created; see section 9.1.5.1, "Opaque Object Registry".
+they are created; see section 10.1.5.1, "Opaque Object Registry".
 
-As of Glk API 0.5, there are three classes: windows, streams, and filerefs
-(numbered 0, 1, and 2 respectively.)
+As of Glk API 0.52, there are four classes: windows, streams, filerefs,
+and sound channels (numbered 0, 1, 2, and 3 respectively.)
 
     glui32 gidispatch_count_intconst(void);
 
@@ -3413,8 +3643,8 @@ function in question. name is the function name, as it is given in the
 glk.h file, but without the "glk_" prefix. And fnptr is the address of
 the function itself. [[This is included because it might be useful,
 but it is *not* recommended. To call an arbitrary Glk function, you
-should use gidispatch_call().]] See section 9.1.6, "Table of Selectors"
-for the selector definitions. See section 9.1.3, "Dispatching" for more
+should use gidispatch_call().]] See section 10.1.6, "Table of Selectors"
+for the selector definitions. See section 10.1.3, "Dispatching" for more
 about calling Glk functions by selector.
 
     gidispatch_function_t *gidispatch_get_function_by_id(glui32 id);
@@ -3422,12 +3652,12 @@ about calling Glk functions by selector.
 This returns a structure describing the Glk function with selector id. If
 there is no such function in the library, this returns NULL.
 
-9.1.3: Dispatching
+10.1.3: Dispatching
 
     void gidispatch_call(glui32 funcnum, glui32 numargs, gluniversal_t
     *arglist);
 
-funcnum is the function number to invoke; see section 9.1.6, "Table of
+funcnum is the function number to invoke; see section 10.1.6, "Table of
 Selectors". arglist is the list of arguments, and numargs is the length
 of the list.
 
@@ -3448,7 +3678,7 @@ encompassing all the types that can be passed to Glk functions.
     } gluniversal_t;
 
 
-9.1.3.1: Basic Types
+10.1.3.1: Basic Types
 
 Numeric arguments are passed in the obvious way -- one argument
 per gluniversal_t, with the uint or sint field set to the numeric
@@ -3461,7 +3691,7 @@ all opaque pointer types.)
 However, pointers (other than C strings), arrays, and structures
 complicate life. So do return values.
 
-9.1.3.2: References
+10.1.3.2: References
 
 A reference to a numeric type or object reference -- that is, glui32*,
 winid_t*, and so on -- takes *one or two* gluniversal_t objects. The
@@ -3549,7 +3779,7 @@ For further examples:
 As you see, the length of arglist depends on how many of the reference
 arguments are NULL.
 
-9.1.3.3: Structures
+10.1.3.3: Structures
 
 A structure pointer is represented by a single ptrflag, possibly
 followed by a sequence of gluniversal_t objects (one for each field of
@@ -3579,7 +3809,7 @@ arglist[0].ptrflag to FALSE, and using a one-element arglist instead
 of five-element. But it's illegal to pass NULL to glk_select(). So you
 cannot actually do this.]]
 
-9.1.3.4: Arrays
+10.1.3.4: Arrays
 
 In the Glk API, an array argument is always followed by a numeric
 argument giving the array's length. These two C arguments are a single
@@ -3613,7 +3843,7 @@ char array, copy your characters into it, make the call, and then free
 the array. [[glk_put_buffer() does not modify the array passed to it,
 so there is no need to copy the characters out.]]
 
-9.1.3.5: Return Values
+10.1.3.5: Return Values
 
 The return value of a function is not treated specially. It is simply
 considered to be a pass-out reference argument which may not be NULL. It
@@ -3633,7 +3863,7 @@ For example, the function glk_window_get_rock() can be invoked as follows:
     rock = arglist[2].uint;
 
 
-9.1.4: Getting Argument Prototypes
+10.1.4: Getting Argument Prototypes
 
 There are many possible ways to set up a gluniversal_t array, and it's
 illegal to call gidispatch_call() with an array which doesn't match the
@@ -3678,9 +3908,9 @@ The basic type codes:
     ("#C"), not string ("S").
     * F: A floating-point value. Glk does not currently use floating-point
     values, but we might as well define a code for them.
-    * Qa, Qb, Qc...: A reference to an opaque object. The second
-    letter determines which class is involved. (The number of classes
-    can be gleaned from gidispatch_count_classes(); see section 9.1.2,
+    * Qa, Qb, Qc...: A reference to an opaque object. The second letter
+    determines which class is involved. (The number of classes can
+    be gleaned from gidispatch_count_classes(); see section 10.1.2,
     "Interrogating the Interface"). [[If Glk expands to have more than
     26 classes, we'll think of something.]]
 
@@ -3716,7 +3946,7 @@ Any type code can be prefixed with one or more of the following characters
     -- ptrflag, pointer, and integer length. [[Depending on the design
     of your program, you may wish to pass a pointer directly to your
     program's memory, or allocate an array and copy the contents in and
-    out. See section 9.1.3.4, "Arrays".]]
+    out. See section 10.1.3.4, "Arrays".]]
     * !: Combined with "#", indicates that the array is *retained*
     by the library. The library will keep a reference to the array;
     the contents are undefined until further notice. You should not
@@ -3725,9 +3955,9 @@ Any type code can be prefixed with one or more of the following characters
     array. [[For example, glk_stream_open_memory() retains the array that
     you pass it, and releases it when the stream is closed. The library
     can notify you automatically when arrays are retained and released;
-    see section 9.1.5.2, "Retained Array Registry".]]
+    see section 10.1.5.2, "Retained Array Registry".]]
 
-9.1.5: Functions the Library Must Provide
+10.1.5: Functions the Library Must Provide
 
 Ideally, the three layers -- program, dispatch layer, Glk library --
 would be completely modular; each would refer only to the layers beneath
@@ -3752,7 +3982,7 @@ in gi_dispa.h, they are not defined in gi_dispa.c. The dispatch layer
 merely coordinates them. The program defines the callback functions;
 the library calls them.]]
 
-9.1.5.1: Opaque Object Registry
+10.1.5.1: Opaque Object Registry
 
 The Glk API refers to opaque objects by pointer; but a VM probably cannot
 store pointers to native memory. Therefore, a VM program will want to
@@ -3818,7 +4048,7 @@ of the existing objects. You must be prepared for this possibility. [[If
 you are keeping hash tables, for example, create them *before* you call
 gidispatch_set_object_registry().]]
 
-9.1.5.2: Retained Array Registry
+10.1.5.2: Retained Array Registry
 
 A few Glk functions take an array and hold onto it. The memory is
 "owned" by the library until some future Glk call releases it. While
@@ -3867,7 +4097,7 @@ data structures, or keep relocatable memory locked, or prevent
 a garbage-collection system from deallocating an array while Glk is
 writing to it.
 
-9.1.6: Table of Selectors
+10.1.6: Table of Selectors
 
 These values, and the values used for future Glk calls, are integers in
 the range 0x0001 to 0xFFFF (1 to 65535). The values are not sequential;
@@ -3913,6 +4143,7 @@ selector of any Glk call, so it may be used for a null value.
     * 0x0065: glk_fileref_get_rock
     * 0x0066: glk_fileref_delete_file
     * 0x0067: glk_fileref_does_file_exist
+    * 0x0068: glk_fileref_create_from_fileref
     * 0x0080: glk_put_char
     * 0x0081: glk_put_char_stream
     * 0x0082: glk_put_string
@@ -3946,6 +4177,15 @@ selector of any Glk call, so it may be used for a null value.
     * 0x00E9: glk_window_erase_rect
     * 0x00EA: glk_window_fill_rect
     * 0x00EB: glk_window_set_background_color
+    * 0x00F0: glk_schannel_iterate
+    * 0x00F1: glk_schannel_get_rock
+    * 0x00F2: glk_schannel_create
+    * 0x00F3: glk_schannel_destroy
+    * 0x00F8: glk_schannel_play
+    * 0x00F9: glk_schannel_play_ext
+    * 0x00FA: glk_schannel_stop
+    * 0x00FB: glk_schannel_set_volume
+    * 0x00FC: glk_sound_load_hint
 
 Note that glk_main() does not have a selector, because it's provided by
 your program, not the library.
@@ -3955,7 +4195,7 @@ earlier version of Glk had gestalt selectors gestalt_FunctionNameToID
 and gestalt_FunctionIDToName, but these have been withdrawn.]] They are
 defined and used only by the dispatch layer.
 
-9.2: The Blorb Layer
+10.2: The Blorb Layer
 
 The material described in this section is not part of the Glk API per
 se. It is an external layer which allows the library to load resources
@@ -3973,7 +4213,7 @@ manipulation, see:
 
 http://www.eblong.com/zarf/blorb/
 
-9.2.1: How This Works
+10.2.1: How This Works
 
 The Blorb layer is implemented in a C source file, gi_blorb.c, and its
 header, gi_blorb.h. This code is (mostly) platform-independent -- it is
@@ -3984,15 +4224,15 @@ and compile them unchanged into the library.
 
 Most of the functions defined in gi_blorb.h are intended for the
 library. If you are writing a Glk program, you can ignore them all,
-except for giblorb_set_resource_map(); see section 9.2.2, "What the
+except for giblorb_set_resource_map(); see section 10.2.2, "What the
 Program Does". If you are implementing a Glk library, you can use this
 API to find and load resource data.
 
-9.2.2: What the Program Does
+10.2.2: What the Program Does
 
 If you wish your program to load its resources from a Blorb file,
 you need to find and open that file in your startup code. (See section
-8.1, "Startup Options".) Each platform will have appropriate functions
+9.1, "Startup Options".) Each platform will have appropriate functions
 available for finding startup data. Be sure to open the file in binary
 mode, not text mode. Once you have opened the file as a Glk stream,
 pass it to giblorb_set_resource_map().
@@ -4014,7 +4254,7 @@ files -- PIC1, PIC2, PIC3, and so on. (See the Blorb specification for
 more on this approach.) Other libraries will not have any other loading
 mechanism at all; no resources will be available.
 
-9.2.3: What the Library Does
+10.2.3: What the Library Does
 
 Each library must implement giblorb_set_resource_map(), if it wishes to
 support Blorb at all. Generally, this function should create a Blorb map
@@ -4022,7 +4262,7 @@ and stash it away somewhere. It may also want to stash the stream itself,
 so that the library can read data directly from it.
 
 giblorb_set_resource_map() should return giblorb_err_None (0) if it
-succeeded, or the appropriate Blorb error code if not. See section 9.2.5,
+succeeded, or the appropriate Blorb error code if not. See section 10.2.5,
 "Blorb Errors".
 
 The library must also link in the gi_blorb.c file. Most of this should
@@ -4031,7 +4271,7 @@ to allocate memory. As supplied, gi_blorb.c calls the ANSI functions
 malloc(), realloc(), and free(). If this is not appropriate on your OS,
 feel free to change these calls. They are isolated at the end of the file.
 
-9.2.4: What the Blorb Layer Does
+10.2.4: What the Blorb Layer Does
 
 These are the functions which are implemented in gi_blorb.c. They will
 be compiled into the library, but they are the same on every platform. In
@@ -4058,6 +4298,11 @@ This loads a chunk of a given type. The count parameter distinguishes
 between chunks of the same type. If count is zero, the first chunk of
 that type is loaded, and so on.
 
+To load a chunk of an IFF FORM type (such as AIFF), you should pass in
+the form type, rather than FORM. [[This introduces a slight ambiguity --
+you cannot distiguish between a FORM AIFF chunk and a non-FORM chunk of
+type AIFF. However, the latter is almost certainly a mistake.]]
+
 The returned data is written into res, according to method:
 
 
@@ -4071,13 +4316,15 @@ The returned data is written into res, according to method:
             glui32 startpos;
         } data;
         glui32 length;
+        glui32 chunktype;
     } giblorb_result_t;
 
 
 The chunknum field is filled in with the number of the chunk. (This
 value can then be passed to giblorb_load_chunk_by_number() or
 giblorb_unload_chunk().) The length field is filled in with the length
-of the chunk in bytes.
+of the chunk in bytes. The chunktype field is the chunk's type, which
+of course will be the type you asked for.
 
 If you specify giblorb_method_DontLoad, no data is actually loaded
 in. You can use this if you are only interested in whether a chunk exists,
@@ -4098,8 +4345,9 @@ call giblorb_unload_chunk() instead.
     glui32 method, giblorb_result_t *res, glui32 chunknum);
 
 This is similar to giblorb_load_chunk_by_type(), but it loads a chunk
-with a given chunk number. You can get the chunk number from the chunknum
-field of giblorb_result_t, after calling one of the other load functions.
+with a given chunk number. The type of the chunk can be found in the
+chunktype field of giblorb_result_t. You can get the chunk number from
+the chunknum field, after calling one of the other load functions.
 
     giblorb_err_t giblorb_unload_chunk(giblorb_map_t *map, glui32
     chunknum);
@@ -4131,7 +4379,7 @@ num. The lowest and highest resource number of that usage are stored in
 min and max. You can leave any of the three pointers NULL if you don't
 care about that information.
 
-9.2.5: Blorb Errors
+10.2.5: Blorb Errors
 
 All Blorb layer functions, including giblorb_set_resource_map(), return
 the following error codes.
