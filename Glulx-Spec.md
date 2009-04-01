@@ -2,11 +2,11 @@
 
 <subtitle>A 32-Bit Virtual Machine for IF</subtitle>
 
-<subtitle>VM specification version 2.0.0</subtitle>
+<subtitle>VM specification version 3.0.0</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
-Copyright 1999-2000 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
+Copyright 1999-2004 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
 
 However, the virtual machine <em>described</em> by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that run on the Glulx VM or make use of it, including compilers, interpreters, debuggers, and so on.
 
@@ -193,6 +193,7 @@ The string-decoding mechanism complicates matters a little, since it is possible
 <li>11: Resume executing function code after a string completes. The PC value contains the program counter as usual, but the FramePtr field is ignored, since the string is printed in the same call frame as the function that executed it. DestAddr should be zero.
 <li>12: Resume printing a signed decimal integer. The PC value contains the integer itself. The DestAddr value contains the position of the digit to print next. (0 indicates the first digit, or the minus sign for negative integers; and so on.)
 <li>13: Resume printing a C-style (E0) string. The PC value contains the address of the character to print next. The DestAddr value should be zero.
+<li>14: Resume printing a Unicode (E2) string. The PC value contains the address of the (four-byte) character to print next. The DestAddr value should be zero.
 </list>
 
 <h level=3>Calling and Returning</h>
@@ -233,7 +234,7 @@ When the output function returns, the terp pops the type-12 stub and realizes th
 
 This process continues until there are no more characters in the decimal representation of the integer. The terp then pops the type-11 stub, restores the PC, and resumes execution after the streamnum opcode.
 
-The streamstr opcode works on the same principle, except that instead of type-12 stubs, the terp uses type-10 stubs (when interrupting an encoded string) and type-13 stubs (when interruping a C-style, null-terminated string). Type-13 stubs look like the others, except that they contain only the address of the next character to print; no other position or bit number is necessary.
+The streamstr opcode works on the same principle, except that instead of type-12 stubs, the terp uses type-10 stubs (when interrupting an encoded string) and type-13/14 stubs (when interruping a C-style, null-terminated string of bytes/Unicode chars). Type-13 and type-14 stubs look like the others, except that they contain only the address of the next character to print; no other position or bit number is necessary.
 
 The interaction between the filter I/O system and indirect string/function calls within encoded strings is left to the reader's imagination. <comment>Because I couldn't explain it if I tried. Follow the rules; they work.</comment>
 
@@ -257,7 +258,7 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 
 <list>
 <li>Magic number: 47 6C 75 6C, which is to say ASCII 'Glul'.
-<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 2.0, so a game file generated to this spec would contain 00020000. I will try to maintain the convention that minor version changes are backwards and forwards compatible.
+<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 3.0, so a game file generated to this spec would contain 00030000. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
 <li>RAMSTART: The first address which the program can write to.
 <li>EXTSTART: The end of the game-file's stored initial memory (and therefore the length of the game file.)
 <li>ENDMEM: The end of the program's memory map.
@@ -266,6 +267,10 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 <li>Address of string-decoding table: This table is used to decode compressed strings. See <ref label=string_enc>. This may be zero, indicating that no compressed strings are to be decoded. <comment>Note that the game can change which table the terp is using, with the setstringtbl opcode. See <ref label=opcodes_output>.</comment>
 <li>Checksum: A simple sum of the entire initial contents of memory, considered as an array of big-endian 32-bit integers. The checksum should be computed with this field set to zero.
 </list>
+
+The interpreter should validate the magic number and the Glulx version number. An interpreter which is written to version X.Y.Z of this specification should accept game files whose Glulx version between X.0.0 and X.Y.*. (That is, the major version number should match; the minor version number should be greater than or equal to Y; the subminor version number does not matter.)
+
+EXCEPTION: A version 3.* interpreter should accept version 2.0 game files. The only difference between spec 2.0 and spec 3.0 is that 2.0 lacks Unicode functionality. Therefore, an interpreter written to this version of the spec (3.0.0) should accept game files whose version is between 2.0.0 and 3.0.* (0x00020000 and 0x000300FF inclusive).
 
 <comment>The header is conventionally followed by a 32-bit word which describes the layout of data in the rest of the file. This value is <em>not</em> a part of the Glulx specification; it is the first ROM word after the header, not a part of the header. It is an option that compilers can insert, when generating Glulx files, to aid debuggers and decompilers.
 
@@ -356,11 +361,27 @@ Of course, not every byte in memory is the start of the legitimate object. It is
 
 <h level=3 label=string>Strings</h>
 
-Strings have a type byte of E0 (for unencoded, C-style strings) or E1 (for compressed strings.) Types E2 to FF are reserved for future expansion of string types.
+Strings have a type byte of E0 (for unencoded, C-style strings), E2 (for unencoded strings of Unicode values), or E1 (for compressed strings.) Types E3 to FF are reserved for future expansion of string types.
 
-<h level=4label=string_plain>Unencoded strings</h>
+<h level=4 label=string_plain>Unencoded strings</h>
 
 An unencoded string consists of an E0 byte, followed by all the bytes of the string, followed by a zero byte.
+
+<h level=4 label=string_unicode>Unencoded Unicode strings</h>
+
+An unencoded Unicode string consists of an E2 byte, followed by three padding 0 bytes, followed by the Unicode character values (each one being a four-byte integer). Finally, there is a terminating value (four 0 bytes).
+
+<code>
+Unencoded Unicode string
++----------------+
+| Type: E2       |  (1 byte)
+| Padding: 00    |  (3 bytes)
+| Characters.... |  (any length, multiple of 4)
+| NUL: 00000000  |  (4 bytes)
++----------------+
+</code>
+
+Note that the character data is not encoded in UTF-8, UTF-16, or any other peculiar encoding. It is treated as an array of 32-bit integers (which are, as always in Glulx, stored big-endian). Each integer is a Unicode code point.
 
 <h level=4 label=string_enc>Compressed strings</h>
 
@@ -433,6 +454,29 @@ C-style string
 This prints an array of characters. Note that the array cannot contain a zero byte, since that is reserved to terminate the array. <comment>A zero byte can be printed using the single-character node type.</comment>
 
 <code>
+Single Unicode character
++----------------+
+| Type: 04       |  (1 byte)
+| Character      |  (4 bytes)
++----------------+
+</code>
+
+This prints a single Unicode character. <comment>To be precise, it prints a 32-bit character, which will be interpreted as Unicode if the I/O system is Glk.</comment>
+
+<code>
+C-style Unicode string
++----------------+
+| Type: 05       |  (1 byte)
+| Characters.... |  (any length, multiple of 4)
+| NUL: 00000000  |  (4 bytes)
++----------------+
+</code>
+
+This prints an array of Unicode characters. Note that the array cannot contain a zero word, since that is reserved to terminate the array. Also note that, unlike an E2-encoded string object, there is no padding.
+
+<comment>If the Glk library is unable to handle Unicode, node types 04 and 05 are still legal. However, characters beyond FF will be printed as 3F ("?").</comment>
+
+<code>
 Indirect reference
 +----------------+
 | Type: 08       |  (1 byte)
@@ -473,8 +517,6 @@ Double-indirect reference with arguments
 </code>
 
 These work the same as the indirect and double-indirect nodes, but if the object found is a function, it will be called with the given argument list. If the object is a string, the arguments are ignored.
-
-Future versions of Glulx will include node types for 16-bit (Unicode) characters and strings.
 
 <h level=3 label=function>Functions</h>
 
@@ -520,7 +562,7 @@ Types 01 to 7F are available for use by the compiler, the library, or the progra
 
 (Or, if you like, "serializing the machine state".)
 
-This is a variant of Quetzal, the standard Z-machine save file format. (See <a href="ftp://ftp.gmd.de/if-archive/infocom/interpreters/specification/savefile_14.txt">ftp://ftp.gmd.de/if-archive/infocom/interpreters/specification/savefile_14.txt</a>
+This is a variant of Quetzal, the standard Z-machine save file format. (See <a href="http://ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt">http://ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt</a>
 
 Everything in the Quetzal specification applies, with the following exceptions:
 
@@ -621,6 +663,7 @@ The table of opcodes:
 <li>0x70: streamchar
 <li>0x71: streamnum
 <li>0x72: streamstr
+<li>0x73: streamunichar
 <li>0x100: gestalt
 <li>0x101: debugtrap
 <li>0x102: getmemsize
@@ -1170,6 +1213,12 @@ streamchar L1
 Send L1 to the current stream. This sends a single character; the value L1 is truncated to eight bits.
 
 <deffun>
+streamunichar L1
+</deffun>
+
+Send L1 to the current stream. This sends a single (32-bit) character.
+
+<deffun>
 streamnum L1
 </deffun>
 
@@ -1179,7 +1228,7 @@ Send L1 to the current stream, represented as a signed decimal number in ASCII.
 streamstr L1
 </deffun>
 
-Send a string object to the current stream. L1 must be the address of a Glulx string object (type E0 or E1.) The string is decoded and sent as a sequence of characters.
+Send a string object to the current stream. L1 must be the address of a Glulx string object (type E0, E1, or E2.) The string is decoded and sent as a sequence of characters.
 
 When the Glk I/O system is set, these opcodes are implemented using the Glk API. You can bypass them and directly call glk_put_char(), glk_put_buffer(), and so on. Remember, however, that a Glulx string object is not a C-style string, so it cannot be passed to glk_put_string().
 
@@ -1314,12 +1363,17 @@ The reasoning behind the design of a Gestalt system is, I hope, too obvious to e
 The list of L1 selectors is as follows. Note that if a selector does not mention L2, you should always set that argument to zero. <comment>This will ensure future compatibility, in case the selector definition is extended.</comment>
 
 <list>
-<li>GlulxVersion (0): Returns the version of the Glulx spec which the interpreter implements. The upper 16 bits of the value contain a major version number; the next 8 bits contain a minor version number; and the lowest 8 bits contain and even more minor version number, if any. This specification is version 2.0, so a terp implementing it would return 0x00020000. I will try to maintain the convention that minor version changes are backwards and forwards compatible.
+<li>GlulxVersion (0): Returns the version of the Glulx spec which the interpreter implements. The upper 16 bits of the value contain a major version number; the next 8 bits contain a minor version number; and the lowest 8 bits contain and even more minor version number, if any. This specification is version 3.0, so a terp implementing it would return 0x00030000. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
 <li>TerpVersion (1): Returns the version of the interpreter. The format is the same as the GlulxVersion. <comment>Each interpreter has its own version numbering system, defined by its author, so this information is not terribly useful. But it is convenient for the game to be able to display it, in case the player is capturing version information for a bug report.</comment>
 <li>ResizeMem (2): Returns 1 if the terp has the potential to resize the memory map, with the setmemsize opcode. If this returns 0, setmemsize will always fail. <comment>But remember that setmemsize might fail in any case.</comment>
 <li>Undo (3): Returns 1 if the terp has the potential to undo. If this returns 0, saveundo and restoreundo will always fail.
 <li>IOSystem (4): Returns 1 if the terp supports the I/O system given in L2. (The constants are the same as for the setiosys opcode: 0 for null, 1 for filter, 2 for Glk. 0 and 1 will always succeed, and 2 will also in any Glulx interpreter currently planned.) 
+<li>Unicode (5): Returns 1 if the terp supports Unicode operations. These are: the E2 Unicode string type; the 04 and 05 string node types (in compressed strings); the streamunichar opcode; the type-14 call stub. If the Unicode selector returns 0, encountering any of these will cause a fatal interpreter error.
 </list>
+
+<comment>The Unicode selector is slightly redundant. Since the Unicode operations exist in Glulx spec 3.0 and higher, you can get the same information by testing GlulxVersion against 0x00030000. However, it's clearer to have a separate selector.</comment>
+
+<comment>The Unicode selector does <em>not</em> guarantee that your Glk library supports Unicode. For that, you must check the Glk gestalt selector gestalt_Unicode. If the Glk library is non-Unicode, the Glulx Unicode operations are still legal; however, Unicode characters (beyond FF) will be printed as 3F ("?").
 
 <deffun>
 debugtrap L1
