@@ -2,16 +2,16 @@
 
 <subtitle>A 32-Bit Virtual Machine for IF</subtitle>
 
-<subtitle>VM specification version 3.1.0</subtitle>
+<subtitle>VM specification version 3.1.1</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
-Copyright 1999-2007 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
+Copyright 1999-2009 by Andrew Plotkin. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: <a href="http://creativecommons.org/licenses/by-nc-sa/3.0">http://creativecommons.org/licenses/by-nc-sa/3.0</a>
 
-However, the virtual machine <em>described</em> by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that run on the Glulx VM or make use of it, including compilers, interpreters, debuggers, and so on.
+The virtual machine <em>described</em> by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that run on the Glulx VM or make use of it, including compilers, interpreters, debuggers, and so on.
 
 This document and further Glulx information can be found at: 
-<a href="http://www.eblong.com/zarf/glulx/">http://www.eblong.com/zarf/glulx/</a>
+<a href="http://eblong.com/zarf/glulx/">http://eblong.com/zarf/glulx/</a>
 
 <contents>
 
@@ -133,8 +133,6 @@ A call frame looks like this:
 +------------+  StackPtr
 </code>
 
-<comment>WORK: It would be nice to add an end-of-frame field at the beginning of the frame. This would always be zero in the topmost frame, but in any lower frame would point at the beginning of the next frame. This would make save-to-disk a heck of a lot more efficient.</comment>
-
 When a function begins executing, the last segment is empty (StackPtr equals FramePtr+FrameLen.) Computation can push and pull 32-bit values on the stack. It is illegal to pop back beyond the original FramePtr+FrameLen boundary.
 
 The "locals" are a list of values which the function uses as local variables. These also include function arguments. (The first N locals can be used as the arguments to an N-argument function.) Locals can be 8, 16, or 32-bit values. They are not necessarily contiguous; padding is inserted wherever necessary to bring a value to its natural alignment (16-bit values at even addresses, 32-bit values at multiples of four).
@@ -153,6 +151,8 @@ The section is terminated by a pair of zero bytes. Another pair of zeroes is add
 (Example: if a function has three 8-bit locals followed by six 16-bit locals, the format segment would contain eight bytes: (1, 3, 2, 6, 0, 0, 0, 0). The locals segment would then be 16 bytes long, with a padding byte after the third local.)
 
 The "format of locals" information is needed by the terp in two places: when calling a function (to write in function arguments), and when saving the game (to fix byte-ordering of the locals.) The formatting is <em>not</em> enforced by the terp while a function is executing. The program is not prevented from accessing locations whose size and position don't match the formatting, or locations that overlap, or even locations in the padding between locals. However, if a program does this, the results are undefined, because the byte-ordering of locals is up to the terp. The save-game algorithm will fail, if nothing else.
+
+<comment>In fact, the call frame may not exist as a byte sequence during function execution. The terp is free to maintain a more structured form, as long as it generates valid save-game files, and correctly handles accesses to valid (according to the format) locals.</comment>
 
 <h level=3 label=callstub>Call Stubs</h>
 
@@ -258,7 +258,7 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 
 <list>
 <li>Magic number: 47 6C 75 6C, which is to say ASCII 'Glul'.
-<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 3.1, so a game file generated to this spec would contain 00030100. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
+<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 3.1.1, so a game file generated to this spec would contain 00030101. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
 <li>RAMSTART: The first address which the program can write to.
 <li>EXTSTART: The end of the game-file's stored initial memory (and therefore the length of the game file.)
 <li>ENDMEM: The end of the program's memory map.
@@ -270,7 +270,7 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 
 The interpreter should validate the magic number and the Glulx version number. An interpreter which is written to version X.Y.Z of this specification should accept game files whose Glulx version between X.0.0 and X.Y.*. (That is, the major version number should match; the minor version number should be greater than or equal to Y; the subminor version number does not matter.)
 
-EXCEPTION: A version 3.* interpreter should accept version 2.0 game files. The only difference between spec 2.0 and spec 3.0 is that 2.0 lacks Unicode functionality. Therefore, an interpreter written to this version of the spec (3.1.0) should accept game files whose version is between 2.0.0 and 3.1.* (0x00020000 and 0x000301FF inclusive).
+EXCEPTION: A version 3.* interpreter should accept version 2.0 game files. The only difference between spec 2.0 and spec 3.0 is that 2.0 lacks Unicode functionality. Therefore, an interpreter written to this version of the spec (3.1.1) should accept game files whose version is between 2.0.0 and 3.1.* (0x00020000 and 0x000301FF inclusive).
 
 <comment>The header is conventionally followed by a 32-bit word which describes the layout of data in the rest of the file. This value is <em>not</em> a part of the Glulx specification; it is the first ROM word after the header, not a part of the header. It is an option that compilers can insert, when generating Glulx files, to aid debuggers and decompilers.
 
@@ -343,7 +343,7 @@ Some opcodes store values as well as reading them in. Store operands use the sam
 
 <list>
 <li>8: The value is pushed into the stack, instead of being popped off.
-<li>3, 2, 1: These modes cannot be used, since it makes no sense to store to a constant. <comment>We delicately elide the subject of Fortran.</comment>
+<li>3, 2, 1: These modes cannot be used, since it makes no sense to store to a constant. <comment>We delicately elide the subject of Fortran. And rule-based property algebras.</comment>
 <li>0: This mode means "throw the value away"; it is not stored at all.
 </list>
 
@@ -713,6 +713,8 @@ The table of opcodes:
 <li>0x171: mcopy
 <li>0x178: malloc
 <li>0x179: mfree
+<li>0x180: accelfunc
+<li>0x181: accelparam
 </list>
 
 <h level=2>Math</h>
@@ -812,7 +814,7 @@ Notes on the shift opcodes: If L2 is zero, the result is always equal to L1. L2 
 
 All branches (except jumpabs) specify their destinations with an offset value. The actual destination address of the branch is computed as (Addr + Offset - 2), where Addr is the address of the instruction <em>after</em> the branch opcode, and offset is the branch's operand. The special offset values 0 and 1 are interpreted as "return 0" and "return 1" respectively. <comment>This odd hiccup is inherited from the Z-machine. Inform uses it heavily for code optimization.</comment>
 
-It is illegal to branch from one function to another.
+It is legal to branch to code that is in another function. <comment>Indeed, there is no well-defined notion of where a function ends.</comment> However, this does not affect the current stack frame; that remains set up according to the same function call as before the branch. Similarly, it is legal to branch to code which is not associated with any function &emdash; e.g., code compiled on the fly in RAM.
 
 <deffun>
 jump L1
@@ -870,8 +872,6 @@ jumpabs L1
 
 Branch unconditionally to address L1. Unlike the other branch opcodes, this takes an absolute address, not an offset. The special cases 0 and 1 (for returning) do not apply; jumpabs 0 would branch to memory address 0, if that were ever a good idea, which it isn't.
 
-Note that it is still illegal to branch from one function to another, even with jumpabs.
-
 <h level=2>Moving Data</h>
 
 <deffun>
@@ -896,7 +896,7 @@ Since copys and copyb can access chunks smaller than the usual four bytes, they 
 
 Therefore, if copyb (for example) copies a byte from main memory to the stack, a 32-bit value will be pushed, whose value will be from 0 to 255. Sign-extension <em>does not</em> occur. Conversely, if copyb copies a byte from the stack to memory, a 32-bit value is popped, and the bottom 8 bits are written at the given address. The upper 24 bits are lost. Constant values are truncated as well.
 
-If copy, copys, or copyb are used with both L1 and S1 in pop/push mode, the 32-bit value is popped, truncated, and pushed.
+If copys or copyb are used with both L1 and S1 in pop/push mode, the 32-bit value is popped, truncated, and pushed.
 
 <deffun>
 sexs L1 S1
@@ -1250,6 +1250,8 @@ getiosys S1 S2
 
 Return the current I/O system mode and rock.
 
+Due to a long-standing bug in the reference interpreter, the two store operands must be of the same general type: both main-memory/global stores, both local variable stores, or both stack pushes.
+
 <deffun>
 setiosys L1 L2
 </deffun>
@@ -1431,6 +1433,220 @@ The structures need not be consecutive; they may be anywhere in memory, in any o
 
 The KeyIndirect and ZeroKeyTerminates options may be used.
 
+<h level=2 label=opcodes_accel>Accelerated Functions</h>
+
+To improve performance, Glulx incorporates some complex functions which replicate code in the Inform library. <comment>Yes, this is even more outrageously CISC than the search opcodes.</comment>
+
+Rather than allocating a new opcode for each function, Glulx offers an expandable function acceleration system. Two functions are defined below. The game may request that a particular address &emdash; the address of a VM function &emdash; be replaced by one of the available functions. This does not alter memory; but any subsequent call to that address might invoke the terp's built-in version of the function, instead of the VM code at that address.
+
+(A "call" includes any function invocation of that address, including the call, tailcall, and callf (etc.) opcodes. It also includes invocation via the filter I/O system, and function nodes in the string-decoding table. Branches to the address are <em>not</em> affected; neither are returns, throws, or other ways the terp might reach it.)
+
+A terp may implement any, all, or none of the functions on the list. If the game requests an accelerated function which is not available, the request is ignored. Therefore, the game <em>must</em> be sure that it only requests an accelerated function at an address which actually matches the requested function.
+
+Some functions may require values (or addresses) which are compiled into the game file, or otherwise stored by the game. The interpreter maintains a table of these parameters &emdash; whichever ones are needed by the functions it supports. All parameters in the table are initially zero; the game may supply values as needed.
+
+The set of active acceleration requests, and the values in the parameter table, are <em>not</em> part of the saved-game state.
+
+The behavior of an accelerated function is somewhat limited. The state of the VM during the function is not defined, so there is no way for an accelerated function to call a normal VM function. The normal printing mechanism (as in the streamchar opcode, etc) is not available, since that can call VM functions via the filter I/O system. <comment>Not that I/O functions are likely to be worth accelerating in any case.</comment>
+
+Errors encountered during an accelerated function will be displayed to the user by some convenient means. For example, an interpreter may send the error message to the current Glk output stream. However, the terp may have no recourse but to invoke a <em>fatal</em> error. (For example, if there is no current Glk output stream.) Therefore, accelerated functions are defined with no error conditions that must be recoverable.
+
+These opcodes were added in Glulx version 3.1.1. Since a 3.1.1 game file ought to run in a 3.1.0 interpreter, you <em>may not</em> use these opcodes without first testing the Acceleration gestalt selector. If it returns zero, your game is running on a 3.1.0 terp (or earlier), and it is your responsibility to avoid executing these opcodes. <comment>Of course, the way the opcodes are defined should ensure that skipping them does not affect the behavior of your game.</comment>
+
+<deffun>
+accelfunc L1 L2
+</deffun>
+
+Request that the VM function with address L2 be replaced by the accelerated function whose number is L1. If L1 is zero, the acceleration for address L2 is cancelled.
+
+If the terp does not offer accelerated function L1, this does nothing.
+
+If you request acceleration at an address which is already accelerated, the previous request is cancelled before the new one is considered. If you cancel at an unaccelerated address, nothing happens.
+
+A given accelerated function L1 may replace several VM functions (at different addresses) at the same time. Each request is considered separate, and must be cancelled separately.
+
+<deffun>
+accelparam L1 L2
+</deffun>
+
+Store the value L2 in the parameter table at position L1. If the terp does not know about parameter L1, this does nothing.
+
+The list of accelerated functions is as follows. They are defined as if in Inform source code. (Consider Inform's "strict" mode to be off, for the purposes of operators such as .&amp; and --&gt;.) ERROR() represents code which displays an error, as described above.
+
+(Functions may be added to this list in future versions of the Glulx spec. Existing functions will not be removed or altered.)
+
+<code>
+Constant PARAM_0_classes_table = #classes_table;
+Constant PARAM_1_indiv_prop_start = INDIV_PROP_START;
+Constant PARAM_2_class_metaclass = Class;
+Constant PARAM_3_object_metaclass = Object;
+Constant PARAM_4_routine_metaclass = Routine;
+Constant PARAM_5_string_metaclass = String;
+Constant PARAM_6_self = #globals_array + WORDSIZE * #g$self;
+Constant PARAM_7_num_attr_bytes = NUM_ATTR_BYTES;
+Constant PARAM_8_cpv__start = #cpv__start;
+
+! OBJ_IN_CLASS: utility function; implements "obj in Class".
+[ OBJ_IN_CLASS obj;
+  return ((obj + 13 + PARAM_7_num_attr_bytes)--&gt;0 
+    == PARAM_2_class_metaclass);
+];
+
+! FUNC_1_Z__Region: implements Z__Region() as of Inform 6.31.
+[ FUNC_1_Z__Region addr
+  tb endmem; ! locals
+  if (addr&lt;36) rfalse;
+  @getmemsize endmem;
+  @jgeu addr endmem?outrange;  ! branch if addr &gt;= endmem (unsigned)
+  tb=addr-&gt;0;
+  if (tb &gt;= $E0) return 3;
+  if (tb &gt;= $C0) return 2;
+  if (tb &gt;= $70 &amp;&amp; tb &lt;= $7F &amp;&amp; addr &gt;= (0--&gt;2)) return 1;
+.outrange;
+  rfalse;
+];
+
+! FUNC_2_CP__Tab: implements CP__Tab() as of Inform 6.31.
+[ FUNC_2_CP__Tab obj id
+  otab max res; ! locals
+  if (FUNC_1_Z__Region(obj)~=1) {
+    ERROR("[** Programming error: tried to find the ~.~ of (something) **]"); 
+    rfalse;
+  }
+  otab = obj--&gt;4;
+  if (otab == 0) return 0;
+  max = otab--&gt;0;
+  otab = otab+4;
+  @binarysearch id 2 otab 10 max 0 0 res;
+  return res;
+];
+
+! FUNC_3_RA__Pr: implements RA__Pr() as of Inform 6.31.
+[ FUNC_3_RA__Pr obj id
+  cla prop ix; ! locals
+  if (id &amp; $FFFF0000) {
+	cla = PARAM_0_classes_table--&gt;(id &amp; $FFFF);
+	if (~~FUNC_5_OC__Cl(obj, cla)) return 0;
+	@ushiftr id 16 id;
+	obj = cla;
+  }
+  prop = FUNC_2_CP__Tab(obj, id);
+  if (prop==0) return 0;
+  if (OBJ_IN_CLASS(obj) &amp;&amp; cla == 0) {
+	if (id &lt; PARAM_1_indiv_prop_start 
+	    || id &gt;= PARAM_1_indiv_prop_start+8)
+	  return 0;
+  }
+  if (PARAM_6_self--&gt;0 ~= obj) {
+	@aloadbit prop 72 ix;
+	if (ix) return 0;
+  }
+  return prop--&gt;1;
+];
+
+! FUNC_4_RL__Pr: implements RL__Pr() as of Inform 6.31.
+[ FUNC_4_RL__Pr obj id
+  cla prop ix; ! locals
+  if (id &amp; $FFFF0000) {
+	cla = PARAM_0_classes_table--&gt;(id &amp; $FFFF);
+	if (~~FUNC_5_OC__Cl(obj, cla)) return 0;
+	@ushiftr id 16 id;
+	obj = cla;
+  }
+  prop = FUNC_2_CP__Tab(obj, id);
+  if (prop==0) return 0;
+  if (OBJ_IN_CLASS(obj) &amp;&amp; cla == 0) {
+	if (id &lt; PARAM_1_indiv_prop_start 
+	    || id &gt;= PARAM_1_indiv_prop_start+8)
+	  return 0;
+  }
+  if (PARAM_6_self--&gt;0 ~= obj) {
+	@aloadbit prop 72 ix;
+	if (ix) return 0;
+  }
+  @aloads prop 1 ix;
+  return WORDSIZE * ix;
+];
+
+! FUNC_5_OC__Cl: implements OC__Cl() as of Inform 6.31.
+[ FUNC_5_OC__Cl obj cla
+  zr jx inlist inlistlen; ! locals
+  zr = FUNC_1_Z__Region(obj);
+  if (zr == 3) {
+	if (cla == PARAM_5_string_metaclass) rtrue;
+	rfalse;
+  }
+  if (zr == 2) {
+	if (cla == PARAM_4_routine_metaclass) rtrue;
+	rfalse;
+  }
+  if (zr ~= 1) rfalse;
+  if (cla == PARAM_2_class_metaclass) {
+	if (OBJ_IN_CLASS(obj)
+	  || obj == PARAM_2_class_metaclass or PARAM_5_string_metaclass
+	     or PARAM_4_routine_metaclass or PARAM_3_object_metaclass)
+	  rtrue;
+	rfalse;
+  }
+  if (cla == PARAM_3_object_metaclass) {
+	if (OBJ_IN_CLASS(obj)
+	  || obj == PARAM_2_class_metaclass or PARAM_5_string_metaclass 
+	     or PARAM_4_routine_metaclass or PARAM_3_object_metaclass)
+	  rfalse;
+	rtrue;
+  }
+  if (cla == PARAM_5_string_metaclass or PARAM_4_routine_metaclass) 
+    rfalse;
+  if (~~OBJ_IN_CLASS(cla)) {
+	ERROR("[** Programming error: tried to apply 'ofclass' with non-class **]");
+	rfalse;
+  }
+  inlist = FUNC_3_RA__Pr(obj, 2);
+  if (inlist == 0) rfalse;
+  inlistlen = FUNC_4_RL__Pr(obj, 2) / WORDSIZE;
+  for (jx=0 : jx&lt;inlistlen : jx++) {
+	if (inlist--&gt;jx == cla) rtrue;
+  }
+  rfalse;
+];
+
+! FUNC_6_RV__Pr: implements RV__Pr() as of Inform 6.31.
+[ FUNC_6_RV__Pr obj id
+  addr; ! locals
+  addr = FUNC_3_RA__Pr(obj, id);
+  if (addr == 0) {
+	if (id &gt; 0 &amp;&amp; id &lt; PARAM_1_indiv_prop_start) {
+	  return PARAM_8_cpv__start--&gt;id;
+	}
+	ERROR("[** Programming error: tried to read (something) **]");
+	return 0;
+  }
+  return addr--&gt;0;
+];
+
+! FUNC_7_OP__Pr: implements OP__Pr() as of Inform 6.31.
+[ FUNC_7_OP__Pr obj id
+  zr; ! locals
+  zr = FUNC_1_Z__Region(obj);
+  if (zr == 3) {
+	if (id == print or print_to_array) rtrue;
+	rfalse;
+  }
+  if (zr == 2) {
+	if (id == call) rtrue;
+	rfalse;
+  }
+  if (zr ~= 1) rfalse;
+  if (id &gt;= PARAM_1_indiv_prop_start 
+      &amp;&amp; id &lt; PARAM_1_indiv_prop_start+8) {
+	if (OBJ_IN_CLASS(obj)) rtrue;
+  }
+  if (FUNC_3_RA__Pr(obj, id) ~= 0)
+	rtrue;
+  rfalse;
+];
+</code>
+
 <h level=2 label=opcodes_misc>Miscellaneous</h>
 
 <deffun>
@@ -1452,7 +1668,7 @@ The reasoning behind the design of a Gestalt system is, I hope, too obvious to e
 The list of L1 selectors is as follows. Note that if a selector does not mention L2, you should always set that argument to zero. <comment>This will ensure future compatibility, in case the selector definition is extended.</comment>
 
 <list>
-<li>GlulxVersion (0): Returns the version of the Glulx spec which the interpreter implements. The upper 16 bits of the value contain a major version number; the next 8 bits contain a minor version number; and the lowest 8 bits contain an even more minor version number, if any. This specification is version 3.1, so a terp implementing it would return 0x00030100. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
+<li>GlulxVersion (0): Returns the version of the Glulx spec which the interpreter implements. The upper 16 bits of the value contain a major version number; the next 8 bits contain a minor version number; and the lowest 8 bits contain an even more minor version number, if any. This specification is version 3.1.1, so a terp implementing it would return 0x00030101. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
 <li>TerpVersion (1): Returns the version of the interpreter. The format is the same as the GlulxVersion. <comment>Each interpreter has its own version numbering system, defined by its author, so this information is not terribly useful. But it is convenient for the game to be able to display it, in case the player is capturing version information for a bug report.</comment>
 <li>ResizeMem (2): Returns 1 if the terp has the potential to resize the memory map, with the setmemsize opcode. If this returns 0, setmemsize will always fail. <comment>But remember that setmemsize might fail in any case.</comment>
 <li>Undo (3): Returns 1 if the terp has the potential to undo. If this returns 0, saveundo and restoreundo will always fail.
@@ -1461,6 +1677,8 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 <li>MemCopy (6): Returns 1 if the interpreter supports the mzero and mcopy opcodes. (This must true for any terp supporting Glulx 3.1.)
 <li>MAlloc (7): Returns 1 if the interpreter supports the malloc and mfree opcodes. (If this is true, MemCopy and ResizeMem must also both be true, so there is no need to check all three.)
 <li>MAllocHeap (8): Returns the start address of the heap. This is the value that getmemsize had when the first memory block was allocated. If the heap is not active (no blocks are extant), this returns zero.
+<li>Acceleration (9): Returns 1 if the interpreter supports the accelfunc and accelparam opcodes. (This must true for any terp supporting Glulx 3.1.1.)
+<li>AccelFunc (10): Returns 1 if the terp implements the accelerated function given in L2.
 </list>
 
 <comment>The Unicode selector is slightly redundant. Since the Unicode operations exist in Glulx spec 3.0 and higher, you can get the same information by testing GlulxVersion against 0x00030000. However, it's clearer to have a separate selector. Similarly, the MemCopy selector is true exactly when GlulxVersion is 0x00030100 or higher.</comment>
