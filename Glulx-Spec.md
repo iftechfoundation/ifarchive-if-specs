@@ -2,11 +2,11 @@
 
 <subtitle>A 32-Bit Virtual Machine for IF</subtitle>
 
-<subtitle>VM specification version 3.0.0</subtitle>
+<subtitle>VM specification version 3.1.0</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
-Copyright 1999-2004 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
+Copyright 1999-2007 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
 
 However, the virtual machine <em>described</em> by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that run on the Glulx VM or make use of it, including compilers, interpreters, debuggers, and so on.
 
@@ -198,7 +198,7 @@ The string-decoding mechanism complicates matters a little, since it is possible
 
 <h level=3>Calling and Returning</h>
 
-When a function is called, the terp pushes a four-value call stub. (This includes the return-value destination, the PC, and the FramePtr; see <ref label=callstub>.) The terp then sets the FramePtr to the StackPtr, and builds a new call frame. (See <ref label=callframe>.) Execution then continues.
+When a function is called, the terp pushes a four-value call stub. (This includes the return-value destination, the PC, and the FramePtr; see <ref label=callstub>.) The terp then sets the FramePtr to the StackPtr, and builds a new call frame. (See <ref label=callframe>.) The PC moves to the first instruction of the function, and execution continues.
 
 Function arguments can be stored in the locals of the new call frame, or pushed on the stack above the new call frame. This is determined by the type of the function; see <ref label=function>.
 
@@ -258,7 +258,7 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 
 <list>
 <li>Magic number: 47 6C 75 6C, which is to say ASCII 'Glul'.
-<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 3.0, so a game file generated to this spec would contain 00030000. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
+<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 3.1, so a game file generated to this spec would contain 00030100. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
 <li>RAMSTART: The first address which the program can write to.
 <li>EXTSTART: The end of the game-file's stored initial memory (and therefore the length of the game file.)
 <li>ENDMEM: The end of the program's memory map.
@@ -270,7 +270,7 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 
 The interpreter should validate the magic number and the Glulx version number. An interpreter which is written to version X.Y.Z of this specification should accept game files whose Glulx version between X.0.0 and X.Y.*. (That is, the major version number should match; the minor version number should be greater than or equal to Y; the subminor version number does not matter.)
 
-EXCEPTION: A version 3.* interpreter should accept version 2.0 game files. The only difference between spec 2.0 and spec 3.0 is that 2.0 lacks Unicode functionality. Therefore, an interpreter written to this version of the spec (3.0.0) should accept game files whose version is between 2.0.0 and 3.0.* (0x00020000 and 0x000300FF inclusive).
+EXCEPTION: A version 3.* interpreter should accept version 2.0 game files. The only difference between spec 2.0 and spec 3.0 is that 2.0 lacks Unicode functionality. Therefore, an interpreter written to this version of the spec (3.1.0) should accept game files whose version is between 2.0.0 and 3.1.* (0x00020000 and 0x000301FF inclusive).
 
 <comment>The header is conventionally followed by a 32-bit word which describes the layout of data in the rest of the file. This value is <em>not</em> a part of the Glulx specification; it is the first ROM word after the header, not a part of the header. It is an option that compilers can insert, when generating Glulx files, to aid debuggers and decompilers.
 
@@ -580,6 +580,24 @@ When the game-state is loaded back in &emdash; or, for that matter, when continu
 
 <comment>Remember that in a call stub, the PC contains the address of the instruction <em>after</em> the one being executed.</comment>
 
+<h level=3>Memory Allocation Heap</h>
+
+If the heap is active (see <ref label=opcodes_malloc>), an allocation heap chunk is written ('MAll'). This chunk contains two four-byte values, plus two more for each extant memory block:
+
+<list>
+<li>Heap start address
+<li>Number of extant blocks
+<li>Address of first block
+<li>Length of first block
+<li>Address of second block
+<li>Length of second block
+<li>...
+</list>
+
+The blocks need not be listed in any particular order.
+
+If the heap is not active, the 'MAll' chunk can contain 0,0 or it may be omitted.
+
 <h level=3>Associated Story File</h>
 
 The contents of the game-file identifier ('IFhd' chunk) are simply the first 128 bytes of memory. This is within ROM (since RAMSTART is at least 256), so it does not vary during play. It includes the story file length and checksum, as well as any compiler-specific information that may be stored immediately after the header.
@@ -691,6 +709,10 @@ The table of opcodes:
 <li>0x161: callfi
 <li>0x162: callfii
 <li>0x163: callfiii
+<li>0x170: mzero
+<li>0x171: mcopy
+<li>0x178: malloc
+<li>0x179: mfree
 </list>
 
 <h level=2>Math</h>
@@ -1013,7 +1035,7 @@ stkroll 9 -3
 5 0 4 3 2 1 8 7 6 &lt;top&gt;
 </code>
 
-Note that stkswap is equivalent to stkroll 2 1, or for that matter stkroll 2 -1. Also, stkcopy 1 is equivalent to stkpeek 0.
+Note that stkswap is equivalent to stkroll 2 1, or for that matter stkroll 2 -1. Also, stkcopy 1 is equivalent to stkpeek 0 sp.
 
 These opcodes can only access the values pushed on the stack above the current call-frame. It is illegal to stkswap, stkpeek, stkcopy, or stkroll values below that &emdash; i.e, the locals segment or any previous function call frames.
 
@@ -1084,11 +1106,11 @@ When catch is executed, a four-value call stub is pushed on the stack &emdash; r
 
 When throw is executed, the stack is popped down until the stack pointer equals the given token. Then the four values are read back off the stack, the thrown value is stored in the destination, and execution proceeds with the instruction after the catch.
 
-If the call stub (or any part of it) is removed from the stack, the catch token becomes invalid, and must not be used. This will certainly occur when you return from the function containing the catch opcode. It will also occur if you pop too many values from the stack after executing the catch. (You may wish to do this to "cancel" the catch; if you pop and discard those four values, the token is invalidated, and it is as if you had never executed the catch at all.)
+If the call stub (or any part of it) is removed from the stack, the catch token becomes invalid, and must not be used. This will certainly occur when you return from the function containing the catch opcode. It will also occur if you pop too many values from the stack after executing the catch. (You may wish to do this to "cancel" the catch; if you pop and discard those four values, the token is invalidated, and it is as if you had never executed the catch at all.) The catch token is also invalidated if any part of the call stub is overwritten (e.g. with stkswap or stkroll).
 
 <comment>Why is the catch branch taken at catch time, and ignored after a throw? Because it's easier to write the interpreter that way, that's why. If it had to branch after a throw, either the call stub would have to contain the branch offset, or the terp would have to re-parse the catch instruction. Both are ugly.</comment>
 
-<h level=2>Memory Map</h>
+<h level=2 label=opcodes_memory>Memory Map</h>
 
 <deffun>
 getmemsize S1
@@ -1104,11 +1126,49 @@ Set the current size of the memory map. The new value must be a multiple of 256,
 
 When the memory size grows, the new space is filled with zeroes. When it shrinks, the contents of the old space are lost.
 
+If the allocation heap is active (see <ref label=opcodes_malloc>) you may not use setmemsize -- the memory map is under the control of the heap system. If you free all heap objects, the heap will no longer be active, and you can then use setmemsize.
+
 Since memory allocation is never guaranteed, you must be prepared for the possibility that setmemsize will fail. The opcode stores the value zero if it succeeded, and 1 if it failed. If it failed, the memory size is unchanged.
 
 Some interpreters do not have the capability to resize memory at all. On such interpreters, setmemsize will <em>always</em> fail. You can check this in advance with the ResizeMem gestalt selector.
 
 Note that the memory size is considered part of the game state. If you restore a saved game, the current memory size is changed to the size that was in effect when the game was saved. If you restart, the current memory size is reset to its initial value.
+
+<h level=2 label=opcodes_malloc>Memory Allocation Heap</h>
+
+Manage the memory allocation heap.
+
+Glulx is able to maintain a list of dynamically-allocated memory objects. These objects exist in the memory map, above ENDMEM. The malloc and mfree opcodes allow the game to request the allocation and destruction of these objects.
+
+Some interpreters do not have the capability to manage an allocation heap. On such interpreters, malloc will always fail. You can check this in advance with the MAlloc gestalt selector.
+
+When you first allocate a block of memory, the heap becomes active. The current end of memory -- that is, the current getmemsize value -- becomes the beginning address of the heap. The memory map is then extended to accomodate the memory block.
+
+Subsequent memory allocations and deallocations are done within the heap. The interpreter may extend or reduce the memory map, as needed, when allocations and deallocations occur. While the heap is active, you may not manually resize the memory map with setmemsize; the heap system is responsible for doing that.
+
+When you free the last extant memory block, the heap becomes inactive. The interpreter will reduce the memory map size down to the heap-start address. (That is, the getmemsize value returns to what it was before you allocated the first block.) Thereafter, it is legal to call setmemsize again.
+
+The heap state (whether it is active, its starting address, and the addresses and sizes of all extant blocks) <em>is</em> part of the saved game state.
+
+These opcodes were added in Glulx version 3.1.
+
+<deffun>
+malloc L1 S1
+</deffun>
+
+Allocate a memory block of L1 bytes. (L1 must be positive.) This stores the address of the new memory block, which will be within the heap and will not overlap any other extant block. The interpreter may have to extend the memory map (see <ref label=opcodes_memory>) to accomodate the new block.
+
+This operation does not change the contents of the memory block (or, indeed, the contents of the memory map at all). If you want the memory block to be initialized, you must do it yourself.
+
+If the allocation fails, this stores zero.
+
+<deffun>
+mfree L1
+</deffun>
+
+Free the memory block at address L1. This <em>must</em> be the address of an extant block -- that is, a value returned by malloc and not previously freed.
+
+This operation does not change the contents of the memory block (or, indeed, the contents of the memory map at all).
 
 <h level=2>Game State</h>
 
@@ -1218,6 +1278,8 @@ streamunichar L1
 
 Send L1 to the current stream. This sends a single (32-bit) character.
 
+This opcode was added in Glulx version 3.0.
+
 <deffun>
 streamnum L1
 </deffun>
@@ -1268,6 +1330,33 @@ The terp starts up in the "nondeterministic" mode (as if setrandom 0 had been in
 
 The random-number generator is not part of the saved-game state.
 
+<h level=2 label=opcodes_copy>Block Copy and Clear</h>
+
+<deffun>
+mzero L1 L2
+</deffun>
+
+Write L1 zero bytes, starting at address L2. This is exactly equivalent to:
+
+<code>
+for (ix=0: ix&lt;L1: ix++) L2-&gt;ix = 0;
+</code>
+
+<deffun>
+mcopy L1 L2 L3
+</deffun>
+
+Copy L1 bytes from address L2 to address L3. It is safe to copy a block to an overlapping block. This is exactly equivalent to:
+
+<code>
+if (L3 &lt; L2)
+  for (ix=0: ix&lt;L1: ix++) L3-&gt;ix = L2-&gt;ix;
+else
+  for (ix=L1-1: ix&gt;=0: ix--) L3-&gt;ix = L2-&gt;ix;
+</code>
+
+These opcodes were added in Glulx version 3.1. You can test for their availability with the MemCopy gestalt selector.
+
 <h level=2>Searching</h>
 
 Perform a generic linear, binary, or linked-list search. 
@@ -1279,7 +1368,7 @@ All three of these opcodes operate on a collection of fixed-size data structures
 The following flags may be set in the Options argument. Note that not all flags can be used with all types of searches.
 
 <list>
-<li>KeyIndirect (0x01): This flag indicates that the Key argument passed to the opcode is the address of the actual key. (If the KeySize is greater than 4, the KeyIndirect flag <em>must</em> be used, since values in Glulx are limited to four bytes.) If this flag is not used, the Key argument is the key value itself. (In this case, if the KeySize is less than 4, the lower bytes of the Key are used and the upper bytes ignored.)
+<li>KeyIndirect (0x01): This flag indicates that the Key argument passed to the opcode is the address of the actual key. If this flag is not used, the Key argument is the key value itself. (In this case, the KeySize <em>must</em> be 1, 2, or 4 -- the native sizes of Glulx values. If the KeySize is 1 or 2, the lower bytes of the Key are used and the upper bytes ignored.)
 <li>ZeroKeyTerminates (0x02): This flag indicates that the search should stop (and return failure) if it encounters a structure whose key is all zeroes. If the searched-for key happens to also be all zeroes, the success takes precedence.
 <li>ReturnIndex (0x04): This flag indicates that search should return the array index of the structure that it finds, or -1 (0xFFFFFFFF) for failure. If this flag is not used, the search returns the address of the structure that it finds, or 0 for failure.
 </list>
@@ -1363,17 +1452,20 @@ The reasoning behind the design of a Gestalt system is, I hope, too obvious to e
 The list of L1 selectors is as follows. Note that if a selector does not mention L2, you should always set that argument to zero. <comment>This will ensure future compatibility, in case the selector definition is extended.</comment>
 
 <list>
-<li>GlulxVersion (0): Returns the version of the Glulx spec which the interpreter implements. The upper 16 bits of the value contain a major version number; the next 8 bits contain a minor version number; and the lowest 8 bits contain and even more minor version number, if any. This specification is version 3.0, so a terp implementing it would return 0x00030000. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
+<li>GlulxVersion (0): Returns the version of the Glulx spec which the interpreter implements. The upper 16 bits of the value contain a major version number; the next 8 bits contain a minor version number; and the lowest 8 bits contain an even more minor version number, if any. This specification is version 3.1, so a terp implementing it would return 0x00030100. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
 <li>TerpVersion (1): Returns the version of the interpreter. The format is the same as the GlulxVersion. <comment>Each interpreter has its own version numbering system, defined by its author, so this information is not terribly useful. But it is convenient for the game to be able to display it, in case the player is capturing version information for a bug report.</comment>
 <li>ResizeMem (2): Returns 1 if the terp has the potential to resize the memory map, with the setmemsize opcode. If this returns 0, setmemsize will always fail. <comment>But remember that setmemsize might fail in any case.</comment>
 <li>Undo (3): Returns 1 if the terp has the potential to undo. If this returns 0, saveundo and restoreundo will always fail.
 <li>IOSystem (4): Returns 1 if the terp supports the I/O system given in L2. (The constants are the same as for the setiosys opcode: 0 for null, 1 for filter, 2 for Glk. 0 and 1 will always succeed, and 2 will also in any Glulx interpreter currently planned.) 
 <li>Unicode (5): Returns 1 if the terp supports Unicode operations. These are: the E2 Unicode string type; the 04 and 05 string node types (in compressed strings); the streamunichar opcode; the type-14 call stub. If the Unicode selector returns 0, encountering any of these will cause a fatal interpreter error.
+<li>MemCopy (6): Returns 1 if the interpreter supports the mzero and mcopy opcodes. (This must true for any terp supporting Glulx 3.1.)
+<li>MAlloc (7): Returns 1 if the interpreter supports the malloc and mfree opcodes. (If this is true, MemCopy and ResizeMem must also both be true, so there is no need to check all three.)
+<li>MAllocHeap (8): Returns the start address of the heap. This is the value that getmemsize had when the first memory block was allocated. If the heap is not active (no blocks are extant), this returns zero.
 </list>
 
-<comment>The Unicode selector is slightly redundant. Since the Unicode operations exist in Glulx spec 3.0 and higher, you can get the same information by testing GlulxVersion against 0x00030000. However, it's clearer to have a separate selector.</comment>
+<comment>The Unicode selector is slightly redundant. Since the Unicode operations exist in Glulx spec 3.0 and higher, you can get the same information by testing GlulxVersion against 0x00030000. However, it's clearer to have a separate selector. Similarly, the MemCopy selector is true exactly when GlulxVersion is 0x00030100 or higher.</comment>
 
-<comment>The Unicode selector does <em>not</em> guarantee that your Glk library supports Unicode. For that, you must check the Glk gestalt selector gestalt_Unicode. If the Glk library is non-Unicode, the Glulx Unicode operations are still legal; however, Unicode characters (beyond FF) will be printed as 3F ("?").
+<comment>The Unicode selector does <em>not</em> guarantee that your Glk library supports Unicode. For that, you must check the Glk gestalt selector gestalt_Unicode. If the Glk library is non-Unicode, the Glulx Unicode operations are still legal; however, Unicode characters (beyond FF) will be printed as 3F ("?").</comment>
 
 <deffun>
 debugtrap L1
@@ -1415,7 +1507,19 @@ The format used by Inform is acceptable for now:
 
 Where each "op" is a constant, the name of a local variable, the name of a global variable, or "sp" (for stack push/pop modes).
 
-It would be convenient to have a one-line form for the opcodes that pass arguments on the stack (call and glk).
+<comment>It would be convenient to have a one-line form for the opcodes that pass arguments on the stack (call and glk).</comment>
 
-It would be convenient if Inform supported the syntax to build an entirely new opcode. (It can do this in Z-code.)
+You can synthesize opcodes that the compiler does not know about:
 
+<code>
+@"FlagsCount:Code" [ op op op ... ] ;
+</code>
+
+The optional Flags can include "S" if the last operand is a store; "SS" if the last two operands are stores; "B" for branch format; "R" if execution never continues after the opcode. The Count is the number of arguments (0 to 9). The Code is a decimal integer representing the opcode number. So these two lines generate the same code:
+
+<code>
+@add x 1 y;
+@"S3:16" x 1 y;
+</code>
+
+...because the @add opcode has number 16 (decimal), and has format "@add L1 L2 S1".
