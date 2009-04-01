@@ -1,6 +1,6 @@
 <title>Glk API Specification</title>
 
-<subtitle>API version 0.7.0</subtitle>
+<subtitle>API version 0.7.###</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -151,7 +151,7 @@ Well, not really. But you should call glk_tick() every so often, just in case. I
 void glk_tick(void);
 </deffun>
 
-This call is fast; in fact, on average, it does nothing at all. So you can call it often. <comment>In a virtual machine interpreter, once per opcode is appropriate. In a program with lots of computation, pick a comparable rate.</comment>
+This call is fast; in fact, on average, it does nothing at all. So you can call it often. <comment>In a virtual machine interpreter, once per opcode is appropriate. A more parsimonious approach would be once per branch and function call opcode; this guarantees it will be called inside loops. In a program with lots of computation, pick a comparable rate.</comment>
 
 glk_tick() does not try to update the screen, or check for player input, or any other interface task. For that, you should call glk_select() or glk_select_poll(). See <ref label=event>.
 
@@ -191,7 +191,7 @@ Currently, these classes are:
 
 <comment>Note that there may be more object classes in future versions of the Glk API.</comment>
 
-When you create one of these objects, it is always possible that the creation will fail (due to lack of memory, or some other OS error.) When this happens, the allocation function will return NULL (0) instead of a valid pointer. You should always test for this possibility.
+When you create one of these objects, it is always possible that the creation will fail (due to lack of memory, or some other OS error.) When this happens, the allocation function will return NULL instead of a valid pointer. You should always test for this possibility.
 
 NULL is never the identifier of any object (window, stream, file reference, or sound channel). The value NULL is often used to indicate "no object" or "nothing", but it is not a valid reference. If a Glk function takes an object reference as an argument, it is illegal to pass in NULL unless the function definition says otherwise.
 
@@ -276,13 +276,13 @@ does exactly the same thing. Note that, in either case, the second argument is n
 
 The glk.h header file is the same on all platforms, with the sole exception of the typedef of glui32 and glsi32. These will always be defined as 32-bit unsigned and signed integer types, which may be "long" or "int" or some other C definition.
 
-Note that all constants are #defines, and all functions are actual function declarations (as opposed to macros.) <comment>There are a few places where macros would be more efficient &emdash; glk_gestalt() and glk_gestalt_ext(), for example &emdash; but they are not likely to be CPU bottlenecks, and clarity seems more important.</comment>
+Note that all constants are #defines. All functions are currently actual function declarations (as opposed to macros), but this may change in future Glk revisions. As in the standard C library, if Glk function is defined by a macro, an actual function of the same name will also be available.
 
-FALSE is 0; TRUE is 1. NULL is also 0.
+Functions that return or generate boolean values will produce only 0 (FALSE) or 1 (TRUE). Functions that accept boolean arguments will accept any value, with zero indicating FALSE and nonzero indicating TRUE.
 
-As stated above, it is illegal to pass NULL to a function which is expecting a valid object reference, unless the function definition says otherwise.
+NULL (when used in this document) refers to the C null pointer. As stated above, it is illegal to pass NULL to a function which is expecting a valid object reference, unless the function definition says otherwise.
 
-Some functions have pointer arguments, acting as "variable" or "reference" arguments; the function's intent is to return some value in the space pointed to by the argument. Unless the function says otherwise, it is legal to pass a NULL pointer to indicate that you do not care about that value.
+Some functions have pointer arguments, acting as "variable" or "reference" arguments; the function's intent is to return some value in the space pointed to by the argument. Unless the function says otherwise, it is legal to pass NULL to indicate that you do not care about that value.
 
 <h level=1 label=encoding>Character Encoding</h>
 
@@ -354,7 +354,7 @@ In all cases, len (the glui32 value pointed at by the third argument) will be th
 
 This selector will always return gestalt_CharOutput_CannotPrint if ch is an unprintable eight-bit character (0 to 9, 11 to 31, 127 to 159.)
 
-<comment>Make sure you do not get confused by signed byte values. If you set a "char" variable ch to 0xFE, <restrict type=ps>the small-thorn character (&thorn;)</restrict><restrict type=text>the small-thorn character</restrict><restrict type=html>the small-thorn character (&thorn;)</restrict>, and then call
+<comment>Make sure you do not get confused by signed byte values. If you set a "signed char" variable ch to 0xFE, <restrict type=ps>the small-thorn character (&thorn;)</restrict><restrict type=text>the small-thorn character</restrict><restrict type=html>the small-thorn character (&thorn;)</restrict>, it will wind up as -2. (The same is true of a "char" variable, if your compiler treats "char" as signed!) If you then call
 <br>
 <code>
 res = glk_gestalt(gestalt_CharOutput, ch);
@@ -463,11 +463,11 @@ The functions return the number of characters after conversion. If this is great
 
 The lower_case and upper_case functions do what you'd expect: they convert every character in the buffer (the first numchars of them) to its upper or lower-case equivalent, if there is such a thing. 
 
-The title_case function has an additional (boolean) flag. Its basic function is to change the first character of the buffer to upper-case, and leave the rest of the buffer unchanged. If lowerrest is true, it changes all the non-first characters to lower-case (instead of leaving them alone.)
+The title_case function has an additional (boolean) flag. If the flag is zero, the function changes the first character of the buffer to upper-case, and leaves the rest of the buffer unchanged. If the flag is nonzero, it changes the first character to upper-case and the rest to lower-case.
 
 See the Unicode spec (chapter 3.13, chapter 4.2, etc) for the exact definitions of upper, lower, and title-case mapping.
 
-<comment>Unicode has some strange case cases. For example, a combined character that looks like "ss" might properly be upper-cased into <em>two</em> characters "S". Title-casing is even stranger; "ss" (at the beginning of a word) might be title-cased into a different combined character that looks like "Ss". The glk_buffer_to_title_case_uni() function is actually title-casing the first character of the buffer. If it makes a difference.</comment>
+<comment>Unicode has some strange case cases. For example, a combined character that looks like "ss" might properly be upper-cased into <em>two</em> "S" characters. Title-casing is even stranger; "ss" (at the beginning of a word) might be title-cased into a different combined character that looks like "Ss". The glk_buffer_to_title_case_uni() function is actually title-casing the first character of the buffer. If it makes a difference.</comment>
 
 <comment>Earlier drafts of this spec had a separate function which title-cased the first character of every <em>word</em> in the buffer. I took this out after reading Unicode Standard Annex #29, which explains how to divide a string into words. If you want it, feel free to implement it.</comment>
 
@@ -604,7 +604,7 @@ winid_t glk_window_open(winid_t split, glui32 method, glui32 size, glui32 wintyp
 
 If there are no windows, the first three arguments are meaningless. split <em>must</em> be zero, and method and size are ignored. wintype is the type of window you're creating, and rock is the rock (see <ref label=opaque_rocks>).
 
-If any windows exist, new windows must be created by splitting existing ones. split is the window you want to split; this <em>must not</em> be zero. method is a mask of constants to specify the direction and the split method (see below). size is the size of the split. wintype is the type of window you're creating, and rock is the rock.
+If any windows exist, new windows must be created by splitting existing ones. split is the window you want to split; this <em>must not</em> be zero. method specifies the direction and the split method (see below). size is the size of the split. wintype is the type of window you're creating, and rock is the rock.
 
 The winmethod constants:
 
@@ -612,6 +612,8 @@ The winmethod constants:
 <li>winmethod_Above, winmethod_Below, winmethod_Left, winmethod_Right: The new window will be above, below, to the left, or to the right of the old one which was split.
 <li>winmethod_Fixed, winmethod_Proportional: The new window is a fixed size, or a given proportion of the old window's size. (See below.)
 </list>
+
+The method argument must be the logical-or of a direction constant (winmethod_Above, winmethod_Below, winmethod_Left, winmethod_Right) and a split-method constant (winmethod_Fixed, winmethod_Proportional).
 
 Remember that it is possible that the library will be unable to create a new window, in which case glk_window_open() will return NULL. <comment>It is acceptable to gracefully exit, if the window you are creating is an important one &emdash; such as your first window. But you should not try to perform any window operation on the id until you have tested to make sure it is non-zero.</comment>
 
@@ -903,7 +905,7 @@ A text grid contains a rectangular array of characters, in a fixed-width font. I
 
 A text grid window supports output. It maintains knowledge of an output cursor position. When the window is opened, it is filled with blanks (space characters), and the output cursor starts in the top left corner &emdash; character (0,0). If the window is cleared with glk_window_clear(), the window is filled with blanks again, and the cursor returns to the top left corner.
 
-When you print, the characters of the output are laid into the array in order, left to right and top to bottom. When the cursor reaches the end of a line, it goes to the beginning of the next line. The library makes <em>no</em> attempt to wrap lines at word breaks.
+When you print, the characters of the output are laid into the array in order, left to right and top to bottom. When the cursor reaches the end of a line, or if a newline (0x0A) is printed, the cursor goes to the beginning of the next line. The library makes <em>no</em> attempt to wrap lines at word breaks. If the cursor reaches the end of the last line, further printing has no effect on the window until the cursor is moved.
 
 <comment>Note that printing fancy characters may cause the cursor to advance more than one position per character. (For example, <restrict type=ps>the "&aelig;" ligature</restrict><restrict type=text>the "ae" ligature</restrict><restrict type=html>the "ae" ligature (&aelig;)</restrict> may print as two characters.) See <ref label=encoding_out>, for how to test this situation.</comment>
 
@@ -939,7 +941,7 @@ A graphics window contains a rectangular array of pixels. Its size is the number
 
 Each graphics window has a background color, which is initially white. You can change this; see <ref label=graphics_graphics>.
 
-When a text grid window is resized smaller, the bottom or right area is thrown away, but the remaining area stays unchanged. When it is resized larger, the new bottom or right area is filled with the background color. <comment>You may wish to watch for evtype_Arrange events, and clear-and-redraw your graphics windows when you see them change size.</comment>
+When a graphics window is resized smaller, the bottom or right area is thrown away, but the remaining area stays unchanged. When it is resized larger, the new bottom or right area is filled with the background color. <comment>You may wish to watch for evtype_Arrange events, and clear-and-redraw your graphics windows when you see them change size.</comment>
 
 In some libraries, you can receive a graphics-redraw event (evtype_Redraw) at any time. This signifies that the window in question has been cleared to its background color, and must be redrawn. If you create any graphics windows, you <em>must</em> handle these events.
 
@@ -1043,10 +1045,16 @@ This returns the stream which is associated with the window. (See <ref label=win
 void glk_set_window(winid_t win);
 </deffun>
 
-This sets the current stream to the window's stream. It is exactly equivalent to
+This sets the current stream to the window's stream. If win is NULL, it is equivalent to
 
 <code>
-glk_stream_set_current(glk_window_get_stream(win)).
+glk_stream_set_current(NULL);
+</code>
+
+If win is not NULL, it is equivalent to
+
+<code>
+glk_stream_set_current(glk_window_get_stream(win));
 </code>
 
 See <ref label=stream>.
@@ -1086,7 +1094,7 @@ The event types are:
 <li>evtype_Hyperlink: The selection of a hyperlink in a window.
 </list>
 
-Note that evtype_None is zero, and the other values are positive. Negative even types (0x80000000 to 0xFFFFFFFF) are reserved for implementation-defined events.
+Note that evtype_None is zero, and the other values are positive. Negative event types (0x80000000 to 0xFFFFFFFF) are reserved for implementation-defined events.
 
 You can also inquire if an event is available, without stopping to wait for one to occur.
 
@@ -1215,7 +1223,7 @@ It is possible that the library does not support timer events. You can check thi
 res = glk_gestalt(gestalt_Timer, 0);
 </code>
 
-This returns 1 if timer events are supported, and 0 if they are not.
+This returns TRUE (1) if timer events are supported, and FALSE (0) if they are not.
 
 Initially, there is no timer and you get no timer events. If you call glk_request_timer_events(N), with N not 0, you will get timer events about every N milliseconds thereafter. (Assuming that they are supported &emdash; if not, glk_request_timer_events() has no effect.) Unlike keyboard and mouse events, timer events will continue until you shut them off. You do not have to re-request them every time you get one. Call glk_request_timer_events(0) to stop getting timer events.
 
@@ -1600,6 +1608,8 @@ The meaning of the value depends on the hint which was tested:
 <li>stylehint_ReverseColor: 0 for normal printing, 1 if the foreground and background colors are reversed.
 </list>
 
+Signed values, such as the stylehint_Weight value, are cast to glui32. They may be cast to glsi32 to be dealt with in a more natural context.
+
 <h level=2 label=stream_types>The Types of Streams</h>
 
 <h level=3 label=window_streams>Window Streams</h>
@@ -1686,7 +1696,7 @@ A file reference contains platform-specific information about the name and locat
 
 A fileref does not have to refer to a file which actually exists. You can create a fileref for a nonexistent file, and then open it in write mode to create a new file.
 
-You always provide a usage argument when you create a fileref. The usage is a mask of constants to indicate the file type and the mode (text or binary.) These values are used when you create a new file, and also to filter file lists when the player is selecting a file to load. The constants are as follows:
+You always provide a usage argument when you create a fileref. The usage indicates the file type and the mode (text or binary.) It must be the logical-or of a file-type constant and a mode constant. These values are used when you create a new file, and also to filter file lists when the player is selecting a file to load. The constants are as follows:
 
 <list>
 <li>fileusage_SavedGame: A file which stores game state.
@@ -1809,7 +1819,7 @@ At present, images can only be drawn in graphics windows and text buffer windows
 glui32 glk_image_get_info(glui32 image, glui32 *width, glui32 *height);
 </deffun>
 
-This gets information about the image resource with the given identifier. It returns TRUE if there is such an image, and FALSE if not. You can also pass pointers to width and height variables; if the image exists, the variables will be filled in with the width and height of the image, in pixels. (You can pass NULL for either width or height if you don't care about that information.)
+This gets information about the image resource with the given identifier. It returns TRUE (1) if there is such an image, and FALSE (0) if not. You can also pass pointers to width and height variables; if the image exists, the variables will be filled in with the width and height of the image, in pixels. (You can pass NULL for either width or height if you don't care about that information.)
 
 <comment>You should always use this function to measure the size of images when you are creating your display. Do this even if you created the images, and you know how big they "should" be. This is because images may be scaled in translating from one platform to another, or even from one machine to another. A Glk library might display all images larger than their original size, because of screen resolution or player preference. Images will be scaled proportionally, but you still need to call glk_image_get_info() to determine their absolute size.</comment>
 
@@ -1924,7 +1934,7 @@ To avoid this, you can perform a preprocessor test for the existence of GLK_MODU
 res = glk_gestalt(gestalt_DrawImage, windowtype);
 </code>
 
-This returns 1 if images can be drawn in windows of the given type. If it returns 0, glk_image_draw() will fail and return FALSE. You should test wintype_Graphics and wintype_TextBuffer separately, since libraries may implement both, neither, or only one.
+This returns 1 if images can be drawn in windows of the given type. If it returns 0, glk_image_draw() will fail and return FALSE (0). You should test wintype_Graphics and wintype_TextBuffer separately, since libraries may implement both, neither, or only one.
 
 <code>
 res = glk_gestalt(gestalt_GraphicsTransparency, 0);
@@ -2344,7 +2354,7 @@ However, pointers (other than C strings), arrays, and structures complicate life
 
 <h level=4>References</h>
 
-A reference to a numeric type or object reference &emdash; that is, glui32*, winid_t*, and so on &emdash; takes <em>one or two</em> gluniversal_t objects. The first is a flag indicating whether the reference argument is NULL or not. The ptrflag field of this gluniversal_t should be FALSE if the reference is NULL, and TRUE otherwise. If FALSE, that is the end of the argument; you should not use a gluniversal_t to explicitly store the NULL reference. If the flag is TRUE, you must then put a gluniversal_t storing the base type of the reference.
+A reference to a numeric type or object reference &emdash; that is, glui32*, winid_t*, and so on &emdash; takes <em>one or two</em> gluniversal_t objects. The first is a flag indicating whether the reference argument is NULL or not. The ptrflag field of this gluniversal_t should be FALSE (0) if the reference is NULL, and TRUE (1) otherwise. If FALSE, that is the end of the argument; you should not use a gluniversal_t to explicitly store the NULL reference. If the flag is TRUE, you must then put a gluniversal_t storing the base type of the reference.
 
 For example, consider a hypothetical function, with selector 0xABCD:
 
@@ -2507,7 +2517,7 @@ The basic type codes:
 <li>Qa, Qb, Qc...: A reference to an opaque object. The second letter determines which class is involved. (The number of classes can be gleaned from gidispatch_count_classes(); see <ref label=interrogating_func>). <comment>If Glk expands to have more than 26 classes, we'll think of something.</comment>
 </list>
 
-Any type code can be prefixed with one or more of the following characters (order does not matter):
+Any type code can be prefixed with one or more of the following characters:
 
 <list>
 <li>&amp;: A reference to the type; or, if you like, a variable passed by reference. The reference is passed both in and out, so you must copy the value in before calling gidispatch_call() and copy it out afterward.
@@ -2519,6 +2529,23 @@ Any type code can be prefixed with one or more of the following characters (orde
 <li>#: Combined with "&amp;", "&lt;", or "&gt;", indicates an array reference. As described above, this encompasses up to three gluniversal_t objects &emdash; ptrflag, pointer, and integer length. <comment>Depending on the design of your program, you may wish to pass a pointer directly to your program's memory, or allocate an array and copy the contents in and out. See <ref label=argtype_arrays>.</comment>
 <li>!: Combined with "#", indicates that the array is <em>retained</em> by the library. The library will keep a reference to the array; the contents are undefined until further notice. You should not use or copy the contents of the array out after the call, even for "&amp;#!" or "&lt;#!" arrays. Instead, do it when the library releases the array. <comment>For example, glk_stream_open_memory() retains the array that you pass it, and releases it when the stream is closed. The library can notify you automatically when arrays are retained and released; see <ref label=retained_registry>.</comment>
 </list>
+
+The order of these characters and prefixes is not completely arbitrary. Here is a formal grammar for the prototype strings. <comment>Thanks to Neil Cerutti for working this out.</comment>
+
+<code>
+&lt;prototype&gt;   -&gt;  ArgCount [ &lt;arg_list&gt; ] ':' [ &lt;arg&gt; ] EOL
+&lt;arg_list&gt;    -&gt;  &lt;arg&gt; { &lt;arg&gt; }
+&lt;arg&gt;         -&gt;  TypeName | &lt;ref_type&gt;
+&lt;ref_type&gt;    -&gt;  RefType [ '+' ] &lt;target_type&gt;
+&lt;target_type&gt; -&gt;  TypeName | &lt;array&gt; | &lt;struct&gt;
+&lt;array&gt;       -&gt;  '#' [ '!' ] TypeName
+&lt;struct&gt;      -&gt;  '[' ArgCount [ &lt;arg_list&gt; ] ']'
+
+TypeName is "I[us]|C[nus]|S|U|F|Q[a-z]"
+ArgCount is '\d+'
+RefType is '&amp;|&lt;|&gt;'
+EOL is end of input
+</code>
 
 <h level=3>Functions the Library Must Provide</h>
 
@@ -2704,7 +2731,6 @@ These values, and the values used for future Glk calls, are integers in the rang
 <li>0x0139: glk_stream_open_memory_uni
 <li>0x0140: glk_request_char_event_uni
 <li>0x0141: glk_request_line_event_uni
-
 </list>
 
 Note that glk_main() does not have a selector, because it's provided by your program, not the library.
@@ -2836,5 +2862,5 @@ All Blorb layer functions, including giblorb_set_resource_map(), return the foll
 <li>giblorb_err_NotAMap: The map parameter is invalid.
 <li>giblorb_err_Format: The Blorb file is corrupted or invalid.
 <li>giblorb_err_NotFound: The requested data could not be found.
-<list>
+</list>
 
