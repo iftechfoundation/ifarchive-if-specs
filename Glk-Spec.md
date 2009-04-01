@@ -1,10 +1,10 @@
 <title>Glk API Specification</title>
 
-<subtitle>API version 0.6.1</subtitle>
+<subtitle>API version 0.7.0</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
-Copyright 1998-2000 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
+Copyright 1998-2004 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
 
 This document and further Glk information can be found at: <a href="http://www.eblong.com/zarf/glk/">http://www.eblong.com/zarf/glk/</a>
 
@@ -27,7 +27,7 @@ Rather than go into a detailed explanation of what that means, let me give examp
 
 and so on. However, the implementation of these capabilities vary widely between platforms and operating systems. Furthermore, this variance is transparent to the program (the adventure game.) The game does not care whether output is displayed via a character terminal emulator or a GUI window; nor whether input uses Mac-style mouse editing or EMACS-style control key editing.
 
-On the third hand, the user is likely to care deeply about these interface decisions. This is why there are Mac-native interpreters on Macintoshes, pen-controlled interpreters on Newtons and Pilots, and so on &emdash; and (ultimately) why there Macintoshes and Pilots and X-windows platforms in the first place.
+On the third hand, the user is likely to care deeply about these interface decisions. This is why there are Mac-native interpreters on Macintoshes, pen-controlled interpreters on Newtons and PalmOS PDAs, and so on &emdash; and (ultimately) why there Macintoshes and Palms and X-windows platforms in the first place.
 
 On the <em>fourth</em> hand, TADS and Inform are not alone; there is historically a large number of text adventure systems. Most are obsolete or effectively dead; but it is inevitable that more will appear. Users want each living system ported to all the platforms in use. Users also prefer these ports to use the same interface, as much as possible.
 
@@ -39,23 +39,15 @@ My hope is that a new IF system, or existing ones which are less-supported (Hugo
 
 Glk can also serve as a nice interface for applications other than games &emdash; data manglers, quick hacks, or anything else which would normally lack niceties such as editable input, macros, scrolling, or whatever is native to your machine's interface idiom.
 
-<h level=2>What About Java?</h>
-
-Java is the ultimate tool for cross-platform development. You wanna buy a bridge? How about some shares of Sun stock? Onna stick?
-
-Java has several disadvantages for my purpose. First, it is resource-intensive. It is unlikely that Java will ever run on a 386/68030 generation computer, which is perfectly adequate for text IF. Java may run on a palmtop, but the standard Java library will not. It is also impossible for a single person to port Java to a new platform &emdash; both legally and practically, Java is in the control of large corporations.
-
-Secondly, Java allows too fine-grained a control over the interface. It is not possible to create a text interface using the standard Java library; it is not even really possible to make a graphical interface in the Mac idiom. Java programs have their own Java-specific interface idiom. This trend is accelerating.
-
-On the other hand, it is perfectly possible to implement a Glk library in Java and using the Java interface idiom. This would allow a Glk-based IF system to be easily ported to any machine that runs Java &emdash; if the player likes the way Java looks, of course.
-
 <h level=2>What About the Virtual Machine?</h>
 
 You can think of Glk as an IF virtual machine, without the virtual machine part. The "machine" is just portable C code.
 
-It is not inconceivable that a new IF virtual machine might be designed to go along with Glk. This VM would use Glk as its interface; each Glk call would correspond to an input/output opcode of the VM.
+An IF virtual machine has been designed specifically to go along with Glk. This VM, called Glulx, uses Glk as its interface; each Glk call corresponds to an input/output opcode of the VM.
 
-For more discussion of this approach, see <ref label=vmio>.
+For more discussion of this approach, see <ref label=vmio>. Glulx is documented at <a href="http://www.eblong.com/zarf/glulx/">http://www.eblong.com/zarf/glulx/</a>.
+
+Of course, Glk can be used with other IF systems. The advantage of Glulx is that it provides the game author with direct and complete access to the Glk API. Other IF systems typically have an built-in abstract I/O API, which maps only partially onto Glk. For these systems, Glk tends to be a least-common-denominator interface: highly portable, but not necessarily featureful. (Even if Glk has a feature, it may not be available through the layers of abstraction.)
 
 <h level=2>What Does Glk Not Do?</h>
 
@@ -81,6 +73,12 @@ This document is written for the point of view of the game programmer &emdash; t
 Hereafter, "Glk" or "the library" refers to the Glk library, and "the program" is the game program (or whatever) which is using the Glk library to print text, input text, or whatever. "You" are the person writing the program. "The player" is the person who will use the program/Glk library combination to actually play a game. Or whatever.
 
 The Glk API is declared in a C header file called "glk.h". Please refer to that file when reading this one.
+
+<h level=2 label=credits>Credits</h>
+
+Glk has been a work of many years and many people. If I tried to list everyone who has offered comments and suggestions, I would immediately go blank, forget everyone's name, and become a mute hermit-like creature living in a train tunnel under Oakland. But I must thank those people who have written Glk libraries and linking systems: Matt Kimball, Ross Raszewski, David Kinder, John Elliott, Joe Mason, Stark Springs, and, er, anyone I missed. Look! A train!
+
+Evin Robertson wrote the original proposal for the Glk Unicode functions, which I imported nearly verbatim into this document. Thank you.
 
 <h level=1>Overall Structure</h>
 
@@ -135,7 +133,7 @@ If you need to clean up critical resources, you can specify an interrupt handler
 void glk_set_interrupt_handler(void (*func)(void));
 </deffun>
 
-The argument you pass to glk_set_interrupt_handler() should be a pointer to a function which takes no argument and returns no result. If Glk receives an interrupt, and you have set an interrupt handler, your handler will be called, before the process is shut down. 
+The argument you pass to glk_set_interrupt_handler() should be a pointer to a function which takes no argument and returns no result. If Glk receives an interrupt, and you have set an interrupt handler, your handler will be called, before the process is shut down.
 
 Initially there is no interrupt handler. You can reset to not having any by calling glk_set_interrupt_handler(NULL).
 
@@ -265,7 +263,7 @@ res = glk_gestalt(gestalt_Version, 0);
 
 res will be set to a 32-bit number which encodes the version of the Glk spec which the library implements. The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. <comment>So the version number 78.2.11 would be encoded as 0x004E020B.</comment>
 
-The current Glk specification version is 0.6.1, so this selector will return 0x00000601.
+The current Glk specification version is 0.7.0, so this selector will return 0x00000700.
 
 <code>
 glui32 res;
@@ -288,11 +286,38 @@ Some functions have pointer arguments, acting as "variable" or "reference" argum
 
 <h level=1 label=encoding>Character Encoding</h>
 
-Glk uses the Latin-1 Unicode encoding, and keeps it holy.
+Glk has two separate, but parallel, APIs for managing text input and output. The basic functions deals entirely in 8-bit characters; their arguments are arrays of bytes (octets). These functions all assume the Latin-1 character encoding. Equivalently, they may be said to use code points U+00..U+FF of <a href="http://unicode.org/">Unicode</a>.
 
 Latin-1 is an 8-bit character encoding; it maps numeric codes in the range 0 to 255 into printed characters. The values from 32 to 126 are the standard printable ASCII characters (' ' to '~'). Values 0 to 31 and 127 to 159 are reserved for control characters, and have no printed equivalent.
 
-Glk uses different parts of the Latin-1 encoding for different purposes.
+<comment>Note that the basic Glk text API does <em>not</em> use UTF-8, or any other Unicode character form. Each character is represented by a single byte &emdash; even characters in the 128..255 range.</comment>
+
+The extended, or "Unicode", Glk functions deal entirely in 32-bit words. They take arrays of words, not bytes, as arguments. They can therefore cope with any Unicode code point. The extended functions have names ending in "_uni".
+
+<comment>Since these functions deal in arrays of 32-bit words, they can be said to use the UTF-32 character encoding form. (But <em>not</em> the UTF-32 character encoding <em>scheme</em> &emdash; that's a stream of bytes which must be interpreted in big-endian or little-endian mode. Glk Unicode functions operate on long integers, not bytes.) UTF-32 is also known as UCS-4, according to the Unicode spec (appendix C.2), modulo some semantic requirements which we will not deal with here. For practical purposes, we can ignore the whole encoding issue, and assume that we are dealing with sequences of numeric code points.</comment>
+
+<comment>Why not UTF-8? It is a reasonable bare-bones compression algorithm for Unicode character streams; but IF systems typically have their own compression models for text. Compositing the two ideas causes more problems than it solves. The other advantage of UTF-8 is that 7-bit ASCII is automatically valid UTF-8; but this is not compelling for IF systems, in which the compiler can be tasked with generating consistent textual data. And UTF-8 is a variable-width encoding. Nobody ever wept at the prospect of avoiding that kettle of eels.</comment>
+
+<comment>What about bi-directional text? It's a good idea, and may show up in future versions of this document. It is not in this version because we want to get something simple implemented soon. For the moment, print out all text in reading order (not necessarily left-to-right) and hope for the best. Current suggestions include a stylehint_Direction, which the game can set to indicate that text in the given style should be laid out right-to-left. Top-to-bottom (or bottom-to-top) may be desirable too. The direction stylehints might only apply to full paragraphs (like justification stylehints); or they might apply to any text, thus requiring the library to lay out "zig-zag" blocks. The possibilities remain to be explored. Page layout is hard.</comment>
+
+<comment>Another possibility is to let the library determine the directionality of text from the character set. This is not impossible &emdash; MacOSX text widgets do it. It may be too difficult.</comment>
+
+<comment>In the meantime, it is worth noting that the Windows Glk library does <em>not</em> autodetect directionality, but the CheapGlk library running on MacOSX does. Therefore, there is no platform-independent way to handle right-to-left fonts at present.</comment>
+
+<h level=2 label=unicode_testing>Testing for Unicode Capabilities</h>
+
+The basic text functions will be available in every Glk library. The Unicode functions may or may not be available. Before calling them, you should use the following gestalt selector:
+
+<code>
+glui32 res;
+res = glk_gestalt(gestalt_Unicode, 0);
+</code>
+
+This returns 1 if the Unicode functions are available. If it returns 0, you should not try to call them. They may print nothing, print gibberish, or cause a run-time error. The Unicode functions include glk_buffer_to_lower_case_uni, glk_buffer_to_upper_case_uni, glk_buffer_to_title_case_uni, glk_put_char_uni, glk_put_string_uni, glk_put_buffer_uni, glk_put_char_stream_uni, glk_put_string_stream_uni, glk_put_buffer_stream_uni, glk_get_char_stream_uni, glk_get_buffer_stream_uni, glk_get_line_stream_uni, glk_request_char_event_uni, glk_request_line_event_uni, glk_stream_open_file_uni, glk_stream_open_memory_uni.
+
+If you are writing a C program, there is an additional complication. A library which does not support Unicode may not implement the Unicode functions at all. Even if you put gestalt tests around your Unicode calls, you may get link-time errors. If the glk.h file is so old that it does not declare the Unicode functions and constants, you may even get compile-time errors.
+
+To avoid this, you can perform a preprocessor test for the existence of GLK_MODULE_UNICODE. If this is defined, so are all the Unicode functions and constants. If not, not.
 
 <h level=2 label=encoding_out>Output</h>
 
@@ -300,11 +325,15 @@ When you are sending text to a window, or to a file open in text mode, you can p
 
 It is <em>not</em> legal to print any other control characters (0 to 9, 11 to 31, 127 to 159). You may not print even common formatting characters such as tab (control-I), carriage return (control-M), or page break (control-L). <comment>As usual, the behavior of the library when you print an illegal character is undefined. It is preferable that the library display a numeric code, such as "\177" or "0x7F", to warn the user that something illegal has occurred. The library may skip illegal characters entirely; but you should not rely on this.</comment>
 
+Printing Unicode characters above 255 is a more complicated matter &emdash; too complicated to be covered precisely by this specification. Refer to the Unicode specification, and good luck to you.
+
+<comment>Unicode combining characters are a particular nuisance. Printing a combining character may alter the appearance of the previous character printed. The library should be prepared to cope with this &emdash; even if the characters are printed by two separate glk_put_char_uni() calls.</comment>
+
 Note that when you are sending data to a file open in binary mode, you can print any byte value, without restriction. See <ref label=file_streams>.
 
 A particular implementation of Glk may not be able to display all the printable characters. It is guaranteed to be able to display the ASCII characters (32 to 126, and the newline 10.) Other characters may be printed correctly, printed as multi-character combinations (such as "ae" for <restrict type=ps>the "&aelig;" ligature</restrict><restrict type=text>the one-character "ae" ligature</restrict><restrict type=html>the one-character "ae" ligature (&aelig;)</restrict>), or printed as some placeholder character (such as a bullet or question mark, or even an octal code.)
 
-You can test for this by using the gestalt_CharOutput selector. If you set ch to a character code (from 0 to 255), and call
+You can test for this by using the gestalt_CharOutput selector. If you set ch to a character code (Latin-1 or higher), and call
 
 <code>
 glui32 res, len;
@@ -323,7 +352,7 @@ In all cases, len (the glui32 value pointed at by the third argument) will be th
 
 <comment>As described in <ref label=api_conventions>, you may skip this information by passing NULL as the third argument in glk_gestalt_ext(), or by calling glk_gestalt() instead.</comment>
 
-If ch is outside the range 0 to 255, this selector will always return gestalt_CharOutput_CannotPrint. It is also guaranteed to do this if ch is an unprintable character (0 to 9, 11 to 31, 127 to 159.)
+This selector will always return gestalt_CharOutput_CannotPrint if ch is an unprintable eight-bit character (0 to 9, 11 to 31, 127 to 159.)
 
 <comment>Make sure you do not get confused by signed byte values. If you set a "char" variable ch to 0xFE, <restrict type=ps>the small-thorn character (&thorn;)</restrict><restrict type=text>the small-thorn character</restrict><restrict type=html>the small-thorn character (&thorn;)</restrict>, and then call
 <br>
@@ -331,7 +360,7 @@ If ch is outside the range 0 to 255, this selector will always return gestalt_Ch
 res = glk_gestalt(gestalt_CharOutput, ch);
 </code>
 <br>
-then (by the definition of C/C++) ch will be <em>sign-extended</em> to 0xFFFFFFFE, which is <em>not</em> in the range 0 to 255. You should write
+then (by the definition of C/C++) ch will be <em>sign-extended</em> to 0xFFFFFFFE, which is <em>not</em> a legitimate character, even in Unicode. You should write
 <br>
 <code>
 res = glk_gestalt(gestalt_CharOutput, (unsigned char)ch);
@@ -339,30 +368,32 @@ res = glk_gestalt(gestalt_CharOutput, (unsigned char)ch);
 <br>
 instead.</comment>
 
+<comment>Unicode includes the concept of non-spacing or combining characters, which do not represent glyphs; and double-width characters, whose glyphs take up two spaces in a fixed-width font. Future versions of this spec may recognize these concepts by returning a len of 0 or 2 when gestalt_CharOutput_ExactPrint is used. For the moment, we are adhering to a policy of "simple stuff first".</comment>
+
 <h level=2 label=encoding_inline>Line Input</h>
 
 You can request that the player enter a line of text. See <ref label=line_events>.
 
 This text will be placed in a buffer of your choice. There is no length field or null terminator in the buffer. (The length of the text is returned as part of the line-input event.)
 
-The buffer will contain only printable Latin-1 characters (32 to 126, 160 to 255).
+If you use the basic text API, the buffer will contain only printable Latin-1 characters (32 to 126, 160 to 255).
 
-A particular implementation of Glk may not be able to accept all printable characters as input. It is guaranteed to be able to accept the ASCII characters (32 to 126.)
+A particular implementation of Glk may not be able to accept all Latin-1 printable characters as input. It is guaranteed to be able to accept the ASCII characters (32 to 126.)
 
-You can test for this by using the gestalt_LineInput selector. If you set ch to a character code (from 0 to 255), and call
+You can test for this by using the gestalt_LineInput selector. If you set ch to a character code, and call
 
 <code>
 glui32 res;
 res = glk_gestalt(gestalt_LineInput, ch);
 </code>
 
-then res will be TRUE (1) if that character can be typed by the player in line input, and FALSE (0) if not. Note that if ch is a nonprintable character (0 to 31, 127 to 159), or if ch is outside the range 0 to 255, then this is guaranteed to return FALSE.
+then res will be TRUE (1) if that character can be typed by the player in line input, and FALSE (0) if not. Note that if ch is a nonprintable Latin-1 character (0 to 31, 127 to 159), then this is guaranteed to return FALSE.
 
 <h level=2 label=encoding_inchar>Character Input</h>
 
 You can request that the player hit a single key. See <ref label=char_events>.
 
-The character code which is returned can be any value from 0 to 255. The printable character codes have already been described. The remaining codes are typically control codes, control-A to control-Z and a few others.
+If you use the basic text API, the character code which is returned can be any value from 0 to 255. The printable character codes have already been described. The remaining codes are typically control codes: control-A to control-Z and a few others.
 
 There are also a number of special codes, representing special keyboard keys, which can be returned from a char-input event. These are represented as 32-bit integers, starting with 4294967295 (0xFFFFFFFF) and working down. The special key codes are defined in the glk.h file. They include:
 
@@ -392,7 +423,7 @@ Some characters may not be enterable because they are reserved for the purposes 
 
 <comment>The delete and backspace keys are merged into a single keycode because they have such an astonishing history of being confused in the first place... this spec formally waives any desire to define the difference. Of course, a library is free to distinguish delete and backspace during line input. This is when it matters most; conflating the two during character input should not be a large problem.</comment>
 
-You can test for this by using the gestalt_CharInput selector. If you set ch to a character code (from 0 to 255) or a special code (from 0xFFFFFFFF down), and call
+You can test for this by using the gestalt_CharInput selector. If you set ch to a character code, or a special code (from 0xFFFFFFFF down), and call
 
 <code>
 glui32 res;
@@ -407,7 +438,7 @@ then res will be TRUE (1) if that character can be typed by the player in charac
 
 <h level=2 label=encoding_hilo>Upper and Lower Case</h>
 
-You can convert characters from upper to lower case with two Glk utility functions:
+You can convert Latin-1 characters between upper and lower case with two Glk utility functions:
 
 <deffun>
 unsigned char glk_char_to_lower(unsigned char ch);
@@ -417,6 +448,28 @@ unsigned char glk_char_to_upper(unsigned char ch);
 These have a few advantages over the standard ANSI tolower() and toupper() macros. They work for the entire Latin-1 character set, including accented letters; they behave consistently on all platforms, since they're part of the Glk library; and they are safe for all characters. That is, if you call glk_char_to_lower() on a lower-case character, or a character which is not a letter, you'll get the argument back unchanged.
 
 The case-sensitive characters in Latin-1 are the ranges 0x41..0x5A, 0xC0..0xD6, 0xD8..0xDE (upper case) and the ranges 0x61..0x7A, 0xE0..0xF6, 0xF8..0xFE (lower case). These are arranged in parallel; so glk_char_to_lower() will add 0x20 to values in the upper-case ranges, and glk_char_to_upper() will subtract 0x20 from values in the lower-case ranges.
+
+Unicode character conversion is trickier, and must be applied to character arrays, not single characters.
+
+<deffun>
+glui32 glk_buffer_to_lower_case_uni(glui32 *buf, glui32 len, glui32 numchars);
+glui32 glk_buffer_to_upper_case_uni(glui32 *buf, glui32 len, glui32 numchars);
+glui32 glk_buffer_to_title_case_uni(glui32 *buf, glui32 len, glui32 numchars, glui32 lowerrest);
+</deffun>
+
+These functions provide two length arguments because a string of Unicode characters may expand when its case changes. The len argument is the available length of the buffer; numchars is the number of characters in the buffer initially. (So numchars must be less than or equal to len. The contents of the buffer after numchars do not affect the operation.) 
+
+The functions return the number of characters after conversion. If this is greater than len, the characters in the array will be safely truncated at len, but the true count will be returned. (The contents of the buffer after the returned count are undefined.)
+
+The lower_case and upper_case functions do what you'd expect: they convert every character in the buffer (the first numchars of them) to its upper or lower-case equivalent, if there is such a thing. 
+
+The title_case function has an additional (boolean) flag. Its basic function is to change the first character of the buffer to upper-case, and leave the rest of the buffer unchanged. If lowerrest is true, it changes all the non-first characters to lower-case (instead of leaving them alone.)
+
+See the Unicode spec (chapter 3.13, chapter 4.2, etc) for the exact definitions of upper, lower, and title-case mapping.
+
+<comment>Unicode has some strange case cases. For example, a combined character that looks like "ss" might properly be upper-cased into <em>two</em> characters "S". Title-casing is even stranger; "ss" (at the beginning of a word) might be title-cased into a different combined character that looks like "Ss". The glk_buffer_to_title_case_uni() function is actually title-casing the first character of the buffer. If it makes a difference.</comment>
+
+<comment>Earlier drafts of this spec had a separate function which title-cased the first character of every <em>word</em> in the buffer. I took this out after reading Unicode Standard Annex #29, which explains how to divide a string into words. If you want it, feel free to implement it.</comment>
 
 <h level=1 label=window>Windows</h>
 
@@ -505,7 +558,7 @@ I'm using the simplest possible splits in the examples above. Every split is 50-
 +---------+ +---------+ +----+----+
 </code>
 
-On the left, we turn the second split (B into B/C) upside down; we put the new window (C) below the old window (B).
+On the left, we turn the second split (B into B/C) upside down; we put the new window (C) above the old window (B).
 
 In the center, we mess with the percentages. The first split (A into A/B) is a 25-75 split, which makes B three times the size of A. The second (B into B/C) is a 33-66 split, which makes C twice the size of B. This looks rather like the second example above, but has a different internal structure.
 
@@ -732,7 +785,7 @@ Again, O3 is gone. But D has collapsed to zero height. This is because its heigh
 
 <h level=2 label=window_changing>Changing Window Constraints</h>
 
-There are library functions to change and to measure the size of a window. 
+There are library functions to change and to measure the size of a window.
 
 <deffun>
 void glk_window_get_size(winid_t win, glui32 *widthptr, glui32 *heightptr);
@@ -752,7 +805,7 @@ o2 = glk_window_get_parent(d);
 glk_window_set_arrangement(o2, winmethod_Above | winmethod_Fixed, 3, d);
 </code>
 
-That would set the D (the upper child of O2) to be O2's key window, and give it a fixed size of 3 rows. 
+That would set the D (the upper child of O2) to be O2's key window, and give it a fixed size of 3 rows.
 
 If you later wanted to expand D, you could do
 
@@ -896,7 +949,7 @@ In some libraries, you can receive a graphics-redraw event (evtype_Redraw) at an
 
 For a description of the drawing functions that apply to graphics windows, see <ref label=graphics_graphics>.
 
-Graphics windows support no input or output.
+Graphics windows support no text input or output.
 
 Not all libraries support graphics windows. You can test whether Glk graphics are available using the gestalt system. In a C program, you can also test whether the graphics functions are defined at compile-time. See <ref label=graphics_testing>. <comment>As with all windows, you should also test for NULL when you create a graphics window.</comment>
 
@@ -1057,49 +1110,63 @@ The upshot of this is that you should not call glk_select_poll() very often. If 
 
 <h level=2 label=char_events>Character Input Events</h>
 
-You can request character input from text buffer and text grid windows.
+You can request character input from text buffer and text grid windows. There are separate functions for requesting Latin-1 input and Unicode input; see <ref label=unicode_testing>.
 
 <deffun>
 void glk_request_char_event(winid_t win);
 </deffun>
 
-A window cannot have requests for both character and line input at the same time. It is illegal to call glk_request_char_event() if the window already has a pending request for either character or line input.
+Request input of a Latin-1 character or special key. A window cannot have requests for both character and line input at the same time. Nor can it have requests for character input of both types (Latin-1 and Unicode). It is illegal to call glk_request_char_event() if the window already has a pending request for either character or line input.
+
+<deffun>
+void glk_request_char_event_uni(winid_t win);
+</deffun>
+
+Request input of a Unicode character or special key.
 
 <deffun>
 void glk_cancel_char_event(winid_t win);
 </deffun>
 
-This cancels a pending request for character input. For convenience, it is legal to call glk_cancel_char_event() even if there is no character input request on that window. Glk will ignore the call in this case.
+This cancels a pending request for character input. (Either Latin-1 or Unicode.) For convenience, it is legal to call glk_cancel_char_event() even if there is no character input request on that window. Glk will ignore the call in this case.
 
-If a window has a pending request for character input, and the player hits a key in that window, glk_select() will return an event whose type is evtype_CharInput. Once this happens, the request is complete; it is no longer pending. You must call glk_request_char_event() if you want another character from that window.
+If a window has a pending request for character input, and the player hits a key in that window, glk_select() will return an event whose type is evtype_CharInput. Once this happens, the request is complete; it is no longer pending. You must call glk_request_char_event() or glk_request_char_event_uni() if you want another character from that window.
 
-In the event structure, win tells what window the event came from. val1 tells what character was entered; this will be a code from 0 to 255, or a special keycode. (See <ref label=encoding_inchar>.) val2 will be 0.
+In the event structure, win tells what window the event came from. val1 tells what character was entered; this will be a character code, or a special keycode. (See <ref label=encoding_inchar>.) If you called glk_request_char_event(), val1 will be in 0..255, or else a special keycode. In any case, val2 will be 0.
 
 <h level=2 label=line_events>Line Input Events</h>
 
-You can request line input from text buffer and text grid windows.
+You can request line input from text buffer and text grid windows. There are separate functions for requesting Latin-1 input and Unicode input; see <ref label=unicode_testing>.
 
 <deffun>
 void glk_request_line_event(winid_t win, char *buf, glui32 maxlen, glui32 initlen);
 </deffun>
 
-A window cannot have requests for both character and line input at the same time. It is illegal to call glk_request_line_event() if the window already has a pending request for either character or line input.
+Request input of a line of Latin-1 characters. A window cannot have requests for both character and line input at the same time. Nor can it have requests for line input of both types (Latin-1 and Unicode). It is illegal to call glk_request_line_event() if the window already has a pending request for either character or line input.
 
 The buf argument is a pointer to space where the line input will be stored. (This may not be NULL.) maxlen is the length of this space, in bytes; the library will not accept more characters than this. If initlen is nonzero, then the first initlen bytes of buf will be entered as pre-existing input &emdash; just as if the player had typed them himself. <comment>The player can continue composing after this pre-entered input, or delete it or edit as usual.</comment>
 
 The contents of the buffer are undefined until the input is completed (either by a line input event, or glk_cancel_line_event(). The library may or may not fill in the buffer as the player composes, while the input is still pending; it is illegal to change the contents of the buffer yourself.
 
 <deffun>
+void glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen, glui32 initlen);
+</deffun>
+
+Request input of a line of Unicode characters. This works the same as glk_request_line_event(), except the result is stored in an array of glui32 values instead of an array of characters, and the values may be any valid Unicode code points.
+
+The result will be in Unicode Normalization Form C. This basically means that composite characters will be single characters where possible, instead of sequences of base and combining marks. See <a href="http://www.unicode.org/reports/tr15/">Unicode Standard Annex #15</a> for the details.
+
+<deffun>
 void glk_cancel_line_event(winid_t win, event_t *event);
 </deffun>
 
-This cancels a pending request for line input. The event pointed to by the event argument will be filled in as if the player had hit enter, and the input composed so far will be stored in the buffer; see below. If you do not care about this information, pass NULL as the event argument. (The buffer will still be filled.)
+This cancels a pending request for line input. (Either Latin-1 or Unicode.) The event pointed to by the event argument will be filled in as if the player had hit enter, and the input composed so far will be stored in the buffer; see below. If you do not care about this information, pass NULL as the event argument. (The buffer will still be filled.)
 
 For convenience, it is legal to call glk_cancel_line_event() even if there is no line input request on that window. The event type will be set to evtype_None in this case.
 
 If a window has a pending request for line input, and the player hits enter in that window (or whatever action is appropriate to enter his input), glk_select() will return an event whose type is evtype_LineInput. Once this happens, the request is complete; it is no longer pending. You must call glk_request_line_event() if you want another line of text from that window.
 
-In the event structure, win tells what window the event came from. val1 tells how many characters were entered. val2 will be 0. The characters themselves are stored in the buffer specified in the original glk_request_line_event() call. <comment>There is no null terminator stored in the buffer.</comment>
+In the event structure, win tells what window the event came from. val1 tells how many characters were entered. val2 will be 0. The characters themselves are stored in the buffer specified in the original glk_request_line_event() or glk_request_line_event_uni() call. <comment>There is no null terminator stored in the buffer.</comment>
 
 It is illegal to print anything to a window which has line input pending. <comment>This is because the window may be displaying and editing the player's input, and printing anything would make life unnecessarily complicated for the library.</comment>
 
@@ -1116,7 +1183,7 @@ A window can have mouse input and character/line input pending at the same time.
 
 If the player clicks in a window which has a mouse input event pending, glk_select() will return an event whose type is evtype_MouseInput. Again, once this happens, the request is complete, and you must request another if you want further mouse input.
 
-In the event structure, win tells what window the event came from. 
+In the event structure, win tells what window the event came from.
 
 In a text grid window, the val1 and val2 fields are the x and y coordinates of the character that was clicked on. <comment>So val1 is the column, and val2 is the row.</comment> The top leftmost character is considered to be (0,0).
 
@@ -1174,7 +1241,7 @@ Arrangement events, like timer events, can be returned by glk_select_poll(). But
 
 <h level=2 label=redraw_events>Window Redrawing Events</h>
 
-On platforms that support graphics, it is possible that the contents of a graphics window will be lost, and have to be redrawn from scratch. If this occurs, then glk_select() will return an event whose type is evtype_Redraw. 
+On platforms that support graphics, it is possible that the contents of a graphics window will be lost, and have to be redrawn from scratch. If this occurs, then glk_select() will return an event whose type is evtype_Redraw.
 
 In the event structure, win will be NULL if all windows are affected. If only some windows are affected, win will refer to a window which contains all the affected windows. <comment>You can always play it safe, ignore win, and redraw every graphics window.</comment> val1 and val2 will be 0.
 
@@ -1267,7 +1334,7 @@ Returns the current stream, or NULL if there is none.
 void glk_put_char(unsigned char ch);
 </deffun>
 
-This prints one character to the current stream. As always, the character is assumed to be in the Latin-1 character encoding. See <ref label=encoding>.
+This prints one character to the current stream. As with all basic functions, the character is assumed to be in the Latin-1 character encoding. See <ref label=encoding>.
 
 <deffun>
 void glk_put_string(char *s);
@@ -1303,6 +1370,30 @@ void glk_put_buffer_stream(strid_t str, char *buf, glui32 len);
 
 These are the same functions, except that you specify a stream to print to, instead of using the current stream. Again, it is illegal for str to be NULL, or the reference of an input-only stream.
 
+<deffun>
+void glk_put_char_uni(glui32 ch);
+</deffun>
+
+This prints one character to the current stream. The character is assumed to be a Unicode code point. See <ref label=encoding>.
+
+<deffun>
+void glk_put_string_uni(glui32 *s);
+</deffun>
+
+This prints a string of Unicode characters to the current stream. It is equivalent to a series of glk_put_char_uni() calls. A string ends on a glui32 whose value is 0.
+
+<deffun>
+void glk_put_buffer_uni(glui32 *buf, glui32 len);
+</deffun>
+
+This prints a block of Unicode characters to the current stream. It is equivalent to a series of glk_put_char_uni() calls.
+
+<deffun>
+void glk_put_char_stream_uni(strid_t str, glui32 ch);
+void glk_put_string_stream_uni(strid_t str, glui32 *s);
+void glk_put_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len);
+</deffun>
+
 <h level=2>How To Read</h>
 
 <deffun>
@@ -1311,7 +1402,9 @@ glsi32 glk_get_char_stream(strid_t str);
 
 This reads one character from the given stream. (There is no notion of a "current input stream.") It is illegal for str to be NULL, or an output-only stream.
 
-The result will be between 0 and 255; as always, Glk assumes the Latin-1 encoding. See <ref label=encoding>. If the end of the stream has been reached, the result will be -1. <comment>Note that high-bit characters (128..255) are <em>not</em> returned as negative numbers.</comment>
+The result will be between 0 and 255. As with all basic text functions, Glk assumes the Latin-1 encoding. See <ref label=encoding>. If the end of the stream has been reached, the result will be -1. <comment>Note that high-bit characters (128..255) are <em>not</em> returned as negative numbers.</comment>
+
+If the stream contains Unicode data &emdash; for example, if it was created with glk_stream_open_file_uni() or glk_stream_open_memory_uni() &emdash; then characters beyond 255 will be returned as 0x3F ("?").
 
 <deffun>
 glui32 glk_get_buffer_stream(strid_t str, char *buf, glui32 len);
@@ -1326,6 +1419,24 @@ glui32 glk_get_line_stream(strid_t str, char *buf, glui32 len);
 This reads characters from the given stream, until either len-1 characters have been read or a newline has been read. It then puts a terminal null ('\0') character on the end. It returns the number of characters actually read, including the newline (if there is one) but not including the terminal null.
 
 It is usually more efficient to read several characters at once with glk_get_buffer_stream() or glk_get_line_stream(), as opposed to calling glk_get_char_stream() several times.
+
+<deffun>
+glsi32 glk_get_char_stream_uni(strid_t str);
+</deffun>
+
+Reads one character from the given stream.  The result will be between 0 and 0x7fffffff.  If the end of the stream has been reached, the result will be -1.
+
+<deffun>
+glui32 glk_get_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len);
+</deffun>
+
+This reads len Unicode characters from the given stream, unless the end of the stream is reached first.  No terminal null is placed in the buffer.  It returns the number of Unicode characters actually read.
+
+<deffun>
+glui32 glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len);
+</deffun>
+
+This reads Unicode characters from the given stream, until either len-1 Unicode characters have been read or a newline has been read. It then puts a terminal null (a zero value) on the end. It returns the number of Unicode characters actually read, including the newline (if there is one) but not including the terminal null.
 
 <h level=2 label=stream_close>Closing Streams</h>
 
@@ -1354,7 +1465,11 @@ You can set the position of the read/write mark in a stream. <comment>Which make
 glui32 glk_stream_get_position(strid_t str);
 </deffun>
 
-This returns the position of the mark. For memory streams and binary file streams, this is exactly the number of bytes read or written from the beginning of the stream (unless you have moved the mark with glk_stream_set_position().) For text file streams, matters are more ambiguous, since (for example) writing one byte to a text file may store more than one character in the platform's native encoding. You can only be sure that the position increases as you read or write to the file.
+This returns the position of the mark. For memory streams and binary file streams, this is exactly the number of characters read or written from the beginning of the stream (unless you have moved the mark with glk_stream_set_position().) For text file streams, matters are more ambiguous, since (for example) writing one byte to a text file may store more than one character in the platform's native encoding. You can only be sure that the position increases as you read or write to the file.
+
+Additional complication: for Latin-1 memory and file streams, a character is a byte. For Unicode memory and file streams (those created by glk_stream_open_file_uni() and glk_stream_open_memory_uni()), a character is a 32-bit word. So in a binary Unicode file, positions are multiples of four bytes. 
+
+<comment>If this bothers you, don't use binary Unicode files. I don't think they're good for much anyhow.</comment>
 
 <deffun>
 void glk_stream_set_position(strid_t str, glsi32 pos, glui32 seekmode);
@@ -1371,6 +1486,8 @@ This sets the position of the mark. The position is controlled by pos, and the m
 It is illegal to specify a position before the beginning or after the end of the file.
 
 In binary files, the mark position is exact &emdash; it corresponds with the number of characters you have read or written. In text files, this mapping can vary, because of linefeed conversions or other character-set approximations. (See <ref label=stream>.) glk_stream_set_position() and glk_stream_get_position() measure positions in the platform's native encoding &emdash; after character cookery. Therefore, in a text stream, it is safest to use glk_stream_set_position() only to move to the beginning or end of a file, or to a position determined by glk_stream_get_position().
+
+Again, in Latin-1 streams, characters are bytes. In Unicode streams, characters are 32-bit words, or four bytes each.
 
 <h level=2 label=stream_style>Styles</h>
 
@@ -1433,7 +1550,7 @@ These functions do <em>not</em> affect <em>existing</em> windows. They affect th
 
 <comment>This policy makes life easier for the interpreter. It knows everything about a particular window's appearance when the window is created, and it doesn't have to change it while the window exists.</comment>
 
-Hints are hints. The interpreter may ignore them, or give the player a choice about whether to accept them. Also, it is never necessary to set hints. You don't have to suggest that style_Preformatted be fixed-width, or style_Emphasized be boldface or italic; they will have appropriate defaults. Hints are for situations when you want to <em>change</em> the appearance of a style from what it would ordinarily be. The most common case when this is appropriate is for the styles style_User1 and style_User2. 
+Hints are hints. The interpreter may ignore them, or give the player a choice about whether to accept them. Also, it is never necessary to set hints. You don't have to suggest that style_Preformatted be fixed-width, or style_Emphasized be boldface or italic; they will have appropriate defaults. Hints are for situations when you want to <em>change</em> the appearance of a style from what it would ordinarily be. The most common case when this is appropriate is for the styles style_User1 and style_User2.
 
 There are currently nine style hints defined. More may be defined in the future.
 
@@ -1505,7 +1622,7 @@ fmode must be filemode_Read, filemode_Write, or filemode_ReadWrite.
 
 buf points to the buffer where output will be read from or written to. buflen is the length of the buffer.
 
-When outputting, if more than buflen characters are written to the stream, all of them beyond the buffer length will be thrown away, so as not to overwrite the buffer. (The character count of the stream will still be maintained correctly. That is, it will count the number of characters written into the stream, not the number that fit in the buffer.) 
+When outputting, if more than buflen characters are written to the stream, all of them beyond the buffer length will be thrown away, so as not to overwrite the buffer. (The character count of the stream will still be maintained correctly. That is, it will count the number of characters written into the stream, not the number that fit in the buffer.)
 
 If buf is NULL, or for that matter if buflen is zero, then <em>everything</em> written to the stream is thrown away. This may be useful if you are interested in the character count.
 
@@ -1513,7 +1630,17 @@ When inputting, if more than buflen characters are read from the stream, the str
 
 The data is written to the buffer exactly as it was passed to the printing functions (glk_put_char(), etc); input functions will read the data exactly as it exists in memory. No platform-dependent cookery will be done on it. <comment>You can write a disk file in text mode, but a memory stream is effectively always in binary mode.</comment>
 
+Unicode values (characters greater than 255) cannot be written to the buffer. If you try, they will be stored as 0x3F ("?") characters.
+
 Whether reading or writing, the contents of the buffer are undefined until the stream is closed. The library may store the data there as it is written, or deposit it all in a lump when the stream is closed. It is illegal to change the contents of the buffer while the stream is open.
+
+<deffun>
+strid_t glk_stream_open_memory_uni(glui32 *buf, glui32 buflen, glui32 fmode, glui32 rock);
+</deffun>
+
+This works just like glk_stream_open_memory(), except that the buffer is an array of 32-bit words, instead of bytes. This allows you to write and read any Unicode character. The buflen is the number of words, not the number of bytes.
+
+<comment>If the buffer contains the value 0xFFFFFFFF, and is opened for reading, the reader cannot distinguish that value from -1 (end-of-file). Fortunately 0xFFFFFFFF is not a valid Unicode character.</comment>
 
 <h level=3 label=file_streams>File Streams</h>
 
@@ -1526,6 +1653,16 @@ strid_t glk_stream_open_file(frefid_t fileref, glui32 fmode, glui32 rock);
 fileref indicates the file which will be opened. fmode can be any of filemode_Read, filemode_Write, filemode_WriteAppend, or filemode_ReadWrite. If fmode is filemode_Read, the file must already exist; for the other modes, an empty file is created if none exists. If fmode is filemode_Write, and the file already exists, it is truncated down to zero length (an empty file). If fmode is filemode_WriteAppend, the file mark is set to the end of the file.
 
 The file may be read or written in text or binary mode; this is determined by the fileref argument. Similarly, platform-dependent attributes such as file type are determined by fileref. See <ref label=fileref>.
+
+When writing in binary mode, Unicode values (characters greater than 255) cannot be written to the file. If you try, they will be stored as 0x3F ("?") characters. In text mode, Unicode values may be stored exactly, approximated, or abbreviated, depending on what the platform's text files support.
+
+<deffun>
+strid_t glk_stream_open_file_uni(frefid_t fileref, glui32 fmode, glui32 rock);
+</deffun>
+
+This works just like glk_stream_open_file(), except that in binary mode, characters are written and read as four-byte (big-endian) values. This allows you to write and read any Unicode character.
+
+In text mode, the file is written and read in a platform-dependent way, which may or may not handle all Unicode characters. A text-mode file created with glk_stream_open_file_uni() may have the same format as a text-mode file created with glk_stream_open_file(); or it may use a more Unicode-friendly format.
 
 <h level=2>Other Stream Functions</h>
 
@@ -1614,7 +1751,7 @@ This copies an existing file reference, but changes the usage. (The original fil
 
 The use of this function can be tricky. If you change the type of the fileref (fileusage_Data, fileusage_SavedGame, etc), the new reference may or may not point to the same actual disk file. <comment>This generally depends on whether the platform uses suffixes to indicate file type.</comment> If you do this, and open both file references for writing, the results are unpredictable. It is safest to change the type of a fileref only if it refers to a nonexistent file.
 
-If you change the mode of a fileref (fileusage_TextMode, fileusage_BinaryMode), but leave the rest of the type unchanged, the new fileref will definitely point to the same disk file as the old one. 
+If you change the mode of a fileref (fileusage_TextMode, fileusage_BinaryMode), but leave the rest of the type unchanged, the new fileref will definitely point to the same disk file as the old one.
 
 Obviously, if you write to a file in text mode and then read from it in binary mode, the results are platform-dependent.
 
@@ -1696,7 +1833,7 @@ If width or height is zero, nothing is drawn. Since those arguments are unsigned
 
 A graphics window is a rectangular canvas of pixels, upon which you can draw images. The contents are entirely under your control. You can draw as many images as you like, at any positions &emdash; overlapping if you like. If the window is resized, you are responsible for redrawing everything. See <ref label=window_graphics>.
 
-If you call glk_image_draw() or glk_image_draw_scaled() in a graphics window, val1 and val2 are interpreted as X and Y coordinates. The image will be drawn with its upper left corner at this position. 
+If you call glk_image_draw() or glk_image_draw_scaled() in a graphics window, val1 and val2 are interpreted as X and Y coordinates. The image will be drawn with its upper left corner at this position.
 
 It is legitimate for part of the image to fall outside the window; the excess is not drawn. Note that these are signed arguments, so you can draw an image which falls outside the left or top edge of the window, as well as the right or bottom.
 
@@ -1710,7 +1847,7 @@ This sets the window's background color. It does <em>not</em> change what is cur
 
 Colors are encoded in a 32-bit value: the top 8 bits must be zero, the next 8 bits are the red value, the next 8 bits are the green value, and the bottom 8 bits are the blue value. Color values range from 0 to 255. <comment>So 0x00000000 is black, 0x00FFFFFF is white, and 0x00FF0000 is bright red.</comment>
 
-<comment>This function may only be used with graphics windows. To set background colors in a text window, use text styles with color hints; see <ref label=stream_style>.</comment> 
+<comment>This function may only be used with graphics windows. To set background colors in a text window, use text styles with color hints; see <ref label=stream_style>.</comment>
 
 <deffun>
 void glk_window_fill_rect(winid_t win, glui32 color, glsi32 left, glsi32 top, glui32 width, glui32 height);
@@ -1746,7 +1883,7 @@ The two "margin" alignments require some care. To allow proper positioning, imag
 
 Inline-aligned images count as "text" for the purpose of this rule.
 
-You may have images in both margins at the same time. 
+You may have images in both margins at the same time.
 
 It is also legal to have more than one image in the <em>same</em> margin (left or right.) However, this is not recommended. It is difficult to predict how text will wrap in that situation, and libraries may err on the side of conservatism.
 
@@ -1912,7 +2049,7 @@ To avoid this, you can perform a preprocessor test for the existence of GLK_MODU
 res = glk_gestalt(gestalt_SoundMusic, 0);
 </code>
 
-This returns 1 if the library is capable of playing music sound resources. If it returns 0, only sampled sounds can be played.<comment>"Music sound resources" means MOD songs -- the only music format that Blorb currently supports. The presence of this selector is, of course, an ugly hack. It is a concession to the current state of the Glk libraries, some of which can handle AIFF but not MOD sounds.</comment>
+This returns 1 if the library is capable of playing music sound resources. If it returns 0, only sampled sounds can be played.<comment>"Music sound resources" means MOD songs &emdash; the only music format that Blorb currently supports. The presence of this selector is, of course, an ugly hack. It is a concession to the current state of the Glk libraries, some of which can handle AIFF but not MOD sounds.</comment>
 
 <code>
 glui32 res;
@@ -1930,7 +2067,7 @@ This selector returns 1 if the library supports sound notification events. If it
 
 <h level=1 label=links>Hyperlinks</h>
 
-Some games may wish to mark up the text in their windows with hyperlinks, which can be selected by the player -- most likely by mouse click. Glk allows this in a manner similar to the way text styles are set.
+Some games may wish to mark up the text in their windows with hyperlinks, which can be selected by the player &emdash; most likely by mouse click. Glk allows this in a manner similar to the way text styles are set.
 
 Hyperlinks are an optional capability in Glk.
 
@@ -1964,7 +2101,7 @@ A window can have hyperlink input and mouse, character, or line input pending at
 
 When a link is selected in a window with a pending request, glk_select() will return an event of type evtype_Hyperlink. In the event structure, win tells what window the event came from, and val1 gives the (non-zero) link value.
 
-If no hyperlink request is pending in a window, the library will ignore attempts to select a link. No evtype_Hyperlink event will be generated unless it has been requested. 
+If no hyperlink request is pending in a window, the library will ignore attempts to select a link. No evtype_Hyperlink event will be generated unless it has been requested.
 
 <h level=2 label=link_testing>Testing for Hyperlink Capabilities</h>
 
@@ -2022,7 +2159,7 @@ Remember that the Glk library is likely to have some options of its own &emdash;
 
 <h level=2>Going Outside the Glk API</h>
 
-Nonportable problems are not limited to the start of execution. There is also the question of OS services which are not represented in Glk. The ANSI C libraries are so familiar that they seem universal, but they are actually not necessarily present. Palmtop platforms such as the Pilot are particularly good at leaving out ANSI libraries.
+Nonportable problems are not limited to the start of execution. There is also the question of OS services which are not represented in Glk. The ANSI C libraries are so familiar that they seem universal, but they are actually not necessarily present. Palmtop platforms such as PalmOS are particularly good at leaving out ANSI libraries.
 
 <h level=3>Memory Management</h>
 
@@ -2032,7 +2169,7 @@ The malloc() system is simple; it can probably be implemented as a layer on top 
 
 <h level=3>String Manipulation</h>
 
-This is more of a nuisance, because the set of string functions varies quite a bit between platforms. Consider bcopy(), memcpy(), and memmove(); stricmp() and strcasecmp(); strchr() and index(); and so on. And again, on a palmtop machine, none of these may be available. The maximally safe course is to implement what you need yourself. <comment>See the model.c program for an example; it implements its own str_eq() and str_len().</comment> 
+This is more of a nuisance, because the set of string functions varies quite a bit between platforms. Consider bcopy(), memcpy(), and memmove(); stricmp() and strcasecmp(); strchr() and index(); and so on. And again, on a palmtop machine, none of these may be available. The maximally safe course is to implement what you need yourself. <comment>See the model.c program for an example; it implements its own str_eq() and str_len().</comment>
 
 The maximally safe course is also a pain in the butt, and may well be inefficient (a platform may have a memcpy() which is highly optimized for large moves.) That's porting in the big city.
 
@@ -2042,7 +2179,7 @@ The maximally safe course is also a pain in the butt, and may well be inefficien
 
 This is the real nuisance, because Glk provides a limited set of stream and file functions. And yet there are all these beautiful ANSI stdio calls, which have all these clever tricks &emdash; ungetc(), fast macro fgetc(), formatted fprintf(), not to mention the joys of direct pathname manipulation. Why bother with the Glk calls?
 
-The problem is, the stdio library really isn't always the best choice. The Pilot and Newton simply don't use stdio. The Mac has a stdio library built on top of its native file API, but it's a large extra library which porters may not wish to link in.
+The problem is, the stdio library really isn't always the best choice. PalmOS and Newton simply don't use stdio. The Mac has a stdio library built on top of its native file API, but it's a large extra library which porters may not wish to link in.
 
 There's also the problem of hooking into the Glk API. Window output goes through Glk streams. <comment>It would have been lovely to use the stdio API for that, but it's not generally possible.</comment>
 
@@ -2072,7 +2209,7 @@ If the I/O API is a subset of the capabilities of Glk, it can be implemented as 
 
 <h level=3>Glk as a VM's Native API</h>
 
-The other approach is to use Glk as the virtual machine's own I/O API, and provide it directly to the game author. This is inherently more powerful, since it allows access to all of Glk, instead of a subset. As Glk is designed to be easily expandable, and will gain new (optional) capabilities over time, this approach also allows a VM to gain capabilities over time without much upheaval.
+The other approach is to use Glk as the virtual machine's own I/O API, and provide it directly to the game author. The Glulx virtual machine is built this way. This is inherently more powerful, since it allows access to all of Glk, instead of a subset. As Glk is designed to be easily expandable, and will gain new (optional) capabilities over time, this approach also allows a VM to gain capabilities over time without much upheaval.
 
 <comment>To a certain extent, Glk was designed for this use more than any other. For example, this is why all Glk function arguments are either pointers or 32-bit integers, and why all Glk API structures are effectively arrays of same. It is also why the iterator functions exist; a VM's entire memory space may be reset by an "undo" or "restore" command, and it would then have to, ah, take inventory of its streams and windows and filerefs.</comment>
 
@@ -2082,7 +2219,7 @@ The other approach is to use Glk as the virtual machine's own I/O API, and provi
 
 The mechanics of this are tricky, because Glk has many API calls, and more will be added over time.
 
-In a VM with a limited number of opcodes, it may be best to allocate a single "Glk" opcode, with a variable number of arguments, the first of which is a function selector. Allow at least 16 bits for this selector; there may be more than 256 Glk calls someday. (For a list of standard selectors for Glk calls, see <ref label=selectors>.)
+In a VM with a limited number of opcodes, it may be best to allocate a single "Glk" opcode, with a variable number of arguments, the first of which is a function selector. (Glulx does this.) Allow at least 16 bits for this selector; there may be more than 256 Glk calls someday. (For a list of standard selectors for Glk calls, see <ref label=selectors>.)
 
 In a VM with a large opcode space, you could reserve a 16-bit range of opcodes for Glk.
 
@@ -2299,7 +2436,7 @@ ev.val1 = arglist[3].uint;
 ev.val2 = arglist[4].uint;
 </code>
 
-Since the structure passed to glk_select() is a pass-out reference (the entry values are ignored), you don't need to fill in arglist[1..4] before calling gidispatch_call(). 
+Since the structure passed to glk_select() is a pass-out reference (the entry values are ignored), you don't need to fill in arglist[1..4] before calling gidispatch_call().
 
 <comment>Theoretically, you would invoke glk_select(NULL) by setting arglist[0].ptrflag to FALSE, and using a one-element arglist instead of five-element. But it's illegal to pass NULL to glk_select(). So you cannot actually do this.</comment>
 
@@ -2365,6 +2502,7 @@ The basic type codes:
 <li>Iu, Is: Unsigned and signed 32-bit integer.
 <li>Cn, Cu, Cs: Character, unsigned char, and signed char. <comment>Of course Cn will be the same as either Cu or Cs, depending on the platform. For this reason, Glk avoids using it, but it is included here for completeness.</comment>
 <li>S: A C-style string (null-terminated array of char). In Glk, strings are always treated as read-only and used immediately; the library does not retain a reference to a string between Glk calls. A Glk call that wants to use writable char arrays will use an array type ("#C"), not string ("S").
+<li>U: A zero-terminated array of 32-bit integers. This is primarily intended as a Unicode equivalent of "S". Like "S" strings, "U" strings are read-only and used immediately. A Glk call that wants to use writable Unicode arrays will use an array type ("#Iu") instead of "U".
 <li>F: A floating-point value. Glk does not currently use floating-point values, but we might as well define a code for them.
 <li>Qa, Qb, Qc...: A reference to an opaque object. The second letter determines which class is involved. (The number of classes can be gleaned from gidispatch_count_classes(); see <ref label=interrogating_func>). <comment>If Glk expands to have more than 26 classes, we'll think of something.</comment>
 </list>
@@ -2451,7 +2589,7 @@ void my_vm_unreg_array(void *array, glui32 len, char *typecode, gidispatch_rock_
 
 Whenever a Glk function retains an array, it will call my_vm_reg_array(). This occurs only if you pass an array to an argument with the "#!" prefix. <comment>But not in every such case. Wait for the my_vm_reg_array() call to confirm it.</comment> The library passes the array and its length, exactly as you put them in the gluniversal_t array. It also passes the string which describes the argument.
 
-<comment>Currently, the only calls that retain arrays are glk_request_line_event() and glk_stream_open_memory(). Both of these use arrays of characters, so the string in both cases is "&amp;+#!Cn".</comment>
+<comment>Currently, the only calls that retain arrays are glk_request_line_event(), glk_stream_open_memory(), glk_request_line_event_uni(), and glk_stream_open_memory_uni(). The first two of these use arrays of characters, so the string is "&amp;+#!Cn". The latter two use arrays of glui32, so the string is "&amp;+#!Iu".</comment>
 
 You can return any value in the gidispatch_rock_t object; the library will stash this away with the array.
 
@@ -2550,6 +2688,23 @@ These values, and the values used for future Glk calls, are integers in the rang
 <li>0x0101: glk_set_hyperlink_stream
 <li>0x0102: glk_request_hyperlink_event
 <li>0x0103: glk_cancel_hyperlink_event
+<li>0x0120: glk_buffer_to_lower_case_uni
+<li>0x0121: glk_buffer_to_upper_case_uni
+<li>0x0122: glk_buffer_to_title_case_uni
+<li>0x0128: glk_put_char_uni
+<li>0x0129: glk_put_string_uni
+<li>0x012A: glk_put_buffer_uni
+<li>0x012B: glk_put_char_stream_uni
+<li>0x012C: glk_put_string_stream_uni
+<li>0x012D: glk_put_buffer_stream_uni
+<li>0x0130: glk_get_char_stream_uni
+<li>0x0131: glk_get_buffer_stream_uni
+<li>0x0132: glk_get_line_stream_uni
+<li>0x0138: glk_stream_open_file_uni
+<li>0x0139: glk_stream_open_memory_uni
+<li>0x0140: glk_request_char_event_uni
+<li>0x0141: glk_request_line_event_uni
+
 </list>
 
 Note that glk_main() does not have a selector, because it's provided by your program, not the library.
@@ -2558,13 +2713,13 @@ There is no way to use these selectors directly in the Glk API. <comment>An earl
 
 <h level=2 label=blorblayer>The Blorb Layer</h>
 
-The material described in this section is not part of the Glk API per se. It is an external layer which allows the library to load resources (images and sounds) from a file specified by your program. The Blorb file format is a standard IF resource archive. 
+The material described in this section is not part of the Glk API per se. It is an external layer which allows the library to load resources (images and sounds) from a file specified by your program. The Blorb file format is a standard IF resource archive.
 
 The Glk spec does not require that resources be stored in a Blorb file. It says only that the library knows how to load them and use them, when you so request. However, Blorb is the recommended way to supply portable resources. Most Glk libraries will support Blorb, using the interface defined in this section.
 
 For the complete Blorb specification and tools for Blorb file manipulation, see:
 
-http://www.eblong.com/zarf/blorb/
+<a href="http://www.eblong.com/zarf/blorb/">http://www.eblong.com/zarf/blorb/</a>
 
 <h level=3>How This Works</h>
 
