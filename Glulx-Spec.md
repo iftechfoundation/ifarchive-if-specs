@@ -752,11 +752,13 @@ Compute (L1 % L2), and store the result in S1. This is the remainder from signed
 In division and remainer, signs are annoying. Rounding is towards zero. The sign of a remainder equals the sign of the dividend. It is always true that (A / B) * B + (A % B) == A. Some examples (in decimal):
 
 <code>
--11 /  2 = -5       
--11 / -2 =  5        
+ 11 /  2 =  5
+-11 /  2 = -5
  11 / -2 = -5
--13 %  5 = -3        
- 13 % -5 =  3       
+-11 / -2 =  5
+ 13 %  5 =  3
+-13 %  5 = -3
+ 13 % -5 =  3
 -13 % -5 = -3
 </code>
 
