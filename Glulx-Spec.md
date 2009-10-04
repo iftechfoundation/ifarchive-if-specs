@@ -31,7 +31,7 @@ The Inform compiler already does most of the work of translating a high-level la
 
 Indeed, most of the effort that has gone into this system has been modifying Inform. Glulx itself is nearly an afterthought.
 
-<h level=2>Glulx and Other IF Systems</h>
+<h level=2 label=otherif>Glulx and Other IF Systems</h>
 
 Glulx grew out of the desire to extend Inform. However, it may well be suitable as a VM for other IF systems.
 
@@ -39,7 +39,9 @@ Or maybe not. Since Glulx <em>is</em> so lightweight, a compiler has to be fairl
 
 However, if a system wants to use a simple runtime format with 32-bit data, Glulx may be a good choice.
 
-<comment>Note that this is entirely separate from question of the I/O layer. Glulx uses the Glk I/O API, for the sake of simplicity and portability. Any IF system can do the same. One can use Glk I/O without using the Glulx game-file format. On the obverse, one could also extend the Glulx VM to use a different I/O system instead of Glk.</comment>
+Note that this is entirely separate from question of the I/O layer. Glulx uses the Glk I/O API, for the sake of simplicity and portability. Any IF system can do the same. One can use Glk I/O without using the Glulx game-file format. 
+
+On the obverse, one could also extend the Glulx VM to use a different I/O system instead of Glk. One such extension is FyreVM, a commercial IF system developed by Textfyre. FyreVM is described at <a href="http://textfyre.com/fyrevm/">http://textfyre.com/fyrevm/</a>. This specification does not cover it, except to note opcodes, gestalt selectors, and iosys values that are specific to FyreVM.
 
 <h level=2>Credits</h>
 
@@ -153,6 +155,8 @@ The section is terminated by a pair of zero bytes. Another pair of zeroes is add
 The "format of locals" information is needed by the terp in two places: when calling a function (to write in function arguments), and when saving the game (to fix byte-ordering of the locals.) The formatting is <em>not</em> enforced by the terp while a function is executing. The program is not prevented from accessing locations whose size and position don't match the formatting, or locations that overlap, or even locations in the padding between locals. However, if a program does this, the results are undefined, because the byte-ordering of locals is up to the terp. The save-game algorithm will fail, if nothing else.
 
 <comment>In fact, the call frame may not exist as a byte sequence during function execution. The terp is free to maintain a more structured form, as long as it generates valid save-game files, and correctly handles accesses to valid (according to the format) locals.</comment>
+
+<comment>NOTE: 8-bit and 16-bit locals have never been in common use, and this spec has not been unambiguous in describing their handling. (By which I mean, what I implemented in the reference interpreter didn't match the spec.) Therefore, 8-bit and 16-bit locals are deprecated.</comment>
 
 <h level=3 label=callstub>Call Stubs</h>
 
@@ -717,6 +721,8 @@ The table of opcodes:
 <li>0x181: accelparam
 </list>
 
+Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM, and are not documented here. See <ref label=otherif>.
+
 <h level=2>Math</h>
 
 <deffun>
@@ -1092,7 +1098,7 @@ catch S1 L1
 
 Generates a "catch token", which can be used to jump back to this execution point from a throw opcode. The token is stored in S1, and then execution branches to offset L1. If execution is proceeding from this point because of a throw, the thrown value is stored instead, and the branch is ignored.
 
-Remember that a branch value can be 0 to return 0, or 1 to return 1. (These return from the function that contains the catch opcode.) Otherwise, it branches to (Addr + L1 - 2), where Addr is the address of the instruction <em>after</em> the catch.
+Remember if the branch value is not 0 or 1, the branch is to to (Addr + L1 - 2), where Addr is the address of the instruction <em>after</em> the catch. If the value <em>is</em> 0 or 1, the function returns immediately, invalidating the catch token.
 
 If S1 or L1 uses the stack push/pop modes, note that the precise order of execution is: evaluate L1 (popping if appropriate); generate a call stub and compute the token; store S1 (pushing if appropriate).
 
@@ -1264,8 +1270,9 @@ These systems are currently defined:
 
 <list>
 <li>0: The null system. All output is discarded. (When the Glulx machine starts up, this is the current system.)
-<li>1: The filtering system. The rock (L2) value should be the address of a Glulx function. This function will be called for every character output (with the character value, 00 to FF, as its sole argument). The function's return value is ignored.
+<li>1: The filtering system. The rock (L2) value should be the address of a Glulx function. This function will be called for every character output (with the character value as its sole argument). The function's return value is ignored.
 <li>2: The Glk system. All output will be handled through Glk function calls, sent to the current Glk stream.
+<li>20: The FyreVM channel system. See <ref label=otherif>.
 </list>
 
 It is important to recall that when Glulx starts up, the Glk I/O system is <em>not</em> set. And when Glk starts up, there are no windows and no current output stream. To make anything appear to the user, you must first do three things: select the Glk I/O system, open a Glk window, and set its stream as the current one. (It is illegal in Glk to send output when there is no stream set. Sending output to Glulx's "null" I/O system is legal, but pointless.)
@@ -1674,7 +1681,7 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 <li>TerpVersion (1): Returns the version of the interpreter. The format is the same as the GlulxVersion. <comment>Each interpreter has its own version numbering system, defined by its author, so this information is not terribly useful. But it is convenient for the game to be able to display it, in case the player is capturing version information for a bug report.</comment>
 <li>ResizeMem (2): Returns 1 if the terp has the potential to resize the memory map, with the setmemsize opcode. If this returns 0, setmemsize will always fail. <comment>But remember that setmemsize might fail in any case.</comment>
 <li>Undo (3): Returns 1 if the terp has the potential to undo. If this returns 0, saveundo and restoreundo will always fail.
-<li>IOSystem (4): Returns 1 if the terp supports the I/O system given in L2. (The constants are the same as for the setiosys opcode: 0 for null, 1 for filter, 2 for Glk. 0 and 1 will always succeed, and 2 will also in any Glulx interpreter currently planned.) 
+<li>IOSystem (4): Returns 1 if the terp supports the I/O system given in L2. (The constants are the same as for the setiosys opcode: 0 for null, 1 for filter, 2 for Glk, 20 for FyreVM. 0 and 1 will always succeed.) 
 <li>Unicode (5): Returns 1 if the terp supports Unicode operations. These are: the E2 Unicode string type; the 04 and 05 string node types (in compressed strings); the streamunichar opcode; the type-14 call stub. If the Unicode selector returns 0, encountering any of these will cause a fatal interpreter error.
 <li>MemCopy (6): Returns 1 if the interpreter supports the mzero and mcopy opcodes. (This must true for any terp supporting Glulx 3.1.)
 <li>MAlloc (7): Returns 1 if the interpreter supports the malloc and mfree opcodes. (If this is true, MemCopy and ResizeMem must also both be true, so there is no need to check all three.)
@@ -1682,6 +1689,8 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 <li>Acceleration (9): Returns 1 if the interpreter supports the accelfunc and accelparam opcodes. (This must true for any terp supporting Glulx 3.1.1.)
 <li>AccelFunc (10): Returns 1 if the terp implements the accelerated function given in L2.
 </list>
+
+Selectors 0x1000 to 0x10FF are reserved for use by FyreVM, and are not documented here. See <ref label=otherif>.
 
 <comment>The Unicode selector is slightly redundant. Since the Unicode operations exist in Glulx spec 3.0 and higher, you can get the same information by testing GlulxVersion against 0x00030000. However, it's clearer to have a separate selector. Similarly, the MemCopy selector is true exactly when GlulxVersion is 0x00030100 or higher.</comment>
 
