@@ -4,7 +4,7 @@
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
-Copyright 1998-2004 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
+Copyright 1998-2009 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
 
 This document and further Glk information can be found at: <a href="http://www.eblong.com/zarf/glk/">http://www.eblong.com/zarf/glk/</a>
 
@@ -1028,7 +1028,7 @@ Erase the window. The meaning of this depends on the window type.
 
 <list>
 <li>Text buffer: This may do any number of things, such as delete all text in the window, or print enough blank lines to scroll all text beyond visibility, or insert a page-break marker which is treated specially by the display part of the library.
-<li>Text grid: This will clear the window, filling all positions with blanks. The window cursor is moved to the top left corner (position 0,0).
+<li>Text grid: This will clear the window, filling all positions with blanks (in the normal style). The window cursor is moved to the top left corner (position 0,0).
 <li>Graphics: Clears the entire window to its current background color. See <ref label=window_graphics>.
 <li>Other window types: No effect.
 </list>
@@ -1432,13 +1432,13 @@ It is usually more efficient to read several characters at once with glk_get_buf
 glsi32 glk_get_char_stream_uni(strid_t str);
 </deffun>
 
-Reads one character from the given stream.  The result will be between 0 and 0x7fffffff.  If the end of the stream has been reached, the result will be -1.
+Reads one character from the given stream. If the end of the stream has been reached, the result will be -1.
 
 <deffun>
 glui32 glk_get_buffer_stream_uni(strid_t str, glui32 *buf, glui32 len);
 </deffun>
 
-This reads len Unicode characters from the given stream, unless the end of the stream is reached first.  No terminal null is placed in the buffer.  It returns the number of Unicode characters actually read.
+This reads len Unicode characters from the given stream, unless the end of the stream is reached first. No terminal null is placed in the buffer.  It returns the number of Unicode characters actually read.
 
 <deffun>
 glui32 glk_get_line_stream_uni(strid_t str, glui32 *buf, glui32 len);
@@ -1614,7 +1614,7 @@ Signed values, such as the stylehint_Weight value, are cast to glui32. They may 
 
 <h level=3 label=window_streams>Window Streams</h>
 
-Every window has an output stream associated with it. This is created automatically, with filemode_Write, when you open the window. You get it with glk_window_get_stream().
+Every window has an output stream associated with it. This is created automatically, with filemode_Write, when you open the window. You get it with glk_window_get_stream(). Window streams always have rock value 0.
 
 A window stream cannot be closed with glk_stream_close(). It is closed automatically when you close its window with glk_window_close().
 
@@ -1686,7 +1686,7 @@ This iterates through all the existing streams. See <ref label=opaque_iteration>
 glui32 glk_stream_get_rock(strid_t str);
 </deffun>
 
-This retrieves the stream's rock value. See <ref label=opaque_rocks>.
+This retrieves the stream's rock value. See <ref label=opaque_rocks>. Window streams always have rock 0; all other streams return whatever rock you created them with.
 
 <h level=1 label=fileref>File References</h>
 
@@ -1792,6 +1792,8 @@ void glk_fileref_delete_file(frefid_t fref);
 </deffun>
 
 This deletes the file referred to by fref. It does not destroy the fileref itself.
+
+You should only call this with a fileref that refers to an existing file.
 
 <deffun>
 glui32 glk_fileref_does_file_exist(frefid_t fref);
