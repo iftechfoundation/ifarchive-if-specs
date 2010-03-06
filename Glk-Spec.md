@@ -1231,7 +1231,7 @@ The rule is that when you call glk_select() or glk_select_poll(), if it has been
 
 Timer events do not stack up. If you spend 10N milliseconds doing computation, and then call glk_select(), you will not get ten timer events in a row. The library will simply note that it has been more than N milliseconds, and return a timer event right away. If you call glk_select() again immediately, it will be N milliseconds before the next timer event.
 
-This means that the timing of timer events is approximate, and the library will err on the side of being late. If there is a conflict between player input events and timer events, the player input takes precedence. <comment>This prevents the user from being locked out by overly enthusiastic timer events. Unfortunately, it also means that your timer can be locked out on slower machines, if the player pounds too enthusiastically on the keyboard. Sorry. If you want a real-time operating system, talk to Wind River.</comment>
+This means that the timing of timer events is approximate, and the library will err on the side of being late. If there is a conflict between player input events and timer events, the player input takes precedence. <comment>This prevents the user from being locked out by overly enthusiastic timer events. Unfortunately, it also means that your timer can be locked out on slower machines, if the player pounds too enthusiastically on the keyboard. Sorry.</comment>
 
 <comment>I don't have to tell you that a millisecond is one thousandth of a second, do I?</comment>
 
@@ -1314,7 +1314,7 @@ A stream is opened with a particular file mode:
 <li>filemode_WriteAppend: An output stream, but the data will added to the end of whatever already existed in the destination, instead of replacing it.
 </list>
 
-<comment>In the stdio library, using fopen(), filemode_Write would be mode "w"; filemode_Read would be mode "r"; filemode_ReadWrite would be mode "r+; filemode_WriteAppend would be mode "a".</comment>
+<comment>In the stdio library, using fopen(), filemode_Write would be mode "w"; filemode_Read would be mode "r"; filemode_ReadWrite would be mode "r+. Confusingly, filemode_WriteAppend cannot be mode "a", because the stdio spec says that when you open a file with mode "a", then fseek() doesn't work. So we have to use mode "r+" for appending. Then we run into the <em>other</em> stdio problem, which is that "r+" never creates a new file. So you'd have to <em>first</em> open the file with "a", close it, reopen with "r+", and then fseek to the end. Similarly, with filemode_ReadWrite, you have to first open the file with "w", close it, and reopen with "r+".</comment>
 
 For information on opening streams, see the discussion of each specific type of stream in <ref label=stream_types>. Remember that it is always possible that opening a stream will fail, in which case the creation function will return NULL.
 
@@ -1661,6 +1661,8 @@ strid_t glk_stream_open_file(frefid_t fileref, glui32 fmode, glui32 rock);
 </deffun>
 
 fileref indicates the file which will be opened. fmode can be any of filemode_Read, filemode_Write, filemode_WriteAppend, or filemode_ReadWrite. If fmode is filemode_Read, the file must already exist; for the other modes, an empty file is created if none exists. If fmode is filemode_Write, and the file already exists, it is truncated down to zero length (an empty file). If fmode is filemode_WriteAppend, the file mark is set to the end of the file.
+
+<comment>Note, again, that this doesn't match stdio's fopen() call very well. See <ref label=stream></comment>
 
 The file may be read or written in text or binary mode; this is determined by the fileref argument. Similarly, platform-dependent attributes such as file type are determined by fileref. See <ref label=fileref>.
 
