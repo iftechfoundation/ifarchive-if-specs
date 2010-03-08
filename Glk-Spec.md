@@ -1314,7 +1314,7 @@ A stream is opened with a particular file mode:
 <li>filemode_WriteAppend: An output stream, but the data will added to the end of whatever already existed in the destination, instead of replacing it.
 </list>
 
-<comment>In the stdio library, using fopen(), filemode_Write would be mode "w"; filemode_Read would be mode "r"; filemode_ReadWrite would be mode "r+. Confusingly, filemode_WriteAppend cannot be mode "a", because the stdio spec says that when you open a file with mode "a", then fseek() doesn't work. So we have to use mode "r+" for appending. Then we run into the <em>other</em> stdio problem, which is that "r+" never creates a new file. So you'd have to <em>first</em> open the file with "a", close it, reopen with "r+", and then fseek to the end. Similarly, with filemode_ReadWrite, you have to first open the file with "w", close it, and reopen with "r+".</comment>
+<comment>In the stdio library, using fopen(), filemode_Write would be mode "w"; filemode_Read would be mode "r"; filemode_ReadWrite would be mode "r+". Confusingly, filemode_WriteAppend cannot be mode "a", because the stdio spec says that when you open a file with mode "a", then fseek() doesn't work. So we have to use mode "r+" for appending. Then we run into the <em>other</em> stdio problem, which is that "r+" never creates a new file. So filemode_WriteAppend has to <em>first</em> open the file with "a", close it, reopen with "r+", and then fseek() to the end of the file. For filemode_ReadWrite, the process is the same, except without the fseek() -- we begin at the beginning of the file.</comment>
 
 For information on opening streams, see the discussion of each specific type of stream in <ref label=stream_types>. Remember that it is always possible that opening a stream will fail, in which case the creation function will return NULL.
 
@@ -1660,7 +1660,7 @@ You can open a stream which reads from or writes to a disk file.
 strid_t glk_stream_open_file(frefid_t fileref, glui32 fmode, glui32 rock);
 </deffun>
 
-fileref indicates the file which will be opened. fmode can be any of filemode_Read, filemode_Write, filemode_WriteAppend, or filemode_ReadWrite. If fmode is filemode_Read, the file must already exist; for the other modes, an empty file is created if none exists. If fmode is filemode_Write, and the file already exists, it is truncated down to zero length (an empty file). If fmode is filemode_WriteAppend, the file mark is set to the end of the file.
+fileref indicates the file which will be opened. fmode can be any of filemode_Read, filemode_Write, filemode_WriteAppend, or filemode_ReadWrite. If fmode is filemode_Read, the file must already exist; for the other modes, an empty file is created if none exists. If fmode is filemode_Write, and the file already exists, it is truncated down to zero length (an empty file); the other modes do not truncate. If fmode is filemode_WriteAppend, the file mark is set to the end of the file.
 
 <comment>Note, again, that this doesn't match stdio's fopen() call very well. See <ref label=stream></comment>
 
