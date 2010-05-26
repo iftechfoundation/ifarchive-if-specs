@@ -156,7 +156,7 @@ The "format of locals" information is needed by the terp in two places: when cal
 
 <comment>In fact, the call frame may not exist as a byte sequence during function execution. The terp is free to maintain a more structured form, as long as it generates valid save-game files, and correctly handles accesses to valid (according to the format) locals.</comment>
 
-<comment>NOTE: 8-bit and 16-bit locals have never been in common use, and this spec has not been unambiguous in describing their handling. (By which I mean, what I implemented in the reference interpreter didn't match the spec.) Therefore, 8-bit and 16-bit locals are deprecated.</comment>
+<comment>NOTE: 8-bit and 16-bit locals have never been in common use, and this spec has not been unambiguous in describing their handling. (By which I mean, what I implemented in the reference interpreter didn't match the spec.) Therefore, 8-bit and 16-bit locals are deprecated. Use of the copyb and copys opcodes with a local-variable operand is also deprecated.</comment>
 
 <h level=3 label=callstub>Call Stubs</h>
 
@@ -905,6 +905,8 @@ Since copys and copyb can access chunks smaller than the usual four bytes, they 
 Therefore, if copyb (for example) copies a byte from main memory to the stack, a 32-bit value will be pushed, whose value will be from 0 to 255. Sign-extension <em>does not</em> occur. Conversely, if copyb copies a byte from the stack to memory, a 32-bit value is popped, and the bottom 8 bits are written at the given address. The upper 24 bits are lost. Constant values are truncated as well.
 
 If copys or copyb are used with both L1 and S1 in pop/push mode, the 32-bit value is popped, truncated, and pushed.
+
+<comment>NOTE: Since a call frame has no specified endianness, it is unwise to use these opcodes to pull out one or two bytes from a four-byte local variable. The result will be implementation-dependent. Therefore, use of the copyb and copys opcodes with a local-variable operand of different size is deprecated. Since locals of less than four bytes are <em>also</em> deprecated, you should not use copyb or copys with local-variable operands at all.</comment>
 
 <deffun>
 sexs L1 S1
