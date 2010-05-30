@@ -1305,7 +1305,7 @@ streamstr L1
 
 Send a string object to the current stream. L1 must be the address of a Glulx string object (type E0, E1, or E2.) The string is decoded and sent as a sequence of characters.
 
-When the Glk I/O system is set, these opcodes are implemented using the Glk API. You can bypass them and directly call glk_put_char(), glk_put_buffer(), and so on. Remember, however, that a Glulx string object is not a C-style string, so it cannot be passed to glk_put_string().
+When the Glk I/O system is set, these opcodes are implemented using the Glk API. You can bypass them and directly call glk_put_char(), glk_put_buffer(), and so on. Remember, however, that glk_put_string() only accepts unencoded string (E0) objects; glk_put_string_uni() only accepts unencoded Unicode (E2) objects.
 
 Note that it is illegal to decode a compressed string (E1) if there is no string-decoding table set.
 
