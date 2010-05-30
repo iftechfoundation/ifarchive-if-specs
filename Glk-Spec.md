@@ -1743,7 +1743,7 @@ fmode must be one of these values:
 
 The fmode argument should generally match the fmode which will be used to open the file.
 
-<comment>It is possible that the prompt or file tool will have a "cancel" option. If the player chooses this, glk_fileref_create_by_prompt() will return NULL. This is a major reason why you should make sure the return value is valid before you use it.</comment>
+<comment>It is likely that the prompt or file tool will have a "cancel" option. If the player chooses this, glk_fileref_create_by_prompt() will return NULL. This is a major reason why you should make sure the return value is valid before you use it.</comment>
 
 <deffun>
 frefid_t glk_fileref_create_by_name(glui32 usage, char *name, glui32 rock);
