@@ -1497,6 +1497,8 @@ In binary files, the mark position is exact &emdash; it corresponds with the num
 
 Again, in Latin-1 streams, characters are bytes. In Unicode streams, characters are 32-bit words, or four bytes each.
 
+A window stream doesn't have a movable mark, so calling glk_stream_set_position() has no effect. glk_stream_get_position() on a window stream will always return zero. <comment>It might make more sense to return the number of characters written to the window, but existing libraries do not support this and it's not really worth adding the feature.</comment>
+
 <h level=2 label=stream_style>Styles</h>
 
 You can send style-changing commands to an output stream. After a style change, new text which is printed to that stream will be given the new style, whatever that means for the stream in question. For a window stream, the text will appear in that style. For a memory stream, style changes have no effect. For a file stream, if the machine supports styled text files, the styles may be written to the file; more likely the style changes will have no effect.
