@@ -2300,6 +2300,8 @@ This returns a structure describing an integer constant which the library export
 
 The structure simply contains a string and a value. The string is a symbolic name of the value, and can be re-exported to anyone interested in using Glk constants.
 
+<comment>In the current gi_dispa.c library, these structures are static and immutable, and will never be deallocated. However, it is safer to assume that the structure may be reused in future gidispatch_get_intconst() calls.</comment>
+
 <deffun>
 glui32 gidispatch_count_functions(void);
 </deffun>
@@ -2327,6 +2329,8 @@ gidispatch_function_t *gidispatch_get_function_by_id(glui32 id);
 </deffun>
 
 This returns a structure describing the Glk function with selector id. If there is no such function in the library, this returns NULL.
+
+<comment>Again, it is safest to assume that the structure is only valid until the next gidispatch_get_function() or gidispatch_get_function_by_id() call.</comment>
 
 <h level=3 label=dispatching_func>Dispatching</h>
 
