@@ -1370,6 +1370,8 @@ else
   for (ix=L1-1: ix&gt;=0: ix--) L3-&gt;ix = L2-&gt;ix;
 </code>
 
+For both of these opcodes, L1 may be zero, in which case the opcodes do nothing. The operands are considered unsigned, so a "negative" L1 is a very large number (and almost certainly a mistake).
+
 These opcodes were added in Glulx version 3.1. You can test for their availability with the MemCopy gestalt selector.
 
 <h level=2>Searching</h>
