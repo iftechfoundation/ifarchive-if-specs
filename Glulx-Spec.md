@@ -1126,7 +1126,7 @@ If the call stub (or any part of it) is removed from the stack, the catch token 
 getmemsize S1
 </deffun>
 
-Store the current size of the memory map. This is originally the ENDMEM value from the header, but you can change it with the setmemsize opcode. It will always be greater than or equal to ENDMEM.
+Store the current size of the memory map. This is originally the ENDMEM value from the header, but you can change it with the setmemsize opcode. (The malloc and mfree opcodes may also cause this value to change; see <ref label=opcodes_malloc>.) It will always be greater than or equal to ENDMEM, and will always be a multiple of 256.
 
 <deffun>
 setmemsize L1 S1
@@ -1136,7 +1136,7 @@ Set the current size of the memory map. The new value must be a multiple of 256,
 
 When the memory size grows, the new space is filled with zeroes. When it shrinks, the contents of the old space are lost.
 
-If the allocation heap is active (see <ref label=opcodes_malloc>) you may not use setmemsize -- the memory map is under the control of the heap system. If you free all heap objects, the heap will no longer be active, and you can then use setmemsize.
+If the allocation heap is active (see <ref label=opcodes_malloc>) you may not use setmemsize -- the memory map is under the control of the heap system. If you free all heap objects, the heap will then no longer be active, and you can use setmemsize.
 
 Since memory allocation is never guaranteed, you must be prepared for the possibility that setmemsize will fail. The opcode stores the value zero if it succeeded, and 1 if it failed. If it failed, the memory size is unchanged.
 
@@ -1157,6 +1157,8 @@ When you first allocate a block of memory, the heap becomes active. The current 
 Subsequent memory allocations and deallocations are done within the heap. The interpreter may extend or reduce the memory map, as needed, when allocations and deallocations occur. While the heap is active, you may not manually resize the memory map with setmemsize; the heap system is responsible for doing that.
 
 When you free the last extant memory block, the heap becomes inactive. The interpreter will reduce the memory map size down to the heap-start address. (That is, the getmemsize value returns to what it was before you allocated the first block.) Thereafter, it is legal to call setmemsize again.
+
+It is legitimate to read or write any memory address in the heap range (from ENDMEM to the end of the memory map). You are not restricted to extant blocks. <comment>The VM's heap state is not stored in its own memory map. So, unlike the familiar C heap, you cannot damage it by writing outside valid blocks.</comment>
 
 The heap state (whether it is active, its starting address, and the addresses and sizes of all extant blocks) <em>is</em> part of the saved game state.
 
