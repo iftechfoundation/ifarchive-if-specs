@@ -782,6 +782,35 @@ The table of opcodes:
 <li>0x179: mfree
 <li>0x180: accelfunc
 <li>0x181: accelparam
+<li>0x190: numtof
+<li>0x191: ftonumz
+<li>0x192: ftonumn
+<li>0x198: ceil
+<li>0x199: floor
+<li>0x1A0: fadd
+<li>0x1A1: fsub
+<li>0x1A2: fmul
+<li>0x1A3: fdiv
+<li>0x1A4: fmod
+<li>0x1A8: sqrt
+<li>0x1A9: exp
+<li>0x1AA: log
+<li>0x1AB: pow
+<li>0x1B0: sin
+<li>0x1B1: cos
+<li>0x1B2: tan
+<li>0x1B3: asin
+<li>0x1B4: acos
+<li>0x1B5: atan
+<li>0x1B6: atan2
+<li>0x1C0: jfeq
+<li>0x1C1: jfne
+<li>0x1C2: jflt
+<li>0x1C3: jflte
+<li>0x1C4: jfgt
+<li>0x1C5: jfgte
+<li>0x1C8: jisnan
+<li>0x1C9: jisinf
 </list>
 
 Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM, and are not documented here. See <ref label=otherif>.
