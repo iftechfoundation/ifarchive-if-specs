@@ -562,11 +562,74 @@ Types 01 to 7F are available for use by the compiler, the library, or the progra
 
 <comment>Inform uses 60 for dictionary words, and 70 for objects and classes. It reserves types 40 to 7F. Types 01 to 3F remain available for use by Inform programmers.</comment>
 
+<h level=2 label=floats>Floating-Point Numbers</h>
+
+Glulx values are 32-bit integers, big-endian when stored in memory. To handle floating-point math, we must be able to encode float values as 32-bit values. Unsurprisingly, Glulx uses the big-endian, single-precision IEEE-754 encoding. (See <a href="http://www.psc.edu/general/software/packages/ieee/ieee.php">http://www.psc.edu/general/software/packages/ieee/ieee.php</a>.) This allows floats to be stored in memory, on the stack, in local variables, and in any other place that a 32-bit value appears.
+
+However, float values and integer values are <em>not</em> interchangable. You cannot pass floats to the normal arithmetic opcodes, or vice versa, and expect to get meaningful answers. Always pass floats to the float opcodes and integers to the int opcodes, with the appropriate conversion opcodes to convert back and forth. (See <ref label=opcodes_float>.)
+
+Floats have limited precision; they cannot represent all real values exactly. (They can't even represent all integers exactly.) Therefore, you must be careful when comparing results. A series of float operations may produce a result fractionally different from what you expect. When comparing float values, you will most often want to use the jfeq opcode, which tests whether two values are <em>near</em> each other (within a specified range).
+
+A float value has three fields in its 32 bits, from highest (the sign bit) to lowest:
+
+<code>
++---------------+
+| Sign Bit (S)  |  (1 bit)
+| Exponent (E)  |  (8 bits)
+| Mantissa (M)  |  (23 bits)
++---------------+
+</code>
+
+The interpretation of the value depends on the exponent value:
+
+<list>
+<li>If E is FF and M is zero, the value is positive or negative infinity, depending on S. Infinite values represent overflows. (+Inf is 7F800000; -Inf is FF800000.)
+<li>If E is FF and M is nonzero, the value is a positive or negative NaN ("not a number"), depending on S. NaN values represent arithmetic failures. (+NaN values are in the range 7F800001 to 7FFFFFFF; -NaN are FF800001 to FFFFFFFF.)
+<li>If E is 00 and M is zero, the value is a positive or negative zero, depending on S. Zero values represent underflows, and also, you know, zero. (+0 is 00000000; -0 is 80000000.)
+<li>If E is 00 and M is nonzero, the value is a "denormalized" number, very close to zero: plus or minus 2^(-149)*M.
+<li>If E is anything else, the value is a "normalized" number: plus or minus 2^(E-150)*(800000+M).
+</list>
+
+<comment>I'm using decimal exponents there amid all the hex constants. -149 is hex -95; -150 is hex -96. Sorry about that.</comment>
+
+The numeric formulas may look more familiar if you write them as 2^(-126)*(0.MMMM...) and 2^(-127)*(1.MMMM...), where "0.MMMM..." is a fraction between zero and one (23 mantissa bits after the binal point) and "1.MMMM...." is a fraction beween one and two.
+
+Some example values:
+
+<list>
+<li>0.0   =  00000000 (S=0, E=00, M=0)
+<li>1.0   =  3F800000 (S=0, E=7F, M=0)
+<li>-2.0  =  C0000000 (S=1, E=80, M=0)
+<li>100.0 =  42C80000 (S=0, E=85, M=480000)
+<li>pi    =  40490FDB (S=0, E=80, M=490FDB)
+<li>2*pi  =  ####
+<li>e     =  ####
+</list>
+
+To give you an idea of the behavior of the special values: 
+
+<list>
+<li>1 / 0    =  +Inf
+<li>-1 / 0   =  -Inf
+<li>1 / Inf  =  0
+<li>1 / -Inf =  -0
+<li>0 / 0    =  NaN
+<li>2 * 0    =  0
+<li>2 * -0   =  -0
+<li>+Inf * 0 =  NaN
+<li>+Inf * 1 =  +Inf
+<li>+Inf / +Inf =  +NaN
+</list>
+
+NaN is sticky; <em>any</em> mathematical operation involving a NaN produces NaN. (Signs may be preserved if they make sense.)
+
+However, Glulx does not guarantee <em>which</em> NaN value you will get from such operations. The underlying platform may try to encode information about what operation failed in the mantissa field of the NaN. Or, contrariwise, it may return the same value for every NaN. You should not test for NaN by comparing to a fixed encoded value; instead, use the jisnan opcode.
+
 <h level=2 label=saveformat>The Save-Game Format</h>
 
 (Or, if you like, "serializing the machine state".)
 
-This is a variant of Quetzal, the standard Z-machine save file format. (See <a href="http://ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt">http://ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt</a>
+This is a variant of Quetzal, the standard Z-machine save file format. (See <a href="http://ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt">http://ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt</a>.)
 
 Everything in the Quetzal specification applies, with the following exceptions:
 
@@ -723,7 +786,7 @@ The table of opcodes:
 
 Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM, and are not documented here. See <ref label=otherif>.
 
-<h level=2>Math</h>
+<h level=2>Integer Math</h>
 
 <deffun>
 add L1 L2 S1
@@ -818,7 +881,7 @@ Shift the bits of L1 to the right by L2 places. The top L2 bits are filled in wi
 
 Notes on the shift opcodes: If L2 is zero, the result is always equal to L1. L2 is considered unsigned, so 80000000 or greater is "more than 32".
 
-<h level=2>Branches</h>
+<h level=2 label=opcodes_branch>Branches</h>
 
 All branches (except jumpabs) specify their destinations with an offset value. The actual destination address of the branch is computed as (Addr + Offset - 2), where Addr is the address of the instruction <em>after</em> the branch opcode, and offset is the branch's operand. The special offset values 0 and 1 are interpreted as "return 0" and "return 1" respectively. <comment>This odd hiccup is inherited from the Z-machine. Inform uses it heavily for code optimization.</comment>
 
@@ -1326,6 +1389,132 @@ Change the address the terp is using for its string-decoding table. This may be 
 <comment>This does not change the value in the header field at address 001C. The header is in ROM, and never changes. To determine the current table address, use the getstringtbl opcode.</comment>
 
 A string-decoding table may be in RAM or ROM, but there may be speed penalties if it is in RAM. See <ref label=string_table>.
+
+<h level=2 label=opcodes_float>Floating-Point Math</h>
+
+Recall that floating-point values are encoded as single-precision (32-bit) IEEE-754 values (see <ref label=floats>). The interpreter must convert values (from memory or the stack) before performing a floating-point operation, and unconvert them afterwards.
+
+<comment>In other words, passing a float value to an integer arithmetic opcode will operate on the IEEE-754-encoded 32-bit value. Such an operation would be deterministic, albeit mathematically meaningless. The same is true for passing an integer to a float opcode.</comment>
+
+If any argument to a float operation is a NaN ("not a number") value, the result will be a NaN value.
+
+<deffun>
+numtof L1 S1
+</deffun>
+
+Convert an integer value to the closest equivalent float. (That is, if L1 is 1, then 3F800000 -- the float encoding of 1.0 -- will be stored in S1.) Integer zero is converted to (positive) float zero.
+
+Since floats cannot exactly represent all integers, this conversion may not be exact.
+
+<deffun>
+ftonumz L1 S1
+</deffun>
+
+Convert a float value to an integer, rounding towards zero (i.e., truncating the fractional part). If the value is outside the 32-bit integer range, or is NaN or infinity, the result will be 7FFFFFFF (for positive values) or 80000000 (for negative values).
+
+<deffun>
+ftonumn L1 S1
+</deffun>
+
+Convert a float value to an integer, rounding towards the nearest integer. Again, overflows become 7FFFFFFF or 80000000.
+
+Converting an integer with numtof followed by ftonumn will return the original integer.#### for what range?
+
+<deffun>
+fadd L1 L2 S1
+fsub L1 L2 S1
+fmul L1 L2 S1
+fdiv L1 L2 S1
+</deffun>
+
+Perform floating-point arithmetic. Overflows produce infinite values (with the appropriate sign); underflows produce zero values (ditto). 0/0 is NaN. Inf/Inf, or Inf-Inf, is NaN. Any finite number added to infinity is infinity. Any nonzero number divided by an infinity, or multiplied by zero, is a zero. Any nonzero number multiplied by an infinity, or divided by zero, is an infinity.
+
+<deffun>
+fmod L1 L2 S1 S2
+</deffun>
+
+Perform a floating-point modulo operation. S1 is the remainder; S2 is the quotient. Both results have the sign of L1; the sign of L2 is ignored.
+
+<deffun>
+ceil L1 S1
+floor L1 S1
+</deffun>
+
+Round L1 up (towards +Inf) or down (towards -Inf) to the nearest integral value. (The result is still in float format, however, so may not be exact.) These opcodes are idempotent.####?
+
+<deffun>
+sqrt L1 S1
+exp L1 S1
+log L1 S1
+</deffun>
+
+Compute the square root of L1, e^L1, and log of L1 (base e).
+
+####special cases
+
+<deffun>
+pow L1 L2 S1
+</deffun>
+
+Compute L1 raised to the L2 power.
+
+<deffun>
+sin L1 S1
+cos L1 S1
+tan L1 S1
+acos L1 S1
+asin L1 S1
+atan L1 S1
+</deffun>
+
+Compute the standard trigonometric functions.
+
+<deffun>
+atan2 L1 L2 S1
+</deffun>
+
+Computes the arctangent of L1/L2, using the signs of both arguments to determine the quadrant of the return value. (Note that the Y argument is first and the X argument is second.)
+
+<h level=2 label=opcodes_floatbranch>Floating-Point Comparisons</h>
+
+All these branch opcodes specify their destinations with an offset value. See <ref label=opcodes_branch>.
+
+Most of these opcodes never branch if any argument is NaN. (Exceptions are jisnan and jfne.) In particular, NaN is neither less than, greater than, nor equal to NaN.
+
+<deffun>
+jisnan L1 L2
+</deffun>
+
+Branch to L2 if the floating-point value L1 is a NaN value. (See <ref label=floats>.)
+
+<deffun>
+jisinf L1 L2
+</deffun>
+
+Branch to L2 if the floating-point value L1 is an infinity (7F800000 or FF800000).
+
+<deffun>
+jfeq L1 L2 L3 L4
+</deffun>
+
+Branch to L4 if the difference between L1 and L2 is less than or equal to (plus or minus) L3. The sign of L3 is ignored.
+
+If any of the arguments are NaN, this will not branch. If L3 is infinite, this will always branch. If L3 is (plus or minus) zero, this tests for exact equality. Note that +0 is considered exactly equal to -0.
+
+<deffun>
+jfne L1 L2 L3 L4
+</deffun>
+
+The reverse of jfeq. This <em>will</em> branch if <em>any</em> of the arguments is NaN.
+
+<deffun>
+jflt L1 L2 L3
+jflte L1 L2 L3
+jfgt L1 L2 L3
+jfgte L1 L2 L3
+</deffun>
+
+Branch to L3 if L1 is less than (less than or equal to, greater than, greater than or equal to) L2. Again, +0 is considered equal to -0, not greater than -0.
 
 <h level=2 label=opcodes_rand>Random Number Generator</h>
 
