@@ -2,7 +2,7 @@
 
 <subtitle>A 32-Bit Virtual Machine for IF</subtitle>
 
-<subtitle>VM specification version 3.2</subtitle>
+<subtitle>VM specification version 3.1.2</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -262,7 +262,7 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 
 <list>
 <li>Magic number: 47 6C 75 6C, which is to say ASCII 'Glul'.
-<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 3.2, so a game file generated to this spec would contain 00030200. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
+<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 3.1.2, so a game file generated to this spec would contain 00030102. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
 <li>RAMSTART: The first address which the program can write to.
 <li>EXTSTART: The end of the game-file's stored initial memory (and therefore the length of the game file.)
 <li>ENDMEM: The end of the program's memory map.
@@ -274,7 +274,7 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 
 The interpreter should validate the magic number and the Glulx version number. An interpreter which is written to version X.Y.Z of this specification should accept game files whose Glulx version between X.0.0 and X.Y.*. (That is, the major version number should match; the minor version number should be less than or equal to Y; the subminor version number does not matter.)
 
-EXCEPTION: A version 3.* interpreter should accept version 2.0 game files. The only difference between spec 2.0 and spec 3.0 is that 2.0 lacks Unicode functionality. Therefore, an interpreter written to this version of the spec (3.2) should accept game files whose version is between 2.0.0 and 3.2.* (0x00020000 and 0x000302FF inclusive).
+EXCEPTION: A version 3.* interpreter should accept version 2.0 game files. The only difference between spec 2.0 and spec 3.0 is that 2.0 lacks Unicode functionality. Therefore, an interpreter written to this version of the spec (3.1.2) should accept game files whose version is between 2.0.0 and 3.1.* (0x00020000 and 0x000301FF inclusive).
 
 <comment>The header is conventionally followed by a 32-bit word which describes the layout of data in the rest of the file. This value is <em>not</em> a part of the Glulx specification; it is the first ROM word after the header, not a part of the header. It is an option that compilers can insert, when generating Glulx files, to aid debuggers and decompilers.
 
@@ -806,9 +806,9 @@ The table of opcodes:
 <li>0x1C0: jfeq
 <li>0x1C1: jfne
 <li>0x1C2: jflt
-<li>0x1C3: jflte
+<li>0x1C3: jfle
 <li>0x1C4: jfgt
-<li>0x1C5: jfgte
+<li>0x1C5: jfge
 <li>0x1C8: jisnan
 <li>0x1C9: jisinf
 </list>
@@ -1427,7 +1427,7 @@ Recall that floating-point values are encoded as single-precision (32-bit) IEEE-
 
 If any argument to a float operation is a NaN ("not a number") value, the result will be a NaN value.
 
-These opcodes were added in Glulx version 3.2. However, not all interpreters may support them. You can test for their availability with the Float gestalt selector.
+These opcodes were added in Glulx version 3.1.2. However, not all interpreters may support them. You can test for their availability with the Float gestalt selector.
 
 <deffun>
 numtof L1 S1
@@ -1512,7 +1512,7 @@ All these branch opcodes specify their destinations with an offset value. See <r
 
 Most of these opcodes never branch if any argument is NaN. (Exceptions are jisnan and jfne.) In particular, NaN is neither less than, greater than, nor equal to NaN.
 
-These opcodes were added in Glulx version 3.2. However, not all interpreters may support them. You can test for their availability with the Float gestalt selector.
+These opcodes were added in Glulx version 3.1.2. However, not all interpreters may support them. You can test for their availability with the Float gestalt selector.
 
 <deffun>
 jisnan L1 L2
@@ -1542,9 +1542,9 @@ The reverse of jfeq. This <em>will</em> branch if <em>any</em> of the arguments 
 
 <deffun>
 jflt L1 L2 L3
-jflte L1 L2 L3
+jfle L1 L2 L3
 jfgt L1 L2 L3
-jfgte L1 L2 L3
+jfge L1 L2 L3
 </deffun>
 
 Branch to L3 if L1 is less than (less than or equal to, greater than, greater than or equal to) L2. Again, +0 is considered equal to -0, not greater than -0.
@@ -1905,7 +1905,7 @@ The reasoning behind the design of a Gestalt system is, I hope, too obvious to e
 The list of L1 selectors is as follows. Note that if a selector does not mention L2, you should always set that argument to zero. <comment>This will ensure future compatibility, in case the selector definition is extended.</comment>
 
 <list>
-<li>GlulxVersion (0): Returns the version of the Glulx spec which the interpreter implements. The upper 16 bits of the value contain a major version number; the next 8 bits contain a minor version number; and the lowest 8 bits contain an even more minor version number, if any. This specification is version 3.2, so a terp implementing it would return 0x00030200. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
+<li>GlulxVersion (0): Returns the version of the Glulx spec which the interpreter implements. The upper 16 bits of the value contain a major version number; the next 8 bits contain a minor version number; and the lowest 8 bits contain an even more minor version number, if any. This specification is version 3.1.2, so a terp implementing it would return 0x00030102. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
 <li>TerpVersion (1): Returns the version of the interpreter. The format is the same as the GlulxVersion. <comment>Each interpreter has its own version numbering system, defined by its author, so this information is not terribly useful. But it is convenient for the game to be able to display it, in case the player is capturing version information for a bug report.</comment>
 <li>ResizeMem (2): Returns 1 if the terp has the potential to resize the memory map, with the setmemsize opcode. If this returns 0, setmemsize will always fail. <comment>But remember that setmemsize might fail in any case.</comment>
 <li>Undo (3): Returns 1 if the terp has the potential to undo. If this returns 0, saveundo and restoreundo will always fail.
