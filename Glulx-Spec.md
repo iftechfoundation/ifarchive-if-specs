@@ -262,7 +262,7 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 
 <list>
 <li>Magic number: 47 6C 75 6C, which is to say ASCII 'Glul'.
-<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 3.1.2, so a game file generated to this spec would contain 00030102. I will try to maintain the convention that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible.
+<li>Glulx version number: The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. This specification is version 3.1.2, so a game file generated to this spec would contain 00030102.
 <li>RAMSTART: The first address which the program can write to.
 <li>EXTSTART: The end of the game-file's stored initial memory (and therefore the length of the game file.)
 <li>ENDMEM: The end of the program's memory map.
@@ -275,6 +275,8 @@ The header is the first 36 bytes of memory. It is always in ROM, so its contents
 The interpreter should validate the magic number and the Glulx version number. An interpreter which is written to version X.Y.Z of this specification should accept game files whose Glulx version between X.0.0 and X.Y.*. (That is, the major version number should match; the minor version number should be less than or equal to Y; the subminor version number does not matter.)
 
 EXCEPTION: A version 3.* interpreter should accept version 2.0 game files. The only difference between spec 2.0 and spec 3.0 is that 2.0 lacks Unicode functionality. Therefore, an interpreter written to this version of the spec (3.1.2) should accept game files whose version is between 2.0.0 and 3.1.* (0x00020000 and 0x000301FF inclusive).
+
+<comment>These rules mean, in the vernacular, that minor version changes are backwards compatible, and subminor version changes are backwards and forwards compatible. If I add a feature which I expect every terp to implement (e.g. mzero and mcopy), then I bump the minor version number, and your game can use that feature without worrying about availability. If I add a feature which not all terps will implement (e.g. floating point), then I bump the subminor version number, and your game should only use the feature after doing a gestalt test for availability.</comment>
 
 <comment>The header is conventionally followed by a 32-bit word which describes the layout of data in the rest of the file. This value is <em>not</em> a part of the Glulx specification; it is the first ROM word after the header, not a part of the header. It is an option that compilers can insert, when generating Glulx files, to aid debuggers and decompilers.
 
