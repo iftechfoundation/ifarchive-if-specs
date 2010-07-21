@@ -620,7 +620,10 @@ To give you an idea of the behavior of the special values:
 <li>2 * -0   =  -0
 <li>+Inf * 0 =  NaN
 <li>+Inf * 1 =  +Inf
-<li>+Inf / +Inf =  +NaN
+<li>+Inf + +Inf =  +Inf
+<li>+Inf * +Inf =  +Inf
+<li>+Inf - +Inf =  NaN
+<li>+Inf / +Inf =  NaN
 </list>
 
 NaN is sticky; <em>any</em> mathematical operation involving a NaN produces NaN. (Signs may be preserved if they make sense.)
