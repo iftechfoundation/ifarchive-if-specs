@@ -1552,7 +1552,9 @@ jfgt L1 L2 L3
 jfge L1 L2 L3
 </deffun>
 
-Branch to L3 if L1 is less than (less than or equal to, greater than, greater than or equal to) L2. Again, +0 is considered equal to -0, not greater than -0.
+Branch to L3 if L1 is less than (less than or equal to, greater than, greater than or equal to) L2. 
+
++0 and -0 behave identically in comparisons. In particular, +0 is considered equal to -0, not greater than -0.
 
 <h level=2 label=opcodes_rand>Random Number Generator</h>
 
