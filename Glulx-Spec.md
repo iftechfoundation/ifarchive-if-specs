@@ -1978,6 +1978,8 @@ Where each "op" is a constant, the name of a local variable, the name of a globa
 
 <comment>It would be convenient to have a one-line form for the opcodes that pass arguments on the stack (call and glk).</comment>
 
+To make life a little easier for cross-platform I6 code, Inform accepts the macro "@push val" for "@copy val sp", and "@pull val" for "@copy sp val". Supporting these forms is recommended.
+
 You can synthesize opcodes that the compiler does not know about:
 
 <code>
