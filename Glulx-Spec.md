@@ -570,7 +570,9 @@ Glulx values are 32-bit integers, big-endian when stored in memory. To handle fl
 
 However, float values and integer values are <em>not</em> interchangable. You cannot pass floats to the normal arithmetic opcodes, or vice versa, and expect to get meaningful answers. Always pass floats to the float opcodes and integers to the int opcodes, with the appropriate conversion opcodes to convert back and forth. (See <ref label=opcodes_float>.)
 
-Floats have limited precision; they cannot represent all real values exactly. (They can't even represent all integers exactly.) Therefore, you must be careful when comparing results. A series of float operations may produce a result fractionally different from what you expect. When comparing float values, you will most often want to use the jfeq opcode, which tests whether two values are <em>near</em> each other (within a specified range).
+Floats have limited precision; they cannot represent all real values exactly. They can't even represent all integers exactly. (Integers between -1000000 and 1000000 (hex) have exact representations. Beyond that, the rounding error can be greater than 1. But when you get into fractions, errors are possible anywhere: 1/3 cannot be stored exactly.)
+
+Therefore, you must be careful when comparing results. A series of float operations may produce a result fractionally different from what you expect. When comparing float values, you will most often want to use the jfeq opcode, which tests whether two values are <em>near</em> each other (within a specified range).
 
 A float value has three fields in its 32 bits, from highest (the sign bit) to lowest:
 
@@ -604,8 +606,8 @@ Some example values:
 <li>-2.0  =  C0000000 (S=1, E=80, M=0)
 <li>100.0 =  42C80000 (S=0, E=85, M=480000)
 <li>pi    =  40490FDB (S=0, E=80, M=490FDB)
-<li>2*pi  =  ####
-<li>e     =  ####
+<li>2*pi  =  40C90FDB
+<li>e     =  402DF854
 </list>
 
 To give you an idea of the behavior of the special values: 
@@ -1476,7 +1478,7 @@ ceil L1 S1
 floor L1 S1
 </deffun>
 
-Round L1 up (towards +Inf) or down (towards -Inf) to the nearest integral value. (The result is still in float format, however, so may not be exact.) These opcodes are idempotent.####?
+Round L1 up (towards +Inf) or down (towards -Inf) to the nearest integral value. (The result is still in float format, however, so may not be exact.) These opcodes are idempotent.
 
 <deffun>
 sqrt L1 S1
