@@ -1488,7 +1488,7 @@ log L1 S1
 
 Compute the square root of L1, e^L1, and log of L1 (base e).
 
-####special cases
+sqrt(-0) is -0. sqrt returns NaN for all other negative values. exp(+0) and exp(-0) are 1; exp(-Inf) is +0. log(+0) and log(-0) are -Inf. log returns NaN for all other negative values.
 
 <deffun>
 pow L1 L2 S1
