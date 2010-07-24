@@ -596,7 +596,7 @@ The interpretation of the value depends on the exponent value:
 
 <comment>I'm using decimal exponents there amid all the hex constants. -149 is hex -95; -150 is hex -96. Sorry about that.</comment>
 
-The numeric formulas may look more familiar if you write them as 2^(-126)*(0.MMMM...) and 2^(-127)*(1.MMMM...), where "0.MMMM..." is a fraction between zero and one (23 mantissa bits after the binal point) and "1.MMMM...." is a fraction beween one and two.
+The numeric formulas may look more familiar if you write them as 2^(-126)*(0.MMMM...) and 2^(E-127)*(1.MMMM...), where "0.MMMM..." is a fraction between zero and one (23 mantissa bits after the binal point) and "1.MMMM...." is a fraction beween one and two.
 
 Some example values:
 
