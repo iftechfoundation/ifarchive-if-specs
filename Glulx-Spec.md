@@ -1432,7 +1432,7 @@ Recall that floating-point values are encoded as single-precision (32-bit) IEEE-
 
 <comment>In other words, passing a float value to an integer arithmetic opcode will operate on the IEEE-754-encoded 32-bit value. Such an operation would be deterministic, albeit mathematically meaningless. The same is true for passing an integer to a float opcode.</comment>
 
-If any argument to a float operation is a NaN ("not a number") value, the result will be a NaN value.
+If any argument to a float operation is a NaN ("not a number") value, the result will be a NaN value. (Except for the pow opcode, which has some special cases.)
 
 These opcodes were added in Glulx version 3.1.2. However, not all interpreters may support them. You can test for their availability with the Float gestalt selector.
 
@@ -1442,7 +1442,7 @@ numtof L1 S1
 
 Convert an integer value to the closest equivalent float. (That is, if L1 is 1, then 3F800000 -- the float encoding of 1.0 -- will be stored in S1.) Integer zero is converted to (positive) float zero.
 
-Since floats cannot exactly represent all integers, this conversion may not be exact.
+If the value is less than -1000000 or greater than 1000000 (hex), the conversion may not be exact. (More specifically, it may round to a nearby multiple of a power of 2.)
 
 <deffun>
 ftonumz L1 S1
@@ -1455,8 +1455,6 @@ ftonumn L1 S1
 </deffun>
 
 Convert a float value to an integer, rounding towards the nearest integer. Again, overflows become 7FFFFFFF or 80000000.
-
-Converting an integer with numtof followed by ftonumn will return the original integer.#### for what range?
 
 <deffun>
 fadd L1 L2 S1
@@ -1495,6 +1493,30 @@ pow L1 L2 S1
 </deffun>
 
 Compute L1 raised to the L2 power.
+
+The special cases are breathtaking. The following is quoted (almost) directly from the libc man page:
+
+<list>
+<li>pow(+-0, y) returns +-Inf for y an odd integer &lt; 0.
+<li>pow(+-0, y) returns +Inf for y &lt; 0 and not an odd integer.
+<li>pow(+-0, y) returns +-0 for y an odd integer &gt; 0.
+<li>pow(+-0, y) returns +0 for y &gt; 0 and not an odd integer.
+<li>pow(-1, +-Inf) returns 1.
+<li>pow(1, y) returns 1 for any y, even a NaN.
+<li>pow(x, +-0) returns 1 for any x, even a NaN.
+<li>pow(x, y) returns a NaN for finite x &lt; 0 and finite non-integer y.
+<li>pow(x, -Inf) returns +Inf for |x| &lt; 1.
+<li>pow(x, -Inf) returns +0 for |x| &gt; 1.
+<li>pow(x, +Inf) returns +0 for |x| &lt; 1.
+<li>pow(x, +Inf) returns +Inf for |x| &gt; 1.
+<li>pow(-Inf, y) returns -0 for y an odd integer &lt; 0.
+<li>pow(-Inf, y) returns +0 for y &lt; 0 and not an odd integer.
+<li>pow(-Inf, y) returns -Inf for y an odd integer &gt; 0.
+<li>pow(-Inf, y) returns +Inf for y &gt; 0 and not an odd integer.
+<li>pow(+Inf, y) returns +0 for y &lt; 0.
+<li>pow(+Inf, y) returns +Inf for y &gt; 0.
+<li>pow(x, y) returns NaN if x is negative and y is not an integer (both finite).
+</list>
 
 <deffun>
 sin L1 S1
