@@ -1531,6 +1531,10 @@ atan L1 S1
 
 Compute the standard trigonometric functions.
 
+sin and cos return values in the range -1 to 1. sin, cos, and tan of infinity are NaN. 
+
+asin is always in the range -pi/2 to pi/2; acos is always in the range 0 to pi. asin and acos of values greater than 1, or less than -1, are NaN. atan(+-Inf) is +-pi/2.
+
 <deffun>
 atan2 L1 L2 S1
 </deffun>
