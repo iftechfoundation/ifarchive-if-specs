@@ -1541,6 +1541,22 @@ atan2 L1 L2 S1
 
 Computes the arctangent of L1/L2, using the signs of both arguments to determine the quadrant of the return value. (Note that the Y argument is first and the X argument is second.)
 
+Again with the special cases:
+
+<list>
+<li>atan2(+-0, -0) returns +-pi.
+<li>atan2(+-0, +0) returns +-0.
+<li>atan2(+-0, x) returns +-pi for x &lt; 0.
+<li>atan2(+-0, x) returns +-0 for x &gt; 0.
+<li>atan2(y, +-0) returns +pi/2 for y &gt; 0.
+<li>atan2(y, +-0) returns -pi/2 for y &lt; 0.
+<li>atan2(+-y, -Inf) returns +-pi for finite y.
+<li>atan2(+-y, +Inf) returns +-0 for finite y.
+<li>atan2(+-Inf, x) returns +-pi/2 for finite x.
+<li>atan2(+-Inf, -Inf) returns +-3*pi/4.
+<li>atan2(+-Inf, +Inf) returns +-pi/4.
+</list>
+
 <h level=2 label=opcodes_floatbranch>Floating-Point Comparisons</h>
 
 All these branch opcodes specify their destinations with an offset value. See <ref label=opcodes_branch>.
