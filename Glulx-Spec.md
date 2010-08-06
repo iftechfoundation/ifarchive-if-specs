@@ -1583,7 +1583,9 @@ jfeq L1 L2 L3 L4
 
 Branch to L4 if the difference between L1 and L2 is less than or equal to (plus or minus) L3. The sign of L3 is ignored.
 
-If any of the arguments are NaN, this will not branch. If L3 is infinite, this will always branch. If L3 is (plus or minus) zero, this tests for exact equality. Note that +0 is considered exactly equal to -0.
+If any of the arguments are NaN, this will not branch. If L3 is infinite, this will always branch -- unless L1 and L2 are opposite infinities. (Opposite infinities are never equal, regardless of L3. Infinities of the same sign are always equal.)
+
+If L3 is (plus or minus) zero, this tests for exact equality. Note that +0 is considered exactly equal to -0.
 
 <deffun>
 jfne L1 L2 L3 L4
