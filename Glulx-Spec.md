@@ -606,8 +606,8 @@ Some example values:
 <li>-2.0  =  C0000000 (S=1, E=80, M=0)
 <li>100.0 =  42C80000 (S=0, E=85, M=480000)
 <li>pi    =  40490FDB (S=0, E=80, M=490FDB)
-<li>2*pi  =  40C90FDB
-<li>e     =  402DF854
+<li>2*pi  =  40C90FDB (S=0, E=81, M=490FDB)
+<li>e     =  402DF854 (S=0, E=80, M=2DF854)
 </list>
 
 To give you an idea of the behavior of the special values: 
