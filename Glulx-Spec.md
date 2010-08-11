@@ -628,9 +628,9 @@ To give you an idea of the behavior of the special values:
 <li>+Inf / +Inf =  NaN
 </list>
 
-NaN is sticky; <em>any</em> mathematical operation involving a NaN produces NaN. (Signs may be preserved if they make sense.)
+NaN is sticky; almost <em>any</em> mathematical operation involving a NaN produces NaN. (There are a few exceptions.)
 
-However, Glulx does not guarantee <em>which</em> NaN value you will get from such operations. The underlying platform may try to encode information about what operation failed in the mantissa field of the NaN. Or, contrariwise, it may return the same value for every NaN. The sign bit, similarly, is never guaranteed. You should not test for NaN by comparing to a fixed encoded value; instead, use the jisnan opcode.
+However, Glulx does not guarantee <em>which</em> NaN value you will get from such operations. The underlying platform may try to encode information about what operation failed in the mantissa field of the NaN. Or, contrariwise, it may return the same value for every NaN. The sign bit, similarly, is never guaranteed. (The sign may be preserved if that's meaningful for the failed operation, but it may not be.) You should not test for NaN by comparing to a fixed encoded value; instead, use the jisnan opcode.
 
 <h level=2 label=saveformat>The Save-Game Format</h>
 
