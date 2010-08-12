@@ -1480,7 +1480,7 @@ floor L1 S1
 
 Round L1 up (towards +Inf) or down (towards -Inf) to the nearest integral value. (The result is still in float format, however.) These opcodes are idempotent.
 
-Rounding -0 up or down gives -0. Rounding an infinite value gives infinity.
+The result keeps the sign of L1; in particular, floor(0.5) is 0 and ceil(-0.5) is -0. Rounding -0 up or down gives -0. Rounding an infinite value gives infinity.
 
 <deffun>
 sqrt L1 S1
