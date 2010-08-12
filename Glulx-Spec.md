@@ -1501,13 +1501,13 @@ Compute L1 raised to the L2 power.
 The special cases are breathtaking. The following is quoted (almost) directly from the libc man page:
 
 <list>
-<li>pow(+-0, y) returns +-Inf for y an odd integer &lt; 0.
-<li>pow(+-0, y) returns +Inf for y &lt; 0 and not an odd integer.
-<li>pow(+-0, y) returns +-0 for y an odd integer &gt; 0.
-<li>pow(+-0, y) returns +0 for y &gt; 0 and not an odd integer.
-<li>pow(-1, +-Inf) returns 1.
+<li>pow(&plusminus;0, y) returns &plusminus;Inf for y an odd integer &lt; 0.
+<li>pow(&plusminus;0, y) returns +Inf for y &lt; 0 and not an odd integer.
+<li>pow(&plusminus;0, y) returns &plusminus;0 for y an odd integer &gt; 0.
+<li>pow(&plusminus;0, y) returns +0 for y &gt; 0 and not an odd integer.
+<li>pow(-1, &plusminus;Inf) returns 1.
 <li>pow(1, y) returns 1 for any y, even a NaN.
-<li>pow(x, +-0) returns 1 for any x, even a NaN.
+<li>pow(x, &plusminus;0) returns 1 for any x, even a NaN.
 <li>pow(x, y) returns a NaN for finite x &lt; 0 and finite non-integer y.
 <li>pow(x, -Inf) returns +Inf for |x| &lt; 1.
 <li>pow(x, -Inf) returns +0 for |x| &gt; 1.
@@ -1535,7 +1535,7 @@ Compute the standard trigonometric functions.
 
 sin and cos return values in the range -1 to 1. sin, cos, and tan of infinity are NaN.
 
-asin is always in the range -pi/2 to pi/2; acos is always in the range 0 to pi. asin and acos of values greater than 1, or less than -1, are NaN. atan(+-Inf) is +-pi/2.
+asin is always in the range -pi/2 to pi/2; acos is always in the range 0 to pi. asin and acos of values greater than 1, or less than -1, are NaN. atan(&plusminus;Inf) is &plusminus;pi/2.
 
 <deffun>
 atan2 L1 L2 S1
@@ -1546,17 +1546,17 @@ Computes the arctangent of L1/L2, using the signs of both arguments to determine
 Again with the special cases:
 
 <list>
-<li>atan2(+-0, -0) returns +-pi.
-<li>atan2(+-0, +0) returns +-0.
-<li>atan2(+-0, x) returns +-pi for x &lt; 0.
-<li>atan2(+-0, x) returns +-0 for x &gt; 0.
-<li>atan2(y, +-0) returns +pi/2 for y &gt; 0.
-<li>atan2(y, +-0) returns -pi/2 for y &lt; 0.
-<li>atan2(+-y, -Inf) returns +-pi for finite y.
-<li>atan2(+-y, +Inf) returns +-0 for finite y.
-<li>atan2(+-Inf, x) returns +-pi/2 for finite x.
-<li>atan2(+-Inf, -Inf) returns +-3*pi/4.
-<li>atan2(+-Inf, +Inf) returns +-pi/4.
+<li>atan2(&plusminus;0, -0) returns &plusminus;pi.
+<li>atan2(&plusminus;0, +0) returns &plusminus;0.
+<li>atan2(&plusminus;0, x) returns &plusminus;pi for x &lt; 0.
+<li>atan2(&plusminus;0, x) returns &plusminus;0 for x &gt; 0.
+<li>atan2(y, &plusminus;0) returns +pi/2 for y &gt; 0.
+<li>atan2(y, &plusminus;0) returns -pi/2 for y &lt; 0.
+<li>atan2(&plusminus;y, -Inf) returns &plusminus;pi for finite y.
+<li>atan2(&plusminus;y, +Inf) returns &plusminus;0 for finite y.
+<li>atan2(&plusminus;Inf, x) returns &plusminus;pi/2 for finite x.
+<li>atan2(&plusminus;Inf, -Inf) returns &plusminus;3*pi/4.
+<li>atan2(&plusminus;Inf, +Inf) returns &plusminus;pi/4.
 </list>
 
 <h level=2 label=opcodes_floatbranch>Floating-Point Comparisons</h>
