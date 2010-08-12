@@ -10,14 +10,14 @@ Copyright 1999-2010 by Andrew Plotkin. This specification is licensed under a Cr
 
 The virtual machine <em>described</em> by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that run on the Glulx VM or make use of it, including compilers, interpreters, debuggers, and so on.
 
-This document and further Glulx information can be found at: 
+This document and further Glulx information can be found at:
 <a href="http://eblong.com/zarf/glulx/">http://eblong.com/zarf/glulx/</a>
 
 <contents>
 
 <h level=1 number=0 label=intro>Introduction</h>
 
-Glulx is a simple solution to a fairly trivial problem. We want a virtual machine which the Inform compiler can compile to, without the increasingly annoying restrictions of the Z-machine. 
+Glulx is a simple solution to a fairly trivial problem. We want a virtual machine which the Inform compiler can compile to, without the increasingly annoying restrictions of the Z-machine.
 
 Glulx does this, without much fuss. All arithmetic is 32-bit (although there are opcodes to handle 8-bit and 16-bit memory access.) Input and output are handled through the Glk API (which chops out half the Z-machine opcodes, and most of the complexity of a Z-code interpreter.) Some care has been taken to make the bytecode small, but simplicity and elbow room are considered more important &emdash; bytecode is not a majority of the bulk in current Inform games.
 
@@ -25,7 +25,7 @@ Glulx does this, without much fuss. All arithmetic is 32-bit (although there are
 
 We're buried in IF VMs already, not to mention general VMs like Java, not to mention other interpreters or bytecode systems like Perl.  Do we need another one?
 
-Well, maybe not, but Glulx is simple enough that it was easier to design and implement it than to use something else. Really. 
+Well, maybe not, but Glulx is simple enough that it was easier to design and implement it than to use something else. Really.
 
 The Inform compiler already does most of the work of translating a high-level language to bytecode. It has long since outgrown many of the IF-specific features of the Z-machine (such as the object structure.) So it makes sense to remove those features, leaving a generic VM. Furthermore, there are enough other constraints (Inform's assumption of a flat memory model, the desire to have a lightweight VM suitable for PDAs) that no existing system is really ideal. So it seems worthwhile to design a new one.
 
@@ -39,7 +39,7 @@ Or maybe not. Since Glulx <em>is</em> so lightweight, a compiler has to be fairl
 
 However, if a system wants to use a simple runtime format with 32-bit data, Glulx may be a good choice.
 
-Note that this is entirely separate from question of the I/O layer. Glulx uses the Glk I/O API, for the sake of simplicity and portability. Any IF system can do the same. One can use Glk I/O without using the Glulx game-file format. 
+Note that this is entirely separate from question of the I/O layer. Glulx uses the Glk I/O API, for the sake of simplicity and portability. Any IF system can do the same. One can use Glk I/O without using the Glulx game-file format.
 
 On the obverse, one could also extend the Glulx VM to use a different I/O system instead of Glk. One such extension is FyreVM, a commercial IF system developed by Textfyre. FyreVM is described at <a href="http://textfyre.com/fyrevm/">http://textfyre.com/fyrevm/</a>. This specification does not cover it, except to note opcodes, gestalt selectors, and iosys values that are specific to FyreVM.
 
@@ -55,9 +55,9 @@ Main memory is a simple array of bytes, numbered from zero up. When accessing mu
 
 The stack is an array of values. It is not a part of main memory; the terp maintains it separately. The format of the stack is technically up to the implementation. However, the needs of the machine (especially the game-save format) leave about one good option. (See <ref label=saveformat>.) One important point: the stack can be kept in either byte ordering. The program should make no assumptions about endianness on the stack. (In fact, programs should never need to care.) Values on the stack always have their natural alignment (16-bit values at even addresses, 32-bit values at multiples of four).
 
-The stack consists of a set of call frames, one for each function in the current chain. When a function is called, a new stack frame is pushed, containing the function's local variables. The function can then push or pull 32-bit values on top of that, to store intermediate computations. 
+The stack consists of a set of call frames, one for each function in the current chain. When a function is called, a new stack frame is pushed, containing the function's local variables. The function can then push or pull 32-bit values on top of that, to store intermediate computations.
 
-All values are treated as unsigned integers, unless otherwise noted. Signed integers are handled with the usual two's-complement notation. Arithmetic overflows and underflows are truncated, also as usual. 
+All values are treated as unsigned integers, unless otherwise noted. Signed integers are handled with the usual two's-complement notation. Arithmetic overflows and underflows are truncated, also as usual.
 
 <h level=2>Input and Output</h>
 
@@ -102,7 +102,7 @@ As you might expect, the section marked ROM never changes during execution; it i
 
 The boundary marked EXTSTART is a trivial gimmick for making game-files smaller. A Glulx game-file only stores the data from 0 to EXTSTART. When the terp loads it in, it allocates memory up to ENDMEM; everything above EXTSTART is initialized to zeroes. Once execution starts, there is no difference between the memory above and below EXTSTART.
 
-For the convenience of paging interpreters, the three boundaries RAMSTART, EXTSTART, and ENDMEM must be aligned on 256-byte boundaries. 
+For the convenience of paging interpreters, the three boundaries RAMSTART, EXTSTART, and ENDMEM must be aligned on 256-byte boundaries.
 
 Any of the segments of memory can be zero-length, except that ROM must be at least 256 bytes long (so that the header fits in it).
 
@@ -139,7 +139,7 @@ When a function begins executing, the last segment is empty (StackPtr equals Fra
 
 The "locals" are a list of values which the function uses as local variables. These also include function arguments. (The first N locals can be used as the arguments to an N-argument function.) Locals can be 8, 16, or 32-bit values. They are not necessarily contiguous; padding is inserted wherever necessary to bring a value to its natural alignment (16-bit values at even addresses, 32-bit values at multiples of four).
 
-The "format of locals" is a series of bytes, describing the arrangement of the "locals" section of the frame (from LocalsPos up to FrameLen). This information is copied directly from the header of the function being called. (See <ref label=function>.) 
+The "format of locals" is a series of bytes, describing the arrangement of the "locals" section of the frame (from LocalsPos up to FrameLen). This information is copied directly from the header of the function being called. (See <ref label=function>.)
 
 Each field in this section is two bytes:
 
@@ -185,7 +185,7 @@ DestType is one of the following values:
 
 <list>
 <li>0: Do not store. The result value is discarded. DestAddr should be zero.
-<li>1: Store in main memory. The result value is stored in the main-memory address given by DestAddr. 
+<li>1: Store in main memory. The result value is stored in the main-memory address given by DestAddr.
 <li>2: Store in local variable. The result value is stored in the call frame at position ((FramePtr+LocalsPos) + DestAddr). See <ref label=instruction>.
 <li>3: Push on stack. The result value is pushed on the stack. DestAddr should be zero.
 </list>
@@ -359,7 +359,7 @@ Operands are evaluated from left to right. (This is important if there are sever
 
 It is convenient for a program to store object references as 32-bit pointers, and still determine the type of a reference at run-time.
 
-To facilitate this, structured objects in Glulx main memory follow a simple convention: the first byte indicates the type of the object. 
+To facilitate this, structured objects in Glulx main memory follow a simple convention: the first byte indicates the type of the object.
 
 At the moment, there are only two kinds of Glulx objects: functions and strings. A program (or compiler, or library) may declare more, but the Glulx VM does not have to know about them.
 
@@ -610,7 +610,7 @@ Some example values:
 <li>e     =  402DF854 (S=0, E=80, M=2DF854)
 </list>
 
-To give you an idea of the behavior of the special values: 
+To give you an idea of the behavior of the special values:
 
 <list>
 <li>1 / 0    =  +Inf
@@ -828,7 +828,7 @@ Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM, and are not documented 
 add L1 L2 S1
 </deffun>
 
-Add L1 and L2, using standard 32-bit addition. Truncate the result to 32 bits if necessary. Store the result in S1. 
+Add L1 and L2, using standard 32-bit addition. Truncate the result to 32 bits if necessary. Store the result in S1.
 
 <deffun>
 sub L1 L2 S1
@@ -840,7 +840,7 @@ Compute (L1 - L2), and store the result in S1.
 mul L1 L2 S1
 </deffun>
 
-Compute (L1 * L2), and store the result in S1. Truncate the result to 32 bits if necessary. 
+Compute (L1 * L2), and store the result in S1. Truncate the result to 32 bits if necessary.
 
 <deffun>
 div L1 L2 S1
@@ -1035,7 +1035,7 @@ Store L3 into the 32-bit field at main memory address (L1+4*L2).
 aload L1 L2 S1
 </deffun>
 
-Load a 32-bit value from main memory address (L1+4*L2), and store it in S1. 
+Load a 32-bit value from main memory address (L1+4*L2), and store it in S1.
 
 <deffun>
 astores L1 L2 L3
@@ -1061,7 +1061,7 @@ aloadb L1 L2 S1
 
 Load an 8-bit value from main memory address (L1+L2), and store it in S1.
 
-Note that these opcodes cannot access call-frame locals, or the stack. (Not with the L1 and L2 opcodes, that is.) L1 and L2 provide a main-memory address. Be not confused by the fact that L1 and L2 can be any addressing mode, including call-frame or stack-pop modes. That controls where the values come from which are used to <em>compute</em> the main-memory address. 
+Note that these opcodes cannot access call-frame locals, or the stack. (Not with the L1 and L2 opcodes, that is.) L1 and L2 provide a main-memory address. Be not confused by the fact that L1 and L2 can be any addressing mode, including call-frame or stack-pop modes. That controls where the values come from which are used to <em>compute</em> the main-memory address.
 
 The other end of the transfer (S1 or L3) is always a 32-bit value. The "store" opcodes truncate L3 to 8 or 16 bits if necessary. The "load" opcodes expand 8-bit or 16-bit values <em>without</em> sign extension. (If signed values are appropriate, you can follow aloads/aloadb with sexs/sexb.)
 
@@ -1154,7 +1154,7 @@ These opcodes can only access the values pushed on the stack above the current c
 call L1 L2 S1
 </deffun>
 
-Call function whose address is L1, passing in L2 arguments, and store the return result at S1. 
+Call function whose address is L1, passing in L2 arguments, and store the return result at S1.
 
 The arguments are taken from the stack. Before you execute the call opcode, you must push the arguments on, in backward order (last argument pushed first, first argument topmost on the stack.) The L2 arguments are removed before the new function's call frame is constructed. (If L1, L2, or S1 use the stack pop/push modes, the arguments are taken after L1 or L2 is popped, but before the result is pushed.)
 
@@ -1175,7 +1175,7 @@ These opcodes behave the same as call, except that the arguments are given in th
 return L1
 </deffun>
 
-Return from the current function, with the given return value. If this is the top-level function, Glulx execution is over. 
+Return from the current function, with the given return value. If this is the top-level function, Glulx execution is over.
 
 Note that all the branch opcodes (jump, jz, jeq, and so on) have an option to return 0 or 1 instead of branching. These behave exactly as if the return opcode had been executed.
 
@@ -1209,7 +1209,7 @@ throw L1 L2
 
 Jump back to a previously-executed catch opcode, and store the value L1. L2 must be a valid catch token.
 
-The exact catch/throw procedure is as follows: 
+The exact catch/throw procedure is as follows:
 
 When catch is executed, a four-value call stub is pushed on the stack &emdash; result destination, PC, and FramePtr. (See <ref label=callstub>. The PC is the address of the next instruction after the catch.) The catch token is the value of the stack pointer after these are pushed. The token value is stored in the result destination, and execution proceeds, branching to L1.
 
@@ -1343,7 +1343,7 @@ Notes:
 
 All the save and restore opcodes can generate diagnostic information on the current output stream.
 
-A terp may support several levels of temporary storage. You should not make any assumptions about how many times restoreundo can be called. If the player so requests, you should keep calling it until it fails. 
+A terp may support several levels of temporary storage. You should not make any assumptions about how many times restoreundo can be called. If the player so requests, you should keep calling it until it fails.
 
 Glk opaque objects (windows, streams, filespecs) are not part of the saved game state. Therefore, when you restore a game, all the object IDs you have in Glulx memory must be considered invalid. (This includes both IDs in main memory and on the stack.) You must use the Glk iteration calls to go through all the opaque objects in existence, and recognize them by their rocks.
 
@@ -1533,7 +1533,7 @@ atan L1 S1
 
 Compute the standard trigonometric functions.
 
-sin and cos return values in the range -1 to 1. sin, cos, and tan of infinity are NaN. 
+sin and cos return values in the range -1 to 1. sin, cos, and tan of infinity are NaN.
 
 asin is always in the range -pi/2 to pi/2; acos is always in the range 0 to pi. asin and acos of values greater than 1, or less than -1, are NaN. atan(+-Inf) is +-pi/2.
 
@@ -1602,7 +1602,7 @@ jfgt L1 L2 L3
 jfge L1 L2 L3
 </deffun>
 
-Branch to L3 if L1 is less than (less than or equal to, greater than, greater than or equal to) L2. 
+Branch to L3 if L1 is less than (less than or equal to, greater than, greater than or equal to) L2.
 
 +0 and -0 behave identically in comparisons. In particular, +0 is considered equal to -0, not greater than -0.
 
@@ -1655,7 +1655,7 @@ These opcodes were added in Glulx version 3.1. You can test for their availabili
 
 <h level=2>Searching</h>
 
-Perform a generic linear, binary, or linked-list search. 
+Perform a generic linear, binary, or linked-list search.
 
 <comment>These are outrageously CISC for an hardware CPU, but easy enough to add to a software terp; and taking advantage of them can speed up a program considerably. Advent, under the Inform library, runs 15-20% faster when property-table lookup is handled with a binary-search opcode instead of Inform code. A similar change in the dictionary lookup trims another percent or so.</comment>
 
@@ -1782,7 +1782,7 @@ Constant PARAM_8_cpv__start = #cpv__start;
 
 ! OBJ_IN_CLASS: utility function; implements "obj in Class".
 [ OBJ_IN_CLASS obj;
-  return ((obj + 13 + PARAM_7_num_attr_bytes)--&gt;0 
+  return ((obj + 13 + PARAM_7_num_attr_bytes)--&gt;0
     == PARAM_2_class_metaclass);
 ];
 
@@ -1804,7 +1804,7 @@ Constant PARAM_8_cpv__start = #cpv__start;
 [ FUNC_2_CP__Tab obj id
   otab max res; ! locals
   if (FUNC_1_Z__Region(obj)~=1) {
-    ERROR("[** Programming error: tried to find the ~.~ of (something) **]"); 
+    ERROR("[** Programming error: tried to find the ~.~ of (something) **]");
     rfalse;
   }
   otab = obj--&gt;4;
@@ -1827,7 +1827,7 @@ Constant PARAM_8_cpv__start = #cpv__start;
   prop = FUNC_2_CP__Tab(obj, id);
   if (prop==0) return 0;
   if (OBJ_IN_CLASS(obj) &amp;&amp; cla == 0) {
-	if (id &lt; PARAM_1_indiv_prop_start 
+	if (id &lt; PARAM_1_indiv_prop_start
 	    || id &gt;= PARAM_1_indiv_prop_start+8)
 	  return 0;
   }
@@ -1850,7 +1850,7 @@ Constant PARAM_8_cpv__start = #cpv__start;
   prop = FUNC_2_CP__Tab(obj, id);
   if (prop==0) return 0;
   if (OBJ_IN_CLASS(obj) &amp;&amp; cla == 0) {
-	if (id &lt; PARAM_1_indiv_prop_start 
+	if (id &lt; PARAM_1_indiv_prop_start
 	    || id &gt;= PARAM_1_indiv_prop_start+8)
 	  return 0;
   }
@@ -1884,12 +1884,12 @@ Constant PARAM_8_cpv__start = #cpv__start;
   }
   if (cla == PARAM_3_object_metaclass) {
 	if (OBJ_IN_CLASS(obj)
-	  || obj == PARAM_2_class_metaclass or PARAM_5_string_metaclass 
+	  || obj == PARAM_2_class_metaclass or PARAM_5_string_metaclass
 	     or PARAM_4_routine_metaclass or PARAM_3_object_metaclass)
 	  rfalse;
 	rtrue;
   }
-  if (cla == PARAM_5_string_metaclass or PARAM_4_routine_metaclass) 
+  if (cla == PARAM_5_string_metaclass or PARAM_4_routine_metaclass)
     rfalse;
   if (~~OBJ_IN_CLASS(cla)) {
 	ERROR("[** Programming error: tried to apply 'ofclass' with non-class **]");
@@ -1931,7 +1931,7 @@ Constant PARAM_8_cpv__start = #cpv__start;
 	rfalse;
   }
   if (zr ~= 1) rfalse;
-  if (id &gt;= PARAM_1_indiv_prop_start 
+  if (id &gt;= PARAM_1_indiv_prop_start
       &amp;&amp; id &lt; PARAM_1_indiv_prop_start+8) {
 	if (OBJ_IN_CLASS(obj)) rtrue;
   }
@@ -1966,7 +1966,7 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 <li>TerpVersion (1): Returns the version of the interpreter. The format is the same as the GlulxVersion. <comment>Each interpreter has its own version numbering system, defined by its author, so this information is not terribly useful. But it is convenient for the game to be able to display it, in case the player is capturing version information for a bug report.</comment>
 <li>ResizeMem (2): Returns 1 if the terp has the potential to resize the memory map, with the setmemsize opcode. If this returns 0, setmemsize will always fail. <comment>But remember that setmemsize might fail in any case.</comment>
 <li>Undo (3): Returns 1 if the terp has the potential to undo. If this returns 0, saveundo and restoreundo will always fail.
-<li>IOSystem (4): Returns 1 if the terp supports the I/O system given in L2. (The constants are the same as for the setiosys opcode: 0 for null, 1 for filter, 2 for Glk, 20 for FyreVM. 0 and 1 will always succeed.) 
+<li>IOSystem (4): Returns 1 if the terp supports the I/O system given in L2. (The constants are the same as for the setiosys opcode: 0 for null, 1 for filter, 2 for Glk, 20 for FyreVM. 0 and 1 will always succeed.)
 <li>Unicode (5): Returns 1 if the terp supports Unicode operations. These are: the E2 Unicode string type; the 04 and 05 string node types (in compressed strings); the streamunichar opcode; the type-14 call stub. If the Unicode selector returns 0, encountering any of these will cause a fatal interpreter error.
 <li>MemCopy (6): Returns 1 if the interpreter supports the mzero and mcopy opcodes. (This must true for any terp supporting Glulx 3.1.)
 <li>MAlloc (7): Returns 1 if the interpreter supports the malloc and mfree opcodes. (If this is true, MemCopy and ResizeMem must also both be true, so there is no need to check all three.)
