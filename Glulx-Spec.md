@@ -1432,6 +1432,8 @@ Recall that floating-point values are encoded as single-precision (32-bit) IEEE-
 
 <comment>In other words, passing a float value to an integer arithmetic opcode will operate on the IEEE-754-encoded 32-bit value. Such an operation would be deterministic, albeit mathematically meaningless. The same is true for passing an integer to a float opcode.</comment>
 
+Float operations which produce inexact results are not guaranteed to be identical on every platform. That is, 1.0 plus 1.0 will always be 2.0, because that can be represented exactly. But acos(-1.0), which should be pi, may generate either 40490FDA (3.14159250...) or 40490FDB (3.14159274...). Both are approximations of the correct result, but which one you get depends on the interpreter's underlying math library.
+
 If any argument to a float operation is a NaN ("not a number") value, the result will be a NaN value. (Except for the pow opcode, which has some special cases.)
 
 <comment>Speaking of special cases: I have tried to describe all the important ones for these operations. However, you should also consult the Glulxercise unit test (available on the Glulx web site). Consider it definitive if this document is unclear.</comment>
