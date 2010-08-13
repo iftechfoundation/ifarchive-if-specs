@@ -1434,6 +1434,8 @@ Recall that floating-point values are encoded as single-precision (32-bit) IEEE-
 
 If any argument to a float operation is a NaN ("not a number") value, the result will be a NaN value. (Except for the pow opcode, which has some special cases.)
 
+<comment>Speaking of special cases: I have tried to describe all the important ones for these operations. However, you should also consult the Glulxercise unit test (available on the Glulx web site). Consider it definitive if this document is unclear.</comment>
+
 These opcodes were added in Glulx version 3.1.2. However, not all interpreters may support them. You can test for their availability with the Float gestalt selector.
 
 <deffun>
