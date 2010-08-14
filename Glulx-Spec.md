@@ -1473,7 +1473,9 @@ Perform floating-point arithmetic. Overflows produce infinite values (with the a
 fmod L1 L2 S1 S2
 </deffun>
 
-Perform a floating-point modulo operation. S1 is the remainder; S2 is the quotient. Both results have the sign of L1; the sign of L2 is ignored.
+Perform a floating-point modulo operation. S1 is the remainder (or modulus); S2 is the quotient.
+
+S2 is L1/L2, rounded (towards zero) to an integral value. S1 is L1-(S2*L2). Note that S1 always has the same sign as L1; S2 has the appropriate sign for L1/L2.
 
 If L2 is 1, this gives you the fractional and integer parts of L1. If L1 is zero, both results are zero. If L2 is infinite, S1 is L1 and S2 is zero. If L1 is infinite or L2 is zero, both results are NaN.
 
