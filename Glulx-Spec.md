@@ -41,7 +41,11 @@ However, if a system wants to use a simple runtime format with 32-bit data, Glul
 
 Note that this is entirely separate from question of the I/O layer. Glulx uses the Glk I/O API, for the sake of simplicity and portability. Any IF system can do the same. One can use Glk I/O without using the Glulx game-file format.
 
-On the obverse, one could also extend the Glulx VM to use a different I/O system instead of Glk. One such extension is FyreVM, a commercial IF system developed by Textfyre. FyreVM is described at <a href="http://textfyre.com/fyrevm/">http://textfyre.com/fyrevm/</a>. This specification does not cover it, except to note opcodes, gestalt selectors, and iosys values that are specific to FyreVM.
+On the obverse, one could also extend the Glulx VM to use a different I/O system instead of Glk. One such extension is FyreVM, a commercial IF system developed by Textfyre. FyreVM is described at <a href="http://textfyre.com/fyrevm/">http://textfyre.com/fyrevm/</a>. 
+
+Other extension projects, not yet solidified, are being developed by Dannii Willis. See <a href="http://curiousdannii.github.com/if/">http://curiousdannii.github.com/if/</a>.
+
+This specification does not cover FyreVM and the other projects, except to note opcodes, gestalt selectors, and iosys values that are specific to them.
 
 <h level=2>Credits</h>
 
@@ -820,7 +824,7 @@ The table of opcodes:
 <li>0x1C9: jisinf
 </list>
 
-Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM, and are not documented here. See <ref label=otherif>.
+Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM. Opcodes 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. These are not documented here. See <ref label=otherif>.
 
 <h level=2>Integer Math</h>
 
@@ -1982,7 +1986,7 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 <li>Float (11): Returns 1 if the interpreter supports the floating-point arithmetic opcodes.
 </list>
 
-Selectors 0x1000 to 0x10FF are reserved for use by FyreVM, and are not documented here. See <ref label=otherif>.
+Selectors 0x1000 to 0x10FF are reserved for use by FyreVM. Selectors 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. These are not documented here. See <ref label=otherif>.
 
 <comment>The Unicode selector is slightly redundant. Since the Unicode operations exist in Glulx spec 3.0 and higher, you can get the same information by testing GlulxVersion against 0x00030000. However, it's clearer to have a separate selector. Similarly, the MemCopy selector is true exactly when GlulxVersion is 0x00030100 or higher.</comment>
 
