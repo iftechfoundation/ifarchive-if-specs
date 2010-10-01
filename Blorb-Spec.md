@@ -117,17 +117,37 @@ An AIFF (Audio IFF) file has chunk type 'FORM', and formtype 'AIFF'. AIFF is an 
 
 An Ogg Vorbis file has chunk type 'OGGV'. This is a high-quality (but lossy) audio compression format, comparable to MP3 (but without the patent concerns that encumber MP3). The Ogg format is available at:
 
+<code>
 <a href="http://www.vorbis.com/">http://www.vorbis.com/</a>
+</code>
 
 <h level=2>MOD Sounds</h>
 
-A MOD file has chunk type 'MOD&nbsp;'. MOD is an Amiga-originated format for music synthesized from note samples. The specification, such as it is, is available in the file:
+MOD is an Amiga-originated format for music synthesized from note samples. Over the years, other formats of this type &emdash; generally called "tracker" or "module music" formats &emdash; have arisen. Blorb supports four: original ".MOD" files, ImpulseTracker (".IT"), FastTracker 2 Extended (".XM"), and ScreamTracker 3 (".S3M").
+
+Because tracker-playing libraries typically handle many formats, it is most practical for Blorb to lump them all together. <em>Regardless of which tracker format is used,</em> the chunk type will be 'MOD&nbsp;'. 
+
+The formats are described here:
 
 <code>
-<a href="mod-spec.txt">http://eblong.com/zarf/blorb/mod-spec.txt</a>
+<a href="http://www.digitalpreservation.gov/formats/fdd/fdd000126.shtml">http://www.digitalpreservation.gov/formats/fdd/fdd000126.shtml</a>
 </code>
 
-For generality, MOD files in Blorb are limited to the ProTracker 2.0 format: 31 note samples, up to 128 note patterns. The magic number at byte 1080 should be 'M.K.' or 'M!K!'.
+This spec does not attempt to distinguish variations within the four supported formats. (".MOD" is particularly ill-defined, although I have saved comments on the original MOD format at <a href="mod-spec.txt">http://eblong.com/zarf/blorb/mod-spec.txt</a>.) Instead, we recommend that C implementations embed libmodplug, a public-domain tracker-playing library. Its home page is:
+
+<code>
+<a href="http://modplug-xmms.sourceforge.net/">http://modplug-xmms.sourceforge.net/</a>
+</code>
+
+However, some bug fixes are included in the version packaged with Windows Glk:
+
+<code>
+###
+</code>
+
+(Note that it may be safer to compile libmodplug with the MODPLUG_BASIC_SUPPORT option, which eliminates many obscure tracker formats that Blorb does not support.)
+
+Where libmodplug is not practical, implementations should use whatever tracker-playing library claims to support the four formats in question. We trust, perhaps beyond reason, that implementation differences will not lead game creators to their doom.
 
 <h level=2>Song Sounds</h>
 
