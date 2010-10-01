@@ -1,6 +1,6 @@
 <title>Blorb: An IF Resource Collection Format Standard</title>
 
-<subtitle>Version 2.0.1</subtitle>
+<subtitle>Version 2.0.2</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -502,7 +502,9 @@ On platforms which limit filename suffixes to three characters, the suffixes ".b
 
 Historically, Blorb files have been associated with the MIME type <code>application/x-blorb</code>. 
 
-It is again pragmatic (in these degenerate times) to associate a separate MIME type with each semantic Blorb type (and filename suffix). Therefore, the types <code>application/x-blorb-zmachine</code> and <code>application/x-blorb-glulx</code> should be used for Blorb files containing Z-code and Glulx games.
+We can use the profile feature of MIME to differentiate the contents: <code>application/x-blorb;profile="zcode"</code> and <code>application/x-blorb;profile="glulx"</code> for the common virtual machines.
+
+(Previous versions of this spec suggested <code>application/x-blorb-zmachine</code> and <code>application/x-blorb-glulx</code>. These are now deprecated.)
 
 <h level=2>Z-Machine Compatibility Issues</h>
 
