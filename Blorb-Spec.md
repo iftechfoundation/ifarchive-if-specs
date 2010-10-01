@@ -1,14 +1,14 @@
 <title>Blorb: An IF Resource Collection Format Standard</title>
 
-<subtitle>Version 1.1</subtitle>
+<subtitle>Version 2.0</subtitle>
 
-<subtitle>Andrew Plotkin &lt;erkyrath@netcom.com&gt;</subtitle>
+<subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
 This is a formal specification for a common format for storing resources associated with an interactive fiction game file. Resources are data which the game can invoke, such as sounds and pictures. In addition, the executable game file may itself be a resource in a resource file. This is a convenient way to package a game and all its resources together in one file.
 
-Blorb was originally designed solely for the Z-machine, which is capable of playing sounds (Z-machine versions 3 and up) and showing images (the V6 Z-machine). However, it has been extended for use with other IF systems. The Glk portable I/O library uses Blorb as a resource format, and therefore so does the Glulx virtual machine. (See <a href="../glk/index.html">http://www.eblong.com/zarf/glk/</a> and <a href="../glulx/index.html">http://www.eblong.com/zarf/glulx/</a>.)
+Blorb was originally designed solely for the Z-machine, which is capable of playing sounds (Z-machine versions 3 and up) and showing images (the V6 Z-machine). However, it has been extended for use with other IF systems. The Glk portable I/O library uses Blorb as a resource format, and therefore so does the Glulx virtual machine. (See <a href="../glk/index.html">http://eblong.com/zarf/glk/</a> and <a href="../glulx/index.html">http://eblong.com/zarf/glulx/</a>.)
 
-<comment>Text in this document is liberally stolen from Martin Frost &lt;mdf@doc.ic.ac.uk&gt;'s proposal for a common save file format. Ideas are liberally stolen from my own PICKLE format proposal, which is now withdrawn in favor of this proposal.</comment>
+<comment>Text in this document is liberally stolen from Martin Frost's proposal for a common save file format. Ideas are liberally stolen from my own PICKLE format proposal, which was withdrawn in favor of this proposal.</comment>
 
 This format is named "Blorb" because it wraps your possessions up in a box, and because the common save file format was at one point named "Gnusto". That has been changed to "Quetzal", but I'm not going to let that stop me.
 
@@ -22,7 +22,7 @@ The first chunk in the FORM must be a resource index (chunk type 'RIdx'.) This l
 
 The resources are stored in the FORM as chunks; each resource is one chunk. They do not need to be in any particular order, since the resource index contains all the information necessary to find a particular resource.
 
-There are five optional chunks which may appear in the file: the color palette (chunk type 'Plte'), the resolution chunk (chunk type 'Reso'), the loop chunk (chunk type 'Loop'), the release number (chunk type 'RelN'), and the game identifier (chunk type 'IFhd'). They may occur anywhere in the file after the resource index.
+There are several optional chunks which may appear in the file: the release number (chunk type 'RelN'), the game identifier (chunk type 'IFhd'), and others defined hereafter. They may occur anywhere in the file after the resource index.
 
 Several optional chunks may also appear by convention in any IFF FORM: '(c)&nbsp;', 'AUTH', and 'ANNO'. These may also appear anywhere in the file after the resource index.
 
@@ -59,38 +59,79 @@ The start field tells where the resource chunk begins. This value is an offset, 
 
 <h level=1>Picture Resource Chunks</h>
 
-Each picture is stored as one chunk, whose content is either a PNG file or a JPEG (JFIF) file. The chunk type is 'PNG&nbsp;' or 'JPEG'. (Note that these are two possible formats for a single resource. It is not possible to have a PNG image and a JPEG image with the same image resource number.)
+Each picture is stored as one chunk, whose content is a PNG file, a JPEG (JFIF) file, or a placeholder rectangle. (Note that these are various possible formats for a single resource. It is not possible to have a PNG image and a JPEG image with the same image resource number.)
 
-The PNG file format is available at
+<h level=2>PNG Pictures</h>
 
-<code>
-<a href="http://www.cdrom.com/pub/png/">http://www.cdrom.com/pub/png/</a>
-</code>
+A PNG resource has a chunk type of 'PNG&nbsp;'.
 
-For information on JPEG, see
+PNG is a lossless image compression format. The PNG file format is available at
 
 <code>
-<a href="http://www.jpeg.org/public/jpeghomepage.htm">http://www.jpeg.org/public/jpeghomepage.htm</a>
+<a href="http://www.libpng.org/pub/png/">http://www.libpng.org/pub/png/</a>
 </code>
+
+<h level=2>JPEG Pictures</h>
+
+A JPEG resource has a chunk type of 'JPEG'.
+
+JPEG is a lossy image compression format, developed for photograph-like images. For information on JPEG, see
+
+<code>
+<a href="http://www.jpeg.org/jpeg/">http://www.jpeg.org/jpeg/</a>
+</code>
+
+<h level=2>Placeholder Pictures</h>
+
+A third form of picture resource is a placeholder rectangle. A rectangle has only size, but no contents. This format exists to describe the legacy behavior of some V6 Infocom games (Zork Zero, Shogun, and Arthur). Its support in interpreters is optional, and its use is strongly discouraged for any purpose other than conversions of Infocom graphics.
+
+<code>
+4 bytes         'Rect'          chunk ID
+4 bytes         8               chunk length
+4 bytes         width           rectangle width
+4 bytes         height          rectangle height
+</code>
+
+Either or both of the width and height may be zero.
+
+In a Z-code game, a rectangle exists for the purposes of @picture_data and @erase_picture, but its use in @draw_picture or @picture_table is an error. The behavior of rectangles in Glulx and other game files is not defined.
+
+<comment>Thanks to Kevin Bracey for this extension.</comment>
 
 <h level=1>Sound Resource Chunks</h>
 
-Each sound is stored as one chunk, whose content is either an AIFF file, a MOD file, or a song file. (Note that these are three possible formats for a single resource. It is not possible to have an AIFF sound and a MOD sound with the same sound resource number.)
+Each sound is stored as one chunk, whose content is either an AIFF file, an Ogg file, a MOD file, or a song file. (Note that these are various possible formats for a single resource. It is not possible to have an AIFF sound and a MOD sound with the same sound resource number.)
 
-An AIFF (Audio IFF) file has chunk type 'FORM', and formtype 'AIFF'. The AIFF format is available at these locations:
+On the Z-machine, we must consider the problems of how the game knows the interpreter can play music, and how sampled sounds are played over music. See the section "Z-Machine Compatibility Issues" later in this document. (These issues are not relevant to Glk and Glulx.)
+
+<h level=2>AIFF Sounds</h>
+
+An AIFF (Audio IFF) file has chunk type 'FORM', and formtype 'AIFF'. AIFF is an uncompressed digital-sample format developed in the late 1980s. The AIFF format is available at these locations:
 
 <code>
-<a href="http://developer.apple.com/techpubs/mac/Sound/Sound-61.html">http://developer.apple.com/techpubs/mac/Sound/Sound-61.html</a>
 <a href="ftp://ftp.sgi.com/sgi/aiff-c.9.26.91.ps.Z">ftp://ftp.sgi.com/sgi/aiff-c.9.26.91.ps.Z</a>
+<a href="http://astronomy.swin.edu.au/~pbourke/dataformats/aiff/">http://astronomy.swin.edu.au/~pbourke/dataformats/aiff/</a>
 </code>
 
-A MOD file has chunk type 'MOD&nbsp;'. This is the Amiga-originated format for music synthesized from note samples. The specification, such as it is, is available in the files 
+<h level=2>Ogg Sounds</h>
+
+An Ogg Vorbis file has chunk type 'OGGV'. This is a high-quality (but lossy) audio compression format, comparable to MP3 (but without the patent concerns that encumber MP3). The Ogg format is available at:
+
+<a href="http://www.vorbis.com/">http://www.vorbis.com/</a>
+
+<h level=2>MOD Sounds</h>
+
+A MOD file has chunk type 'MOD&nbsp;'. MOD is an Amiga-originated format for music synthesized from note samples. The specification, such as it is, is available in the file:
 
 <code>
-<a href="mod-spec.txt">http://www.eblong.com/zarf/blorb/mod-spec.txt</a>
+<a href="mod-spec.txt">http://eblong.com/zarf/blorb/mod-spec.txt</a>
 </code>
 
 For generality, MOD files in Blorb are limited to the ProTracker 2.0 format: 31 note samples, up to 128 note patterns. The magic number at byte 1080 should be 'M.K.' or 'M!K!'.
+
+<h level=2>Song Sounds</h>
+
+<em>The song file format is deprecated, as of Blorb 2.0.</em> It is complicated, non-standard, and hard to use. Its support in interpreters should be considered optional. However, it will continue to be documented here.
 
 A song file has chunk type 'SONG'. This is similar to a MOD file, but with no built-in sample data. The samples are instead taken from AIFF sounds in the resource file. For each sample, the 22-byte sample-name field in the song should contain the string "SND1" to refer to sound resource 1, "SND953" to refer to sound resource 953, and so on. Any sound so referred to must be an AIFF, not a MOD or song. (You can experiment with fractal recursive music on your own time.)
 
@@ -99,8 +140,6 @@ Each sample record in a MOD or song contains six fields: sample name, sample len
 Note that an AIFF need not contain 8-bit sound samples, as a sound built into a MOD would. A clever sound engine may take advantage of this to generate higher-quality music. An unclever one can trim (or pad) the AIFF's data to 8 bits before playing the song. In the worst case, it is always possible to trim the AIFF data to 8 bits, append it to the song data, fill in the song's sample records (with the appropriate lengths, etc, from the AIFF data); the result is a complete MOD file, which can then be played by a standard MOD engine.
 
 The intent of allowing song files is both to allow higher quality, and to save space. Note samples are the largest part of a MOD file, and if the samples are stored in resources, they can be shared between songs. (Typically note samples will be given high resource numbers, so that they do not conflict with sounds used directly by the game. However, it is legal for the game to use a note sample as a sampled-sound effect, if it wants.)
-
-On the Z-machine, there are also the problems of how the game knows the interpreter can play music, and how sampled sounds are played over music. See the section "Z-Machine Compatibility Issues" later in this document. (These issues are not relevant to Glk and Glulx.)
 
 <h level=1>Executable Resource Chunks</h>
 
@@ -114,20 +153,6 @@ A resource file which does not contain an executable chunk can only be used in t
 
 If an interpreter is handed inconsistent arguments &emdash; that is, a resource file with no executable chunk, or a resource file with an executable chunk plus an executable file &emdash; it should complain righteously to the user.
 
-<h level=1>The Release Number Chunk</h>
-
-This chunk is used to tell the interpreter the release number of the resource file. It is meaningful only in Z-code resource files. 
-
-The interpreter passes this information to the game when the @picture_data opcode is executed with an argument of 0. The release number is a 16-bit value. The chunk format is:
-
-<code>
-4 bytes         'RelN'          chunk ID
-4 bytes         2               chunk length
-2 bytes         num             release number
-</code>
-
-This chunk is optional. If it is not present, the interpreter should assume a release number of 0.
-
 <h level=1>The Game Identifier Chunk</h>
 
 This identifies which game the resources are associated with. The chunk type is 'IFhd'.
@@ -139,12 +164,12 @@ If the resource file contains an executable chunk, there's not much point in put
 For Z-code, the contents of the game identifier chunk are defined in the common save file format specification, section 5. This spec can be found at
 
 <code>
-<a href="ftp://ftp.gmd.de/if-archive/infocom/interpreters/specification/savefile_14.txt">ftp://ftp.gmd.de/if-archive/infocom/interpreters/specification/savefile_14.txt</a>
+<a href="http://mirror.ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt">http://mirror.ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt</a>
 </code>
 
 The "Initial PC" field of the IFhd chunk (bytes 10 through 12) has no meaning for resource files. It should be set to zero.
 
-For Glulx, the contents of the game identifier chunk are defined in the Glulx specification. This can be found at <a href="../glulx/index.html">http://www.eblong.com/zarf/glulx/</a>.
+For Glulx, the contents of the game identifier chunk are defined in the Glulx specification. This can be found at <a href="../glulx/index.html">http://eblong.com/zarf/glulx/</a>.
 
 <h level=1>The Color Palette Chunk</h>
 
@@ -176,7 +201,59 @@ Similarly, if the interpreter finds a "16" or "32" value, it may set the display
 
 It is not required that the palette chunk list every color used in the 'Pict' resources. It is not required that the colors in the palette all be different, or that they all are actually used by 'Pict' resources. It is not required that the palette have anything to do with the game art at all. Of course, if you give the interpreter misleading hints, you deserve whatever you get.
 
-<h level=1>The Resolution Chunk</h>
+<h level=1>The Frontispiece Chunk</h>
+
+The Blorb format generally does not specify how images are loaded and displayed; that is the province of the game file format. However, it may be desirable to associate a single image with the game. The image would serve as a frontispiece, or "cover art".
+
+The exact use of a frontispiece image is left open to invention. An interpreter may display it before starting a game. Or it might display frontispieces while the player is <em>choosing</em> a game to play (as an aid to locating a particular game). An index of games might extract the frontispieces and use them as catalog illustrations. 
+
+If present, the frontispiece is simply an ordinary picture resource. It is singled out as a frontispiece by a chunk with type 'Fspc'; this contains its image resource number.
+
+The frontispiece image may be of any legal Blorb type (except a placeholder rectangle). The image may be of any size, but is preferred to be square or approximately so. This allows interpreters to display frontispieces in a systematic way, scaling them to fit a layout, without wasting screen space.
+
+(Since the frontispiece image is not loaded by the game file, it may be used even with game files that do not support graphics, such as the V5 Z-machine. In a graphics-capable game file, it is legal for the frontispiece image to also be loaded by the game file in the usual way.)
+
+<code>
+4 bytes         'Fspc'          chunk ID
+4 bytes         4               chunk length
+4 bytes         number          number of a Pict resource
+</code>
+
+<h level=1>Metadata</h>
+
+Metadata is a contentious topic, with which the Blorb spec is not entirely unentangled. (The game identifier and frontispiece chunks are answers to small parts of the IF metadata problem.)
+
+Rather than entangle ourselves further, we will merely say that metadata will be stored as XML, in a chunk of type 'IFmd'. The XML structure is currently being worked out as part of the ongoing Inform 7 project.
+
+<code>
+4 bytes         'IFmd'          chunk ID
+4 bytes         n               chunk length
+n bytes         ...             XML document (UTF-8 encoding)
+</code>
+
+<h level=1>Chunks Specific to the Z-machine</h>
+
+The Z-machine's graphics and sound capabilities were added late in Infocom's history, but early in the history of data format standardization. As a result, the Z-machine's audio and image models are both too rigid and too flexible to work well with modern file formats.
+
+To compensate for this, we add additional information to the Blorb file. Interpreters can use these hints to display the resource information correctly.
+
+Some of these hints are needed only to handle legacy Infocom games and their resources. Others will be useful for the creation of new Z-code games.
+
+<h level=2>The Release Number Chunk</h>
+
+This chunk is used to tell the interpreter the release number of the resource file. It is meaningful only in Z-code resource files. 
+
+The interpreter passes this information to the game when the @picture_data opcode is executed with an argument of 0. The release number is a 16-bit value. The chunk format is:
+
+<code>
+4 bytes         'RelN'          chunk ID
+4 bytes         2               chunk length
+2 bytes         num             release number
+</code>
+
+This chunk is optional. If it is not present, the interpreter should assume a release number of 0.
+
+<h level=2>The Resolution Chunk</h>
 
 This chunk contains information used to scale images. The chunk type is 'Reso'. It is optional. This chunk is meaningful only in Z-code resource files.
 
@@ -292,7 +369,62 @@ The same compass rose, still to be 1/4 of the window size &emdash; but this time
 
 End of verbose examples.
 
-<h level=1>The Looping Chunk</h>
+<h level=2>The Adaptive Palette Chunk</h>
+
+This chunk contains a list of pictures that change their colors according to the pictures plotted before. The chunk type is 'APal'. It is optional. This chunk is meaningful only in Z-code resource files.
+
+This format exists to describe the legacy behavior of some V6 Infocom games (Zork Zero and Arthur). Its support in interpreters is optional, and its use is strongly discouraged for any purpose other than conversions of Infocom graphics.
+
+<code>
+4 bytes         'APal'          chunk ID
+4 bytes         num*4           chunk length
+num*4 bytes     ...             adaptive palette entries
+</code>
+        
+Each entry is 4 bytes, of the form:
+
+<code>
+4 bytes         number          picture resource number
+</code>
+
+If this chunk is present:
+
+<list>
+<li>All pictures in the Blorb file will be PNGs or Rects.
+<li>All PNGs will be indexed-color (color type 3).
+<li>All PNGs will use only color indices 2 through 15.
+<li>All PNGs will have no more than 16 entries in their PLTE chunk.
+<li>PNGs may have a tRNS chunk marking color 0 only as fully transparent, in which case color index 0 may also be used. No other forms of the tRNS chunk are valid.
+</list>
+
+However, the following rules still apply from the PNG standard:
+
+<list>
+<li>Any bit depth of PNG is valid (1, 2, 4, or 8 bits per pixel).
+<li>The PLTE chunk is required by the PNG standard, and it must have sufficient entries to cover every color used in the PNG, even in adaptive-palette pictures.
+<li>The PLTE chunk may not have more entries than can be represented by the PNG's bit depth.
+<li>The PNGs may have gAMA, cHRM and sRGB or iCCP chunks describing the color space. Interpreters should make every effort to support at least gAMA. For the Infocom graphics at least, cHRM, sRGB and iCCP are probably beyond the call of duty.
+</list>
+
+These restrictions, though intricate, serve to make the interpreter's life easier at the expense of constraining the creator. The constraints are natural given the form of the original Infocom graphics.
+
+The interpreter should keep track of the "Current Palette". This will be a 14-entry table, covering color indices 2-16. For ease of implementation, this will probably be a 16-entry table, whose first two entries are not significant.
+
+Whenever a picture <em>not</em> listed in the APal chunk is plotted, its palette (as derived from its PLTE, gAMA, cHRM and sRGB/iCCP chunks) should be copied into the Current Palette. If its palette has fewer than 16 entries, then only those entries of the Current Palette are changed. (Possible interpreter implementation: transform the PNG's PLTE chunk according to the gAMA, cHRM, sRGB chunks, then copy it into your Current Palette which is always in the screen color-space. With libpng, use png_get_PLTE, after calling png_update_info).
+
+Whenever a picture listed in the APal chunk is plotted, its palette should be ignored, and it should be plotted with the Current Palette. (Possible interpreter implementation: strip out the PLTE, gAMA, cHRM and sRGB/iCCP chunks from the PNG, and insert the Current Palette as its PLTE. Or with libpng, use png_set_PLTE before reading the data).
+
+The behavior is undefined if any adaptive-palette pictures are plotted before a non-adaptive picture has been plotted.
+
+If picture caching (through @picture_data or otherwise) is implemented, special attention may need to be paid to ensure that adaptive images that are cached are still appropriate for the Current Palette when plotted. It would appear that the Zork Zero does reset the cache after a palette change, but this has not been exhaustively investigated.
+
+Alternatively, for the full retro-gaming experience, the pictures can be handled in the same way as the Amiga and IBM MCGA interpreters, as follows: Use a 16-color screen mode. Copy non-adaptive pictures' palette (apart from the first two entries) into the screen palette when plotted. Use color indices 0 and 1 for the window background and text respectively. This mimics the IBM MGA and Amiga display, where drawing a picture can change the colors of graphics already on the screen, but it is not the preferred rendering.
+
+Shogun and Journey do not use any adaptive-palette images, but on some platforms the effect of pictures already on the screen changing color is visible. To give an interpreter the ability to do this if desired, and to signal that optimizations may be possible because of the limited nature of the graphics, the Blorb files for Shogun and Journey contain an empty APal chunk.
+
+<comment>Thanks to Kevin Bracey for this extension.</comment>
+
+<h level=2>The Looping Chunk</h>
 
 This chunk contains information about which sounds are looped, in a V3 Z-machine game. The chunk type is 'Loop'. It is optional.
 
@@ -327,7 +459,23 @@ The '(c)&nbsp;' chunk contains the copyright message (date and holder, without t
 
 The 'ANNO' chunk contains any textual annotation that the user or writing program sees fit to include.
 
-<h level=1>Z-Machine Compatibility Issues</h>
+<h level=1>Presentation and Compatibility</h>
+
+<h level=2>File Suffixes</h>
+
+Previous versions of the Blorb spec did not discuss file naming. However, with the relapse of MacOS into filename suffix semantics, it is impossible for us to pretend that the issue is an implementation detail.
+
+It is always legal for a Blorb file to have a ".blorb" filename suffix. However, interpreters have a natural interest in locating <em>their</em> sort of Blorb files -- Z-code, Glulx, or so on -- and it is generally easier for them to do this by filename suffix, rather than by opening each Blorb and looking at its resource index. Therefore, ".zblorb" and ".gblorb" should be used to designate Blorb files containing Z-code and Glulx games, respectively.
+
+On platforms which limit filename suffixes to three characters, the suffixes ".blb", ".zlb", and ".glb" may be used instead. But this practice, at least, I can deprecate without qualm. I hope.
+
+<h level=2>MIME Types</h>
+
+Historically, Blorb files have been associated with the MIME type <code>application/x-blorb</code>. 
+
+It is again pragmatic (in these degenerate times) to associate a separate MIME type with each semantic Blorb type (and filename suffix). Therefore, the types <code>application/x-blorb-zmachine</code> and <code>application/x-blorb-glulx</code> should be used for Blorb files containing Z-code and Glulx games.
+
+<h level=2>Z-Machine Compatibility Issues</h>
 
 The image system presented in this document is fully backwards-compatible with Infocom's interpreters. Infocom V6 games, such as Arthur, Journey, and Zork Zero, contain only non-scalable image resources. The game files are written to deal with both variations in window size and variations in image size (since the interpreters for different platforms had different window sizes and different art.) Therefore, if you construct a Blorb file containing the images from a particular platform (say, the Mac) and give it the suggested window size of the Infocom Mac interpreter, the game file will deal with it correctly.
 
@@ -339,13 +487,13 @@ The sound system is slightly more problematic. A game file can announce that it 
 
 There is also the question of overlapping sounds. The Z-Spec (9.4.2) says that starting a new sound effect automatically stops any current one. But it is not desirable that a sound effect such as footsteps should interrupt the playing of background music. Therefore, the interpreter should amend this rule, and consider sampled sounds and music to be in seperate "channels". Samples interrupt samples, and music interrupts music, but one form of sound does not interrupt the other.
 
-This is an actual variance in the behavior of the Z-machine, and worse, a variance which depends on data format. (One sound will either stop another, or not, depending on whether the sound is stored in AIFF or MOD format.) We apologize for the ugliness.
+This is an actual variance in the behavior of the Z-machine, and worse, a variance which depends on data format. (One sound will either stop another, or not, depending on whether the sound is stored in AIFF (sampled) or Ogg/MOD (music) format.) We apologize for the ugliness.
 
 Again, future versions of the Z-machine may address this issue, and allow a more general system where any sound can be overlaid on any other sound, or interrupt it, as the game desires and regardless of storage format. (After all, there can be background <em>sounds</em> as well as background <em>music</em>.) Such a system would also allow the interpreter to announce its limitations and capabilities &emdash; whether it can play music, whether it can play two pieces of music at once, how many sampled sounds it can play at once, etc.
 
 A final, ah, note: The remark at the end of Z-Spec chapter 9, about sequencing sound effects to simulate the slow Amiga version of "The Lurking Horror", should not be applied to music sounds. New music should interrupt old music immediately, regardless of whether keyboard input has occurred since the old music started.
 
-<h level=1>Glk Compatibility Issues</h>
+<h level=2>Glk Compatibility Issues</h>
 
 The Glk I/O library was designed with portable resources in mind, so there should be no incompatibility.
 
@@ -386,7 +534,20 @@ When reading an IFF file, a program should always ignore any chunk it doesn't un
 
 It may be convenient for an interpreter to be able to access resources in formats other than a resource file. In particular, when developing a game, an author will want to load images and sounds from individual files, rather than having to re-package all the resources whenever any one of them changes.
 
-Such resource arrangements are platform-specific, and the details are left to the interpreter. However, one suggestion is to have a single directory which contains all the resources as files, with one file per resource. (PNG files for images, and so on. The contents of each file would be exactly the same as the contents of the equivalent chunk, minus the initial eight bytes of type/length information.) Files would be named something like "PIC1", "PIC2"..., "SND1", "SND2"..., and so on. A Z-code file (if present) would be named "STORY"; a color palette would be named "PALETTE", a resolution chunk "RESOL", a looping chunk "LOOPING", a release number "RELEASE", and a game identifier chunk "IDENT". (Naturally, file suffixes would be added in platforms that require them.) The interpreter would be started up and handed the entire directory as an argument; or possibly the directory along with a separate Z-code file.
+Such resource arrangements are platform-specific, and the details are left to the interpreter. However, one suggestion is to have a single directory which contains all the resources as files, with one file per resource. (PNG files for images, and so on. The contents of each file would be exactly the same as the contents of the equivalent chunk, minus the initial eight bytes of type/length information.) Files would be named something like "PIC1", "PIC2"..., "SND1", "SND2"..., and so on. A Z-code file (if present) would be named "STORY". Other chunks would be named as follows:
+
+<list>
+<li>"IDENT": game identifier chunk
+<li>"PALETTE": color palette
+<li>"FRONTIS": frontispiece identifier
+<li>"METADATA": metadata document
+<li>"RELEASE": release number
+<li>"RESOL": resolution chunk
+<li>"ADAPTPAL": adaptive palette list
+<li>"LOOPING": looping chunk
+</list>
+
+(Naturally, file suffixes would be added in platforms that require them.) The interpreter would be started up and handed the entire directory as an argument; or possibly the directory along with a separate Z-code file.
 
 <h level=1>Rationales and Rationalizations</h>
 
@@ -410,21 +571,27 @@ Any reasonable sound or image format already incorporates compression.
 
 On the Z-machine, pictures are not necessarily numbered contiguously (Z-Spec 8.8.6.1.) Sounds are numbered consecutively, but sounds 1 and 2 are bleeps, so the game-specific sound resources start at 3. (Z-Spec 9.2.) In Glk, resources need not be contiguous at all. Rather than jigger the numbering or require place-holder chunks, I decided there should be an index which maps resource numbers to chunks.
 
-- Why only two image format? Why not allow any image format?
+- Why only two image formats? Why not allow any image format?
 
 The whole point of this exercise is to assure the author that the player can view his art. If we allow lots of different formats, we can't possibly insist that every interpreter must display all the formats. This leaves us just about back where we started. Individual game authors would be negotiating with individual interpreter authors to support particular formats, and it would just be icky.
 
 Therefore, we <em>do</em> insist that every interpreter be able to display all the formats listed in this standard. That means a small number of formats. See the next two questions.
 
+It is very strongly suggested that an interpreter use standard open-source libraries for interpreting sound and image resources. To rely on OS services, while tempting, is a road paved with incompatibility problems.
+
 - Okay, then, why three sound formats?
 
-Because a sampled-sound format (like AIFF) can reproduce anything; and a note format (like MOD) can reproduce music with much less data than AIFF. It's effectively a very efficient form of compression which only works for musical sound. Song files are even more efficient, if you have several songs, because the note samples are shared. But standard MOD playing and composition tools work on MODs, so it wouldn't make sense not to allow those too. Sigh.
+Because a sampled-sound format (like AIFF) can reproduce anything, and a compressed digital format (like Ogg) can reproduce large sounds efficiently. 
+
+MOD can reproduce music even more efficiently, but it's really retained in the spec more for backwards compatibility than for any technical reason. Existing games use it, and while it's not very well standardized, it seems to work.
+
+(The "song" format was never widely used, which is both the qualification and the justification for deprecating it.)
 
 - Why PNG and JPEG for images?
 
 The PNG format is not burdened with patent restrictions; it is free; it's not lossy; and it can efficiently store many types of images, from 1-bit (monochrome) images up to 48-bit color images. JPEG is lossy and not optimal for images other than photographs, but compresses photographs well. Earlier versions of Blorb specified only PNG, but JPEG was a popular request, and the two formats should complement each other.
 
-As to other possibilities: GIF is a popular format, but it is owned by twits who restrict its use. TIFF has been suggested, but it seems to be overly baroque. Blorb is likely to stay with PNG and JPEG for the foreseeable future.
+As to other possibilities: GIF is a popular format, but was previously owned by twits who restricted its use. (Life has improved, but we have PNG now and we will stick with it.) TIFF has been suggested, but it seems to be overly baroque. Blorb is likely to stay with PNG and JPEG for the foreseeable future.
 
 - What is the Blorb Policy on Color Depth?
 
@@ -452,9 +619,9 @@ Assumption one: Image pixels are square. Your images should have the correct asp
 
 Assumption two: It is always okay to draw images at their "actual size" &emdash; one image pixel per screen pixel.
 
-Now you think I'm crazy. It is true that many modern screens can be adjusted to different pixel sizes; mine allows 55, 72, or 88 pixels per inch. However, <em>I declare this to be an illusion.</em> If a user sets his monitor to smaller pixels, it's because he wants a given image to be smaller. So he can fit more of them on screen. He also wants his text to be smaller, and his windows. That's the way web browsers work, that's the way Adobe Photoshop works, and that's damn well good enough for the Z-machine.
+Now you think I'm crazy. It is true that many modern screens can be adjusted to different pixel sizes. However, <em>I declare this to be an illusion.</em> If a user sets his monitor to smaller pixels, it's because he wants a given image to be smaller. So he can fit more of them on screen. He also wants his text to be smaller, and his windows. That's the way web browsers work, that's the way Adobe Photoshop works, and that's damn well good enough for the Z-machine.
 
-Perhaps in the future there will be monitors that break this rule &emdash; much smaller pixels, 300 or 600 pixels per inch, for example. At that time there will be some consensus on how to display images. (Frankly, I expect it will be "draw them at 55, 72, or 88 pixels per inch, depending on the user's previous preference.") Z-machine interpreters can follow that plan when it emerges. 
+Perhaps in the future there will be monitors that break this rule &emdash; much smaller pixels, 300 or 600 pixels per inch, for example. At that time there will be some consensus on how to display images. (Frankly, I expect it will be "draw them at 55, 72, or 88 pixels per inch, depending on the user's previous preference." Or some such set of standard options.) Z-machine interpreters can follow that plan when it emerges. 
 
 Until then, the right size for a non-scaled picture is one image pixel per screen pixel. If an image is to be scaled by a ratio of 2.0, then the right size for it is one image pixel per two screen pixels (vertically and horizontally). And so on.
 
