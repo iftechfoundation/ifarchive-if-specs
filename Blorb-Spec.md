@@ -8,8 +8,6 @@ This is a formal specification for a common format for storing resources associa
 
 Blorb was originally designed solely for the Z-machine, which is capable of playing sounds (Z-machine versions 3 and up) and showing images (the V6 Z-machine). However, it has been extended for use with other IF systems. The Glk portable I/O library uses Blorb as a resource format, and therefore so does the Glulx virtual machine. (See <a href="../glk/index.html">http://eblong.com/zarf/glk/</a> and <a href="../glulx/index.html">http://eblong.com/zarf/glulx/</a>.)
 
-<comment>Text in this document is liberally stolen from Martin Frost's proposal for a common save file format. Ideas are liberally stolen from my own PICKLE format proposal, which was withdrawn in favor of this proposal.</comment>
-
 This format is named "Blorb" because it wraps your possessions up in a box, and because the common save file format was at one point named "Gnusto". That has been changed to "Quetzal", but I'm not going to let that stop me.
 
 This proposal is longer than I would have liked. However, a large percentage of it is optional stuff &emdash; optional for either the interpreter writer, the game author, or both. That may make you feel better. I've also put in lots of examples, explication, and self-justification.
@@ -111,8 +109,8 @@ On the Z-machine, we must consider the problems of how the game knows the interp
 An AIFF (Audio IFF) file has chunk type 'FORM', and formtype 'AIFF'. AIFF is an uncompressed digital-sample format developed in the late 1980s. The AIFF format is available at these locations:
 
 <code>
-<a href="ftp://ftp.sgi.com/sgi/aiff-c.9.26.91.ps.Z">ftp://ftp.sgi.com/sgi/aiff-c.9.26.91.ps.Z</a>
-<a href="http://astronomy.swin.edu.au/~pbourke/dataformats/aiff/">http://astronomy.swin.edu.au/~pbourke/dataformats/aiff/</a>
+<a href="http://www.digitalpreservation.gov/formats/fdd/fdd000005.shtml">http://www.digitalpreservation.gov/formats/fdd/fdd000005.shtml</a>
+<a href="../ftp/aiff-c.9.26.91.ps">http://eblong.com/zarf/ftp/aiff-c.9.26.91.ps</a>
 </code>
 
 <h level=2>Ogg Sounds</h>
