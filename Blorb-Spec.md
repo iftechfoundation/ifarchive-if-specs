@@ -1,6 +1,6 @@
 <title>Blorb: An IF Resource Collection Format Standard</title>
 
-<subtitle>Version 2.0</subtitle>
+<subtitle>Version 2.0.1</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -18,7 +18,7 @@ This proposal is longer than I would have liked. However, a large percentage of 
 
 The overall format will be a new IFF type. The FORM type is 'IFRS'.
 
-The first chunk in the FORM must be a resource index (chunk type 'RIdx'.) This lists all the resources stored in the IFRS FORM.
+The first chunk in the FORM must be a resource index (chunk type 'RIdx'.) This lists all the resources stored in the IFRS FORM. There must be exactly one resource index chunk.
 
 The resources are stored in the FORM as chunks; each resource is one chunk. They do not need to be in any particular order, since the resource index contains all the information necessary to find a particular resource.
 
@@ -56,6 +56,8 @@ The usage field tells what kind of resource is being described. There are curren
 The number field tells which resource is being described, from the game's point of view. For example, when a Z-code game calls @draw_picture with an argument of 3, the interpreter would find the index entry whose usage is 'Pict' and whose number is 3. For code chunks (usage 'Exec'), the number should contain 0.
 
 The start field tells where the resource chunk begins. This value is an offset, in bytes, from the start of the IFRS FORM (that is, from the start of the resource file.)
+
+Note that the start field must refer to the beginning of a chunk. It is not strictly required for each resource to refer to a different chunk.
 
 <h level=1>Picture Resource Chunks</h>
 
@@ -143,9 +145,28 @@ The intent of allowing song files is both to allow higher quality, and to save s
 
 <h level=1>Executable Resource Chunks</h>
 
-There should at most one chunk with usage 'Exec'. If present, its number must be zero; its content is a Z-code or Glulx game file, and its chunk type is 'ZCOD' or 'GLUL'.
+There should at most one chunk with usage 'Exec'. If present, its number must be zero. Its content is a VM or game executable. Its chunk type describes its format:
 
-<comment>Other executable formats may be added in the future. Some of them might support multiple executable chunks; for example, a VM which supports concurrent processes. In such a case, chunk zero should contain the code to execute first, or at the top level.</comment>
+<list>
+<li>'ZCOD': Z-code
+<li>'GLUL': Glulx
+<li>'TAD2': TADS 2
+<li>'TAD3': TADS 3
+<li>'HUGO': Hugo
+<li>'ALAN': Alan
+<li>'ADRI': Adrift
+<li>'LEVE': Level 9
+<li>'AGT&nbsp;': AGT
+<li>'MAGS': Magnetic Scrolls
+<li>'ADVS': AdvSys
+<li>'EXEC': Native executable
+</list>
+
+<comment>This list of formats is taken from the Babel format agreement. See <a href="http://babel.ifarchive.org/">http://babel.ifarchive.org/</a> for more information. Most of these development systems do not support Blorb at the present time; the list is available for future use. Other executable formats may also be added in the future. As a convention, the chunk types should be taken from the Babel format name, converted to upper case and padded (if necessary) with spaces.</comment>
+
+<comment>The EXEC (native) chunk type is not likely to be useful, because it is underspecified. Nothing (beyond the chunk data itself) indicates what CPU or operating system the executable is intended for. Again, it is defined here following the Babel format list.</comment>
+
+<comment>Some formats might support multiple executable chunks; for example, a VM which supports concurrent processes. In such a case, chunk zero should contain the code to execute first, or at the top level.</comment>
 
 A resource file which contains an executable chunk contains everything needed to run the executable. An interpreter can begin interpreting when handed such a resource file; it sees that there is an executable chunk, loads it, and runs it.
 
@@ -157,9 +178,9 @@ If an interpreter is handed inconsistent arguments &emdash; that is, a resource 
 
 This identifies which game the resources are associated with. The chunk type is 'IFhd'.
 
-This chunk is optional. If it is present, and the interpreter is given a game file along with a resource file, the interpreter can check that the game matches the IFhd chunk. If they don't, the interpreter should display an error. The interpreter may want to provide a way for the user to ignore or skip this error (for example, if the user is a game author testing changes to the game file.)
+This chunk is optional; at most one should appear. If it is present, and the interpreter is given a game file along with a resource file, the interpreter can check that the game matches the IFhd chunk. If they don't, the interpreter should display an error. The interpreter may want to provide a way for the user to ignore or skip this error (for example, if the user is a game author testing changes to the game file.)
 
-If the resource file contains an executable chunk, there's not much point in putting in the IFhd chunk.
+If the resource file contains an executable chunk, there is little reason to have an IFhd chunk. It is legal, however, as long as the identifier matches the executable. 
 
 For Z-code, the contents of the game identifier chunk are defined in the common save file format specification, section 5. This spec can be found at
 
@@ -173,7 +194,7 @@ For Glulx, the contents of the game identifier chunk are defined in the Glulx sp
 
 <h level=1>The Color Palette Chunk</h>
 
-This contains information about which colors are used by picture resources in the file. The chunk type is 'Plte'. It is optional, and should not appear if there are no 'Pict' resources in the file.
+This contains information about which colors are used by picture resources in the file. The chunk type is 'Plte'. It is optional, and should not appear if there are no 'Pict' resources in the file. At most one color palette chunk should appear.
 
 The format is:
 
@@ -207,7 +228,7 @@ The Blorb format generally does not specify how images are loaded and displayed;
 
 The exact use of a frontispiece image is left open to invention. An interpreter may display it before starting a game. Or it might display frontispieces while the player is <em>choosing</em> a game to play (as an aid to locating a particular game). An index of games might extract the frontispieces and use them as catalog illustrations. 
 
-If present, the frontispiece is simply an ordinary picture resource. It is singled out as a frontispiece by a chunk with type 'Fspc'; this contains its image resource number.
+If present, the frontispiece is simply an ordinary picture resource. It is singled out as a frontispiece by a chunk with type 'Fspc'; this contains its image resource number. There may not be more than one 'Fspc' chunk.
 
 The frontispiece image may be of any legal Blorb type (except a placeholder rectangle). The image may be of any size, but is preferred to be square or approximately so. This allows interpreters to display frontispieces in a systematic way, scaling them to fit a layout, without wasting screen space.
 
@@ -223,13 +244,15 @@ The frontispiece image may be of any legal Blorb type (except a placeholder rect
 
 Metadata is a contentious topic, with which the Blorb spec is not entirely unentangled. (The game identifier and frontispiece chunks are answers to small parts of the IF metadata problem.)
 
-Rather than entangle ourselves further, we will merely say that metadata will be stored as XML, in a chunk of type 'IFmd'. The XML structure is currently being worked out as part of the ongoing Inform 7 project.
+Rather than entangle ourselves further, we will merely say that metadata will be stored as XML, in a chunk of type 'IFmd'. The XML structure is documented in the Babel format agreement; see <a href="http://babel.ifarchive.org/">http://babel.ifarchive.org/</a>.
 
 <code>
 4 bytes         'IFmd'          chunk ID
 4 bytes         n               chunk length
 n bytes         ...             XML document (UTF-8 encoding)
 </code>
+
+The handling of metadata chunks will not be defined here. In particular, the behavior of an interpreter which finds more than one metadata chunk is undefined. It is likely to be a good idea to have at most one.
 
 <h level=1>Chunks Specific to the Z-machine</h>
 
@@ -238,6 +261,8 @@ The Z-machine's graphics and sound capabilities were added late in Infocom's his
 To compensate for this, we add additional information to the Blorb file. Interpreters can use these hints to display the resource information correctly.
 
 Some of these hints are needed only to handle legacy Infocom games and their resources. Others will be useful for the creation of new Z-code games.
+
+Each of these chunks is optional; no more than one of each should appear.
 
 <h level=2>The Release Number Chunk</h>
 
@@ -459,6 +484,10 @@ The '(c)&nbsp;' chunk contains the copyright message (date and holder, without t
 
 The 'ANNO' chunk contains any textual annotation that the user or writing program sees fit to include.
 
+<h level=1>Deprecated Chunks</h>
+
+Some older Z-code Blorb files contain an 'SNam' (story name) chunk, which contains the game's title. The format of this chunk is Unicode UTF-16, with the 16-bit values stored big-endian. Modern Blorb files should not have an 'SNam' chunk; this information should be stored in the metadata chunk instead.
+
 <h level=1>Presentation and Compatibility</h>
 
 <h level=2>File Suffixes</h>
@@ -504,7 +533,7 @@ Remember that the resolution and scaling data is not used by Glk. That chunk is 
 A description of the IFF format can be found at
 
 <code>
-<a href="http://www.cica.indiana.edu/graphics/image_specs/ilbm.format.txt">http://www.cica.indiana.edu/graphics/image_specs/ilbm.format.txt</a>
+<a href="http://eblong.com/zarf/blorb/iff.html">http://eblong.com/zarf/blorb/iff.html</a>
 </code>
 
 In the interests of simplicity, this proposal does not use IFF LISTs or CATs, even though its purpose is to contain concatenated lists of data. Therefore, the format can be quickly described as follows:
@@ -548,6 +577,8 @@ Such resource arrangements are platform-specific, and the details are left to th
 </list>
 
 (Naturally, file suffixes would be added in platforms that require them.) The interpreter would be started up and handed the entire directory as an argument; or possibly the directory along with a separate Z-code file.
+
+It is of course possible to break a Blorb file down into a directory in this format. When doing this, one must remember that AIFF (and no other chunk type) uses an IFF form as its single-file representation. Therefore, the SND... file representing an AIFF will begin "FORM<length>AIFF", followed by the chunk data. All other chunk types would be turned into files simply by extracting the chunk data.
 
 <h level=1>Rationales and Rationalizations</h>
 
