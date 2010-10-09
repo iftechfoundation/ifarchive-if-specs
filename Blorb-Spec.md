@@ -598,7 +598,7 @@ Such resource arrangements are platform-specific, and the details are left to th
 
 (Naturally, file suffixes would be added in platforms that require them.) The interpreter would be started up and handed the entire directory as an argument; or possibly the directory along with a separate Z-code file.
 
-It is of course possible to break a Blorb file down into a directory in this format. When doing this, one must remember that AIFF (and no other chunk type) uses an IFF form as its single-file representation. Therefore, the SND... file representing an AIFF will begin "FORM<length>AIFF", followed by the chunk data. All other chunk types would be turned into files simply by extracting the chunk data.
+It is of course possible to break a Blorb file down into a directory in this format. When doing this, one must remember that AIFF (and no other chunk type) uses an IFF form as its single-file representation. Therefore, the SND... file representing an AIFF will begin "FORM&lt;length&gt;AIFF", followed by the chunk data. All other chunk types would be turned into files simply by extracting the chunk data.
 
 <h level=1>Rationales and Rationalizations</h>
 
