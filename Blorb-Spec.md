@@ -142,7 +142,7 @@ This spec does not attempt to distinguish variations within the four supported f
 However, some bug fixes are included in the version packaged with Windows Glk:
 
 <code>
-###
+<a href="http://ifarchive.org/if-archive/programming/glk/implementations/">http://ifarchive.org/if-archive/programming/glk/implementations/</a>
 </code>
 
 (Note that it may be safer to compile libmodplug with the MODPLUG_BASIC_SUPPORT option, which eliminates many obscure tracker formats that Blorb does not support.)
@@ -203,7 +203,7 @@ If the resource file contains an executable chunk, there is little reason to hav
 For Z-code, the contents of the game identifier chunk are defined in the common save file format specification, section 5. This spec can be found at
 
 <code>
-<a href="http://mirror.ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt">http://mirror.ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt</a>
+<a href="http://ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt">http://ifarchive.org/if-archive/infocom/interpreters/specification/savefile_14.txt</a>
 </code>
 
 The "Initial PC" field of the IFhd chunk (bytes 10 through 12) has no meaning for resource files. It should be set to zero.
