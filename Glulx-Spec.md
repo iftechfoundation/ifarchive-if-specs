@@ -1777,7 +1777,7 @@ Store the value L2 in the parameter table at position L1. If the terp does not k
 
 The list of accelerated functions is as follows. They are defined as if in Inform source code. (Consider Inform's "strict" mode to be off, for the purposes of operators such as .&amp; and --&gt;.) ERROR() represents code which displays an error, as described above.
 
-(Functions may be added to this list in future versions of the Glulx spec. Existing functions will not be removed or altered.)
+(Functions may be added to this list in future versions of the Glulx spec. Existing functions will not be removed or altered. Functions and parameters numbered 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. These are not documented here. See <ref label=otherif>.)
 
 <code>
 Constant PARAM_0_classes_table = #classes_table;
