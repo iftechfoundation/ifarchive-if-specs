@@ -306,18 +306,27 @@ The extended, or "Unicode", Glk functions deal entirely in 32-bit words. They ta
 
 <h level=2 label=unicode_testing>Testing for Unicode Capabilities</h>
 
-The basic text functions will be available in every Glk library. The Unicode functions may or may not be available. Before calling them, you should use the following gestalt selector:
+The basic text functions will be available in every Glk library. The Unicode functions may or may not be available. Before calling them, you should use the following gestalt selectors:
 
 <code>
 glui32 res;
 res = glk_gestalt(gestalt_Unicode, 0);
 </code>
 
-This returns 1 if the Unicode functions are available. If it returns 0, you should not try to call them. They may print nothing, print gibberish, or cause a run-time error. The Unicode functions include glk_buffer_to_lower_case_uni, glk_buffer_to_upper_case_uni, glk_buffer_to_title_case_uni, glk_put_char_uni, glk_put_string_uni, glk_put_buffer_uni, glk_put_char_stream_uni, glk_put_string_stream_uni, glk_put_buffer_stream_uni, glk_get_char_stream_uni, glk_get_buffer_stream_uni, glk_get_line_stream_uni, glk_request_char_event_uni, glk_request_line_event_uni, glk_stream_open_file_uni, glk_stream_open_memory_uni.
+This returns 1 if the core Unicode functions are available. If it returns 0, you should not try to call them. They may print nothing, print gibberish, or cause a run-time error. The Unicode functions include glk_buffer_to_lower_case_uni, glk_buffer_to_upper_case_uni, glk_buffer_to_title_case_uni, glk_put_char_uni, glk_put_string_uni, glk_put_buffer_uni, glk_put_char_stream_uni, glk_put_string_stream_uni, glk_put_buffer_stream_uni, glk_get_char_stream_uni, glk_get_buffer_stream_uni, glk_get_line_stream_uni, glk_request_char_event_uni, glk_request_line_event_uni, glk_stream_open_file_uni, glk_stream_open_memory_uni.
 
 If you are writing a C program, there is an additional complication. A library which does not support Unicode may not implement the Unicode functions at all. Even if you put gestalt tests around your Unicode calls, you may get link-time errors. If the glk.h file is so old that it does not declare the Unicode functions and constants, you may even get compile-time errors.
 
 To avoid this, you can perform a preprocessor test for the existence of GLK_MODULE_UNICODE. If this is defined, so are all the Unicode functions and constants. If not, not.
+
+<code>
+glui32 res;
+res = glk_gestalt(gestalt_UnicodeNorm, 0);
+</code>
+
+This returns 1 if the Unicode normalization functions are available. If it returns 0, you should not try to call them. The Unicode normalization functions include glk_buffer_canon_decompose_uni and glk_buffer_canon_normalize_uni.
+
+The equivalent preprocessor test for these functions is GLK_MODULE_UNICODE_NORM.
 
 <h level=2 label=encoding_out>Output</h>
 
@@ -470,6 +479,50 @@ See the Unicode spec (chapter 3.13, chapter 4.2, etc) for the exact definitions 
 <comment>Unicode has some strange case cases. For example, a combined character that looks like "ss" might properly be upper-cased into <em>two</em> "S" characters. Title-casing is even stranger; "ss" (at the beginning of a word) might be title-cased into a different combined character that looks like "Ss". The glk_buffer_to_title_case_uni() function is actually title-casing the first character of the buffer. If it makes a difference.</comment>
 
 <comment>Earlier drafts of this spec had a separate function which title-cased the first character of every <em>word</em> in the buffer. I took this out after reading Unicode Standard Annex #29, which explains how to divide a string into words. If you want it, feel free to implement it.</comment>
+
+<h level=2 label=encoding_uninorm>Unicode String Normalization</h>
+
+Comparing Unicode strings is difficult, because there can be several ways to represent a piece of text as a Unicode string. For example, the one-character string "&egrave;" (an accented "e") will be displayed the same as the two-character string containing "e" followed by Unicode character 0300 (COMBINING GRAVE ACCENT). These strings should be considered equal. 
+
+Therefore, a Glk program that accepts line input should convert its text to a normalized form before parsing it. These functions offer those conversions. The algorithms are defined by the Unicode spec (chapter 3.7) and <a href="http://www.unicode.org/reports/tr15/">Unicode Standard Annex #15</a>.
+
+<deffun>
+glui32 glk_buffer_canon_decompose_uni(glui32 *buf, glui32 len, glui32 numchars);
+</deffun>
+
+This transforms a string into its canonical decomposition ("Normalization Form D"). Effectively, this takes apart multipart characters into their individual parts. For example, it would convert "&egrave;" (character 00E8, an accented "e") into the two-character string containing "e" followed by Unicode character 0300 (COMBINING GRAVE ACCENT). If a single character has multiple accent marks, they are also rearranged into a standard order.
+
+<deffun>
+glui32 glk_buffer_canon_normalize_uni(glui32 *buf, glui32 len, glui32 numchars);
+</deffun>
+
+This transforms a string into its canonical decomposition and recomposition ("Normalization Form C"). Effectively, this takes apart multipart characters, and then puts them back together in a standard way. For example, this would convert the two-character string containing "e" followed by Unicode character 0300 (COMBINING GRAVE ACCENT) into the one-character string "&egrave;" (character 00E8, an accented "e").
+
+The canon_normalize function includes decomposition as part of its implementation. You never have to call both functions on the same string.
+
+Both of these functions are idempotent.
+
+These functions provide two length arguments because a string of Unicode characters may expand when it is transformed. The len argument is the available length of the buffer; numchars is the number of characters in the buffer initially. (So numchars must be less than or equal to len. The contents of the buffer after numchars do not affect the operation.) 
+
+The functions return the number of characters after transformation. If this is greater than len, the characters in the array will be safely truncated at len, but the true count will be returned. (The contents of the buffer after the returned count are undefined.)
+
+<comment>The Unicode spec also defines stronger forms of these functions, called "compatibility decomposition and recomposition" ("Normalization Form KD" and "Normalization Form KC".) These do all of the accent-mangling described above, but they also transform many other obscure Unicode characters into more familiar forms. For example, they split ligatures apart into separate letters. They also convert Unicode display variations such as script letters, circled letters, and half-width letters into their common forms.</comment>
+
+<comment>The Glk spec does not currently provide these stronger transformations. Glk's expected use of Unicode normalization is for line input, and an OS facility for line input will generally not produce these alternate character forms (unless the user goes out of his way to type them). Therefore, the need for these transformations does not seem to be worth the extra data table space.</comment>
+
+<h level=3>A Note on Unicode Case-Folding and Normalization</h>
+
+With all of these Unicode transformations hovering about, an author might reasonably ask about the right way to handle line input. Our recommendation is: call glk_buffer_to_lower_case_uni(), followed by glk_buffer_canon_normalize_uni(), and then parse the result. The parsing process should of course match against strings that have been put through the same process.
+
+The Unicode spec (chapter 3.13) gives a different, three-step process: decomposition, case-folding, and decomposition again. Our recommendation comes through a series of practical compromises:
+
+<list>
+<li>The initial decomposition is only necessary because of a historical error in the Unicode spec: character 0345 (COMBINING GREEK YPOGEGRAMMENI) behaves inconsistently. We ignore this case, and skip this step.
+<li>Case-folding is a slightly different operation from lower-casing. (Case-folding splits some combined characters, so that, for example, "&szlig;" can match both "ss" and "SS".) However, Glk does not currently offer a case-folding function. We substitute glk_buffer_to_lower_case_uni().
+<li>I'm not sure why the spec recommends decomposition (glk_buffer_canon_decompose_uni()) rather than glk_buffer_canon_normalize_uni(). However, composed characters are the norm in source code, and therefore in compiled Inform game files. If we specified decomposition, the compiler would have to do extra work; also, the standard Inform dictionary table (with its fixed word length) would store fewer useful characters. Therefore, we substitute glk_buffer_canon_normalize_uni().
+</list>
+
+<comment>We may revisit these recommendations in future versions of the spec.</comment>
 
 <h level=1 label=window>Windows</h>
 
@@ -1162,7 +1215,7 @@ void glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen, glui32 
 
 Request input of a line of Unicode characters. This works the same as glk_request_line_event(), except the result is stored in an array of glui32 values instead of an array of characters, and the values may be any valid Unicode code points.
 
-The result will be in Unicode Normalization Form C. This basically means that composite characters will be single characters where possible, instead of sequences of base and combining marks. See <a href="http://www.unicode.org/reports/tr15/">Unicode Standard Annex #15</a> for the details.
+<comment>Earlier versions of this spec said that line input should always be in Unicode Normalization Form C. However, this has not been universally implemented. It is also somewhat redundant, because a game is likely to case-fold line input, and case-folding can (occasionally) produce non-normalized text. Therefore, we now merely recommend that line input not be decomposed into combining marks. The game is responsible for all case-folding and normalization. See <ref label=encoding_uninorm>.</comment>
 
 <deffun>
 void glk_cancel_line_event(winid_t win, event_t *event);
@@ -2728,6 +2781,8 @@ These values, and the values used for future Glk calls, are integers in the rang
 <li>0x0120: glk_buffer_to_lower_case_uni
 <li>0x0121: glk_buffer_to_upper_case_uni
 <li>0x0122: glk_buffer_to_title_case_uni
+<li>0x0123: glk_buffer_canon_decompose_uni
+<li>0x0124: glk_buffer_canon_normalize_uni
 <li>0x0128: glk_put_char_uni
 <li>0x0129: glk_put_string_uni
 <li>0x012A: glk_put_buffer_uni
