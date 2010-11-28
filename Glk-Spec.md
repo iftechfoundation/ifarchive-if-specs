@@ -482,7 +482,7 @@ See the Unicode spec (chapter 3.13, chapter 4.2, etc) for the exact definitions 
 
 <h level=2 label=encoding_uninorm>Unicode String Normalization</h>
 
-Comparing Unicode strings is difficult, because there can be several ways to represent a piece of text as a Unicode string. For example, the one-character string "&egrave;" (an accented "e") will be displayed the same as the two-character string containing "e" followed by Unicode character 0300 (COMBINING GRAVE ACCENT). These strings should be considered equal. 
+Comparing Unicode strings is difficult, because there can be several ways to represent a piece of text as a Unicode string. For example, the one-character string "&egrave;" (an accented "e") will be displayed the same as the two-character string containing "e" followed by Unicode character 0x0300 (COMBINING GRAVE ACCENT). These strings should be considered equal. 
 
 Therefore, a Glk program that accepts line input should convert its text to a normalized form before parsing it. These functions offer those conversions. The algorithms are defined by the Unicode spec (chapter 3.7) and <a href="http://www.unicode.org/reports/tr15/">Unicode Standard Annex #15</a>.
 
@@ -490,13 +490,13 @@ Therefore, a Glk program that accepts line input should convert its text to a no
 glui32 glk_buffer_canon_decompose_uni(glui32 *buf, glui32 len, glui32 numchars);
 </deffun>
 
-This transforms a string into its canonical decomposition ("Normalization Form D"). Effectively, this takes apart multipart characters into their individual parts. For example, it would convert "&egrave;" (character 00E8, an accented "e") into the two-character string containing "e" followed by Unicode character 0300 (COMBINING GRAVE ACCENT). If a single character has multiple accent marks, they are also rearranged into a standard order.
+This transforms a string into its canonical decomposition ("Normalization Form D"). Effectively, this takes apart multipart characters into their individual parts. For example, it would convert "&egrave;" (character 0xE8, an accented "e") into the two-character string containing "e" followed by Unicode character 0x0300 (COMBINING GRAVE ACCENT). If a single character has multiple accent marks, they are also rearranged into a standard order.
 
 <deffun>
 glui32 glk_buffer_canon_normalize_uni(glui32 *buf, glui32 len, glui32 numchars);
 </deffun>
 
-This transforms a string into its canonical decomposition and recomposition ("Normalization Form C"). Effectively, this takes apart multipart characters, and then puts them back together in a standard way. For example, this would convert the two-character string containing "e" followed by Unicode character 0300 (COMBINING GRAVE ACCENT) into the one-character string "&egrave;" (character 00E8, an accented "e").
+This transforms a string into its canonical decomposition and recomposition ("Normalization Form C"). Effectively, this takes apart multipart characters, and then puts them back together in a standard way. For example, this would convert the two-character string containing "e" followed by Unicode character 0x0300 (COMBINING GRAVE ACCENT) into the one-character string "&egrave;" (character 0xE8, an accented "e").
 
 The canon_normalize function includes decomposition as part of its implementation. You never have to call both functions on the same string.
 
@@ -517,7 +517,7 @@ With all of these Unicode transformations hovering about, an author might reason
 The Unicode spec (chapter 3.13) gives a different, three-step process: decomposition, case-folding, and decomposition again. Our recommendation comes through a series of practical compromises:
 
 <list>
-<li>The initial decomposition is only necessary because of a historical error in the Unicode spec: character 0345 (COMBINING GREEK YPOGEGRAMMENI) behaves inconsistently. We ignore this case, and skip this step.
+<li>The initial decomposition is only necessary because of a historical error in the Unicode spec: character 0x0345 (COMBINING GREEK YPOGEGRAMMENI) behaves inconsistently. We ignore this case, and skip this step.
 <li>Case-folding is a slightly different operation from lower-casing. (Case-folding splits some combined characters, so that, for example, "&szlig;" can match both "ss" and "SS".) However, Glk does not currently offer a case-folding function. We substitute glk_buffer_to_lower_case_uni().
 <li>I'm not sure why the spec recommends decomposition (glk_buffer_canon_decompose_uni()) rather than glk_buffer_canon_normalize_uni(). However, composed characters are the norm in source code, and therefore in compiled Inform game files. If we specified decomposition, the compiler would have to do extra work; also, the standard Inform dictionary table (with its fixed word length) would store fewer useful characters. Therefore, we substitute glk_buffer_canon_normalize_uni().
 </list>
