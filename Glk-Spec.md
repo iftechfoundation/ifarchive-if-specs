@@ -490,13 +490,13 @@ Therefore, a Glk program that accepts line input should convert its text to a no
 glui32 glk_buffer_canon_decompose_uni(glui32 *buf, glui32 len, glui32 numchars);
 </deffun>
 
-This transforms a string into its canonical decomposition ("Normalization Form D"). Effectively, this takes apart multipart characters into their individual parts. For example, it would convert "&egrave;" (character 0xE8, an accented "e") into the two-character string containing "e" followed by Unicode character 0x0300 (COMBINING GRAVE ACCENT). If a single character has multiple accent marks, they are also rearranged into a standard order.
+This transforms a string into its canonical decomposition ("Normalization Form D"). Effectively, this takes apart multipart characters into their individual parts. For example, it would convert "&egrave;" (character 0xE8, an accented "e") into the two-character string containing "e" followed by Unicode character 0x0300 (COMBINING GRAVE ACCENT). If a single character has multiple accent marks, they are also rearranged into a standard order.
 
 <deffun>
 glui32 glk_buffer_canon_normalize_uni(glui32 *buf, glui32 len, glui32 numchars);
 </deffun>
 
-This transforms a string into its canonical decomposition and recomposition ("Normalization Form C"). Effectively, this takes apart multipart characters, and then puts them back together in a standard way. For example, this would convert the two-character string containing "e" followed by Unicode character 0x0300 (COMBINING GRAVE ACCENT) into the one-character string "&egrave;" (character 0xE8, an accented "e").
+This transforms a string into its canonical decomposition and recomposition ("Normalization Form C"). Effectively, this takes apart multipart characters, and then puts them back together in a standard way. For example, this would convert the two-character string containing "e" followed by Unicode character 0x0300 (COMBINING GRAVE ACCENT) into the one-character string "&egrave;" (character 0xE8, an accented "e").
 
 The canon_normalize function includes decomposition as part of its implementation. You never have to call both functions on the same string.
 
@@ -506,7 +506,7 @@ These functions provide two length arguments because a string of Unicode charact
 
 The functions return the number of characters after transformation. If this is greater than len, the characters in the array will be safely truncated at len, but the true count will be returned. (The contents of the buffer after the returned count are undefined.)
 
-<comment>The Unicode spec also defines stronger forms of these functions, called "compatibility decomposition and recomposition" ("Normalization Form KD" and "Normalization Form KC".) These do all of the accent-mangling described above, but they also transform many other obscure Unicode characters into more familiar forms. For example, they split ligatures apart into separate letters. They also convert Unicode display variations such as script letters, circled letters, and half-width letters into their common forms.</comment>
+<comment>The Unicode spec also defines stronger forms of these functions, called "compatibility decomposition and recomposition" ("Normalization Form KD" and "Normalization Form KC".) These do all of the accent-mangling described above, but they also transform many other obscure Unicode characters into more familiar forms. For example, they split ligatures apart into separate letters. They also convert Unicode display variations such as script letters, circled letters, and half-width letters into their common forms.</comment>
 
 <comment>The Glk spec does not currently provide these stronger transformations. Glk's expected use of Unicode normalization is for line input, and an OS facility for line input will generally not produce these alternate character forms (unless the user goes out of his way to type them). Therefore, the need for these transformations does not seem to be worth the extra data table space.</comment>
 
