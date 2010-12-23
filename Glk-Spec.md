@@ -14,9 +14,9 @@ This document and further Glk information can be found at: <a href="http://www.e
 
 <h level=2>What Glk Is</h>
 
-Glk is an attempt to define a portable API (programming interface) for applications with text UIs (user interfaces.)
+Glk defines a portable API (programming interface) for applications with text UIs (user interfaces.) It was primarily designed for interactive fiction, but it should be suitable for many interactive text utilities, particularly those based on a command line.
 
-Rather than go into a detailed explanation of what that means, let me give examples from the world of text adventures. TADS and Infocom's Z-machine have nearly identical interface capabilities; each allows a program to...
+Rather than go into a detailed explanation of what that means, let me give examples from the world of text adventures. TADS, Glulx, and Infocom's Z-machine have nearly identical interface capabilities; each allows a program to...
 
 <list>
 <li>print an indefinite stream of text into an output buffer, with some style control
@@ -27,7 +27,7 @@ Rather than go into a detailed explanation of what that means, let me give examp
 
 and so on. However, the implementation of these capabilities vary widely between platforms and operating systems. Furthermore, this variance is transparent to the program (the adventure game.) The game does not care whether output is displayed via a character terminal emulator or a GUI window; nor whether input uses Mac-style mouse editing or EMACS-style control key editing.
 
-On the third hand, the user is likely to care deeply about these interface decisions. This is why there are Mac-native interpreters on Macintoshes, pen-controlled interpreters on Newtons and PalmOS PDAs, and so on &emdash; and (ultimately) why there Macintoshes and Palms and X-windows platforms in the first place.
+On the third hand, the user is likely to care deeply about these interface decisions. This is why there are Mac-native interpreters on Macintoshes, stylus and touch-screen interpreters on mobile devices, and so on &emdash; and (ultimately) why there are Macintoshes and iPads and terminal window apps in the first place.
 
 On the <em>fourth</em> hand, TADS and Inform are not alone; there is historically a large number of text adventure systems. Most are obsolete or effectively dead; but it is inevitable that more will appear. Users want each living system ported to all the platforms in use. Users also prefer these ports to use the same interface, as much as possible.
 
@@ -1215,7 +1215,11 @@ void glk_request_line_event_uni(winid_t win, glui32 *buf, glui32 maxlen, glui32 
 
 Request input of a line of Unicode characters. This works the same as glk_request_line_event(), except the result is stored in an array of glui32 values instead of an array of characters, and the values may be any valid Unicode code points.
 
-<comment>Earlier versions of this spec said that line input should always be in Unicode Normalization Form C. However, this has not been universally implemented. It is also somewhat redundant, because a game is likely to case-fold line input, and case-folding can (occasionally) produce non-normalized text. Therefore, we now merely recommend that line input not be decomposed into combining marks. The game is responsible for all case-folding and normalization. See <ref label=encoding_uninorm>.</comment>
+If possible, the library should return fully composed Unicode characters, rather than strings of base and composition characters.
+
+<comment>Fully-composed characters are the norm for Unicode text, so an implementation that ignores this issue will probably produce the right result. However, the game may not want to rely on that. Another factor is that case-folding can (occasionally) produce non-normalized text. Therefore, to cover all its bases, a game should call glk_buffer_to_lower_case_uni(), followed by glk_buffer_canon_normalize_uni(), before parsing.</comment>
+
+<comment>Earlier versions of this spec said that line input must always be in Unicode Normalization Form C. However, this has not been universally implemented. It is also somewhat redundant, for the results noted above. Therefore, we now merely recommend that line input be fully composed. The game is ultimately responsible for all case-folding and normalization. See <ref label=encoding_uninorm>.</comment>
 
 <deffun>
 void glk_cancel_line_event(winid_t win, event_t *event);
