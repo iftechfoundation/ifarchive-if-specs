@@ -948,9 +948,11 @@ In character input, there will be some visible signal that the window is waiting
 
 In line input, again, there will be some visible signal. It is most common for the player to compose input in the window itself, at the end of the text. (This is how IF story input usually looks.) But it's not strictly required. An alternative approach is the way MUD clients usually work: there is a dedicated one-line input window, outside of Glk's window space, and the user composes input there. <comment>If this approach is used, there will still be some way to handle input from two windows at once. It is the library's responsibility to make this available to the player. You only need request line input and wait for the result.</comment>
 
-When the player finishes his line of input, the library will display the input text at the end of the buffer text (if it wasn't there already.) It will be followed by a newline, so that the next text you print will start a new line (paragraph) after the input.
+By default, when the player finishes his line of input, the library will display the input text at the end of the buffer text (if it wasn't there already.) It will be followed by a newline, so that the next text you print will start a new line (paragraph) after the input.
 
 If you call glk_cancel_line_event(), the same thing happens; whatever text the user was composing is visible at the end of the buffer text, followed by a newline.
+
+However, this default behavior can be changed with the glk_set_echo_line_event() call. If the default echoing is disabled, the library will <em>not</em> display the input text (plus newline) after input is either completed or cancelled. The buffer will end with whatever prompt you displayed before requesting input. If you want the traditional input behavior, it is then your responsibility to print the text and newline, using the Input text style.
 
 <h level=3 label=window_textgrid>Text Grid Windows</h>
 
@@ -986,7 +988,7 @@ Character input is as described in the previous section.
 
 Line input is slightly different; it is guaranteed to take place in the window, at the output cursor position. The player can compose input only to the right edge of the window; therefore, the maximum input length is (windowwidth - 1 - cursorposition). If the maxlen argument of glk_request_line_event() is smaller than this, the library will not allow the input cursor to go more than maxlen characters past its start point. <comment>This allows you to enter text in a fixed-width field, without the player being able to overwrite other parts of the window.</comment>
 
-When the player finishes his line of input, it will remain visible in the window, and the output cursor will be positioned at the beginning of the <em>next</em> row. Again, if you glk_cancel_line_event(), the same thing happens.
+When the player finishes his line of input, it will remain visible in the window, and the output cursor will be positioned at the beginning of the <em>next</em> row. Again, if you glk_cancel_line_event(), the same thing happens. The glk_set_echo_line_event() call has no effect in grid windows.
 
 <h level=3 label=window_graphics>Graphics Windows</h>
 
@@ -1228,6 +1230,18 @@ void glk_cancel_line_event(winid_t win, event_t *event);
 This cancels a pending request for line input. (Either Latin-1 or Unicode.) The event pointed to by the event argument will be filled in as if the player had hit enter, and the input composed so far will be stored in the buffer; see below. If you do not care about this information, pass NULL as the event argument. (The buffer will still be filled.)
 
 For convenience, it is legal to call glk_cancel_line_event() even if there is no line input request on that window. The event type will be set to evtype_None in this case.
+
+<deffun>
+void glk_set_echo_line_event(winid_t win, glui32 val);
+</deffun>
+
+Normally, after line input is completed or cancelled in a buffer window, the library ensures that the complete input line (or its latest state, after cancelling) is displayed at the end of the buffer, followed by a newline. This call allows you to suppress this behavior. If the val argument is zero, all <em>subsequent</em> line input requests in the given window will leave the buffer unchanged after the input is completed or cancelled; the player's input will not be printed. If val is nonzero, subsequent input requests will have the normal printing behavior.
+
+<comment>Note that this feature is unrelated to the window's echo stream.</comment>
+
+If you turn off line input echoing, you can reproduce the standard input behavior by following each line input event (or line input cancellation) by printing the input line, followed by a newline, in the Input style.
+
+The glk_set_echo_line_event() does not affect a pending line input request. It also has no effect in non-buffer windows. <comment>In a grid window, the game can overwrite the input area at will, so there is no need for this distinction.</comment>
 
 If a window has a pending request for line input, and the player hits enter in that window (or whatever action is appropriate to enter his input), glk_select() will return an event whose type is evtype_LineInput. Once this happens, the request is complete; it is no longer pending. You must call glk_request_line_event() if you want another line of text from that window.
 
