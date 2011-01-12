@@ -1239,6 +1239,12 @@ Normally, after line input is completed or cancelled in a buffer window, the lib
 
 <comment>Note that this feature is unrelated to the window's echo stream.</comment>
 
+<code>
+res = glk_gestalt(gestalt_LineInputEcho, 0);
+</code>
+
+Not all libraries support this feature. This returns 1 if glk_set_echo_line_event() is supported, and 0 if it is not. <comment>Remember that if it is not supported, the behavior is always the default, which is line echoing <em>enabled</em>.</comment>
+
 If you turn off line input echoing, you can reproduce the standard input behavior by following each line input event (or line input cancellation) by printing the input line, followed by a newline, in the Input style.
 
 The glk_set_echo_line_event() does not affect a pending line input request. It also has no effect in non-buffer windows. <comment>In a grid window, the game can overwrite the input area at will, so there is no need for this distinction.</comment>
@@ -2814,6 +2820,7 @@ These values, and the values used for future Glk calls, are integers in the rang
 <li>0x0139: glk_stream_open_memory_uni
 <li>0x0140: glk_request_char_event_uni
 <li>0x0141: glk_request_line_event_uni
+<li>0x0150: glk_set_echo_line_event
 </list>
 
 Note that glk_main() does not have a selector, because it's provided by your program, not the library.
