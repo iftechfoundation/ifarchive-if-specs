@@ -664,6 +664,7 @@ The winmethod constants:
 <list>
 <li>winmethod_Above, winmethod_Below, winmethod_Left, winmethod_Right: The new window will be above, below, to the left, or to the right of the old one which was split.
 <li>winmethod_Fixed, winmethod_Proportional: The new window is a fixed size, or a given proportion of the old window's size. (See below.)
+<li>winmethod_Border, winmethod_NoBorder: There should or should not be a visible window border between the new window and its sibling. (This is a hint to the library; you might specify NoBorder between two graphics windows that should form a single image.)
 </list>
 
 The method argument must be the logical-or of a direction constant (winmethod_Above, winmethod_Below, winmethod_Left, winmethod_Right) and a split-method constant (winmethod_Fixed, winmethod_Proportional).
@@ -902,9 +903,9 @@ Note that you can resize windows, but you can't flip or rotate them. You can't m
 
 <h level=2>A Note on Display Style</h>
 
-The way windows are displayed is, of course, entirely up to the Glk library; it depends on what is natural for the player's machine. The borders between windows may be black lines, 3-D bars, rows of "#" characters; there may even be no borders at all. <comment>This is an important possibility to keep in mind.</comment>
+The way windows are displayed is, of course, entirely up to the Glk library; it depends on what is natural for the player's machine. The borders between windows may be black lines, 3-D bars, rows of "#" characters; there may even be no borders at all. The library may not support the Border/NoBorder hint, in which case <em>every</em> pair of windows will have a visible border -- or no border -- between them.
 
-There may be other decorations as well. A text buffer window will often have a scroll bar. The library (or player) may prefer wide margins around each text window. And so on.
+There may be decorations within the windows as well. A text buffer window will often have a scroll bar. The library (or player) may prefer wide margins around each text window. And so on.
 
 The library is reponsible for handling these decorations, margins, spaces, and borders. You should never worry about them. You are guaranteed that if you request a fixed size of two rows, your text grid window will have room for two rows of characters &emdash; if there is enough total space. Any margins or borders will be allowed for already. If there <em>isn't</em> enough total space (as in stages 4 and 5, above), you lose, of course.
 
