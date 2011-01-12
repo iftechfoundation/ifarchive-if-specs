@@ -2806,6 +2806,8 @@ Note that glk_main() does not have a selector, because it's provided by your pro
 
 There is no way to use these selectors directly in the Glk API. <comment>An earlier version of Glk had gestalt selectors gestalt_FunctionNameToID and gestalt_FunctionIDToName, but these have been withdrawn.</comment> They are defined and used only by the dispatch layer.
 
+Call selectors 0x1200 to 0x12FF are reserved for extension projects by Carlos Sanchez. The same is true of gestalt selector 0x1200. These are not documented here.
+
 <h level=2 label=blorblayer>The Blorb Layer</h>
 
 The material described in this section is not part of the Glk API per se. It is an external layer which allows the library to load resources (images and sounds) from a file specified by your program. The Blorb file format is a standard IF resource archive.
