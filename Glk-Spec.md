@@ -903,7 +903,7 @@ Note that you can resize windows, but you can't flip or rotate them. You can't m
 
 <h level=2>A Note on Display Style</h>
 
-The way windows are displayed is, of course, entirely up to the Glk library; it depends on what is natural for the player's machine. The borders between windows may be black lines, 3-D bars, rows of "#" characters; there may even be no borders at all. The library may not support the Border/NoBorder hint, in which case <em>every</em> pair of windows will have a visible border -- or no border -- between them.
+The way windows are displayed is, of course, entirely up to the Glk library; it depends on what is natural for the player's machine. The borders between windows may be black lines, 3-D bars, rows of "#" characters; there may even be no borders at all. The library may not support the Border/NoBorder hint, in which case <em>every</em> pair of windows will have a visible border &emdash; or no border &emdash; between them.
 
 There may be decorations within the windows as well. A text buffer window will often have a scroll bar. The library (or player) may prefer wide margins around each text window. And so on.
 
@@ -1418,7 +1418,7 @@ A stream is opened with a particular file mode:
 <li>filemode_WriteAppend: An output stream, but the data will added to the end of whatever already existed in the destination, instead of replacing it.
 </list>
 
-<comment>In the stdio library, using fopen(), filemode_Write would be mode "w"; filemode_Read would be mode "r"; filemode_ReadWrite would be mode "r+". Confusingly, filemode_WriteAppend cannot be mode "a", because the stdio spec says that when you open a file with mode "a", then fseek() doesn't work. So we have to use mode "r+" for appending. Then we run into the <em>other</em> stdio problem, which is that "r+" never creates a new file. So filemode_WriteAppend has to <em>first</em> open the file with "a", close it, reopen with "r+", and then fseek() to the end of the file. For filemode_ReadWrite, the process is the same, except without the fseek() -- we begin at the beginning of the file.</comment>
+<comment>In the stdio library, using fopen(), filemode_Write would be mode "w"; filemode_Read would be mode "r"; filemode_ReadWrite would be mode "r+". Confusingly, filemode_WriteAppend cannot be mode "a", because the stdio spec says that when you open a file with mode "a", then fseek() doesn't work. So we have to use mode "r+" for appending. Then we run into the <em>other</em> stdio problem, which is that "r+" never creates a new file. So filemode_WriteAppend has to <em>first</em> open the file with "a", close it, reopen with "r+", and then fseek() to the end of the file. For filemode_ReadWrite, the process is the same, except without the fseek() &emdash; we begin at the beginning of the file.</comment>
 
 For information on opening streams, see the discussion of each specific type of stream in <ref label=stream_types>. Remember that it is always possible that opening a stream will fail, in which case the creation function will return NULL.
 
