@@ -1250,9 +1250,35 @@ If you turn off line input echoing, you can reproduce the standard input behavio
 
 The glk_set_echo_line_event() does not affect a pending line input request. It also has no effect in non-buffer windows. <comment>In a grid window, the game can overwrite the input area at will, so there is no need for this distinction.</comment>
 
-If a window has a pending request for line input, and the player hits enter in that window (or whatever action is appropriate to enter his input), glk_select() will return an event whose type is evtype_LineInput. Once this happens, the request is complete; it is no longer pending. You must call glk_request_line_event() if you want another line of text from that window.
+<deffun>
+void glk_set_terminators_line_event(winid_t win, glui32 *keycodes, glui32 count);
+</deffun>
 
-In the event structure, win tells what window the event came from. val1 tells how many characters were entered. val2 will be 0. The characters themselves are stored in the buffer specified in the original glk_request_line_event() or glk_request_line_event_uni() call. <comment>There is no null terminator stored in the buffer.</comment>
+If a window has a pending request for line input, the player can generally hit the enter key (in that window) to complete line input. The details will depend on the platform's native user interface.
+
+It is possible to request that other keystrokes complete line input as well. (This allows a game to intercept function keys or other special keys during line input.) To do this, call glk_set_terminators_line_event(), and pass an array of count keycodes. These must all be special keycodes (see <ref label=encoding_inchar>). Do not include regular printable characters in the array, nor keycode_Return (which represents the default enter key and will always be recognized). To return to the default behavior, pass a NULL or empty array.
+
+The glk_set_terminators_line_event() affects <em>subsequent</em> line input requests in the given window. It does not affect a pending line input request.
+
+A library may not support this feature; if it does, it may not support all special keys as terminators. (Some keystrokes are reserved for OS or interpreter control.)
+
+<code>
+res = glk_gestalt(gestalt_LineTerminators, 0);
+</code>
+
+This returns 1 if glk_set_terminators_line_event() is supported, and 0 if it is not.
+
+<code>
+res = glk_gestalt(gestalt_LineTerminatorKey, ch);
+</code>
+
+This returns 1 if the keycode ch can be passed to glk_set_terminators_line_event(). If it returns 0, that keycode will be ignored as a line terminator. Printable characters and keycode_Return will always return 0.
+
+When line input is completed, glk_select() will return an event whose type is evtype_LineInput. Once this happens, the request is complete; it is no longer pending. You must call glk_request_line_event() if you want another line of text from that window.
+
+In the event structure, win tells what window the event came from. val1 tells how many characters were entered. val2 will be 0 unless input was ended by a special terminator key, in which case val2 will be the keycode (one of the values passed to glk_set_terminators_line_event()).
+
+The characters themselves are stored in the buffer specified in the original glk_request_line_event() or glk_request_line_event_uni() call. <comment>There is no null terminator or newline stored in the buffer.</comment>
 
 It is illegal to print anything to a window which has line input pending. <comment>This is because the window may be displaying and editing the player's input, and printing anything would make life unnecessarily complicated for the library.</comment>
 
@@ -2822,6 +2848,7 @@ These values, and the values used for future Glk calls, are integers in the rang
 <li>0x0140: glk_request_char_event_uni
 <li>0x0141: glk_request_line_event_uni
 <li>0x0150: glk_set_echo_line_event
+<li>0x0151: glk_set_terminators_line_event
 </list>
 
 Note that glk_main() does not have a selector, because it's provided by your program, not the library.
