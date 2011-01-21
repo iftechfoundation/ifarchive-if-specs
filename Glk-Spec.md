@@ -1,6 +1,6 @@
 <title>Glk API Specification</title>
 
-<subtitle>API version 0.7.###</subtitle>
+<subtitle>API version 0.7.1</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -899,7 +899,7 @@ These do exactly the same thing, since 30% above is the same as 70% below. You d
 
 Whatever constraint you set, glk_window_get_size() will tell you the actual window size you got.
 
-Note that you can resize windows, but you can't flip or rotate them. You can't move A above D, or change O2 to a vertical split where A is left or right of D. <comment>To get this effect you could close one of the windows, and re-split the other one with glk_window_open().</comment>
+Note that you can resize windows, and alter the Border/NoBorder flag. But you can't flip or rotate them. You can't move A above D, or change O2 to a vertical split where A is left or right of D. <comment>To get this effect you could close one of the windows, and re-split the other one with glk_window_open().</comment>
 
 <h level=2>A Note on Display Style</h>
 
@@ -953,7 +953,7 @@ By default, when the player finishes his line of input, the library will display
 
 If you call glk_cancel_line_event(), the same thing happens; whatever text the user was composing is visible at the end of the buffer text, followed by a newline.
 
-However, this default behavior can be changed with the glk_set_echo_line_event() call. If the default echoing is disabled, the library will <em>not</em> display the input text (plus newline) after input is either completed or cancelled. The buffer will end with whatever prompt you displayed before requesting input. If you want the traditional input behavior, it is then your responsibility to print the text and newline, using the Input text style.
+However, this default behavior can be changed with the glk_set_echo_line_event() call. If the default echoing is disabled, the library will <em>not</em> display the input text (plus newline) after input is either completed or cancelled. The buffer will end with whatever prompt you displayed before requesting input. If you want the traditional input behavior, it is then your responsibility to print the text, using the Input text style, followed by a newline (in the original style).
 
 <h level=3 label=window_textgrid>Text Grid Windows</h>
 
@@ -1246,7 +1246,7 @@ res = glk_gestalt(gestalt_LineInputEcho, 0);
 
 Not all libraries support this feature. This returns 1 if glk_set_echo_line_event() is supported, and 0 if it is not. <comment>Remember that if it is not supported, the behavior is always the default, which is line echoing <em>enabled</em>.</comment>
 
-If you turn off line input echoing, you can reproduce the standard input behavior by following each line input event (or line input cancellation) by printing the input line, followed by a newline, in the Input style.
+If you turn off line input echoing, you can reproduce the standard input behavior by following each line input event (or line input cancellation) by printing the input line, in the Input style, followed by a newline in the original style.
 
 The glk_set_echo_line_event() does not affect a pending line input request. It also has no effect in non-buffer windows. <comment>In a grid window, the game can overwrite the input area at will, so there is no need for this distinction.</comment>
 
@@ -1258,7 +1258,7 @@ If a window has a pending request for line input, the player can generally hit t
 
 It is possible to request that other keystrokes complete line input as well. (This allows a game to intercept function keys or other special keys during line input.) To do this, call glk_set_terminators_line_event(), and pass an array of count keycodes. These must all be special keycodes (see <ref label=encoding_inchar>). Do not include regular printable characters in the array, nor keycode_Return (which represents the default enter key and will always be recognized). To return to the default behavior, pass a NULL or empty array.
 
-The glk_set_terminators_line_event() affects <em>subsequent</em> line input requests in the given window. It does not affect a pending line input request.
+The glk_set_terminators_line_event() affects <em>subsequent</em> line input requests in the given window. It does not affect a pending line input request. <comment>This distinction makes life easier for interpreters that set up UI callbacks only at the start of input.</comment>
 
 A library may not support this feature; if it does, it may not support all special keys as terminators. (Some keystrokes are reserved for OS or interpreter control.)
 
