@@ -4,7 +4,7 @@
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
-Copyright 1998-2009 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
+Copyright 1998-2011 by Andrew Plotkin. You have permission to display, download, and print this document, provided that you do so for personal, non-commercial use only. You may not modify or distribute this document without the author's written permission.
 
 This document and further Glk information can be found at: <a href="http://www.eblong.com/zarf/glk/">http://www.eblong.com/zarf/glk/</a>
 
@@ -263,7 +263,7 @@ res = glk_gestalt(gestalt_Version, 0);
 
 res will be set to a 32-bit number which encodes the version of the Glk spec which the library implements. The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. <comment>So the version number 78.2.11 would be encoded as 0x004E020B.</comment>
 
-The current Glk specification version is 0.7.0, so this selector will return 0x00000700.
+The current Glk specification version is 0.7.1, so this selector will return 0x00000701.
 
 <code>
 glui32 res;

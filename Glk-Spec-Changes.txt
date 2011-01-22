@@ -1,0 +1,143 @@
+* version 0.1 (Dec 16, 1997)
+
+Initial release.
+
+* version 0.1.1 (Dec 20, 1997)
+
+Added upper and lower case conversion. (glk_char_to_lower(), glk_char_to_upper())
+
+Added the ability to exit the process. (glk_exit())
+
+* version 0.2 (Feb 7, 1998)
+
+Changed the startup process so that there is no initial window. You can then
+call glk_window_open() to create the initial window, not splitting anything.
+It is also now legal to close all windows.
+
+Removed the attr argument from glk_set_style() and glk_set_style_stream(),
+since text can only be in one style at a time.
+
+Changed the defining metric of a fixed-size window split from a window *type*
+to a particular key *window*. (If the split's key window is closed, the split
+defaults to zero size.) Changed glk_window_set_arrangement() and 
+glk_window_get_arrangement() to reflect this.
+
+* version 0.3 (Mar 5, 1998)
+
+Added the sections on styles and style hints. Functions glk_stylehint_set(),
+glk_stylehint_clear(), glk_style_distinguish(), glk_style_measure().
+
+Made timer events optional -- the library need not implement them. Added
+gestalt_Timer to test for whether they're supported.
+
+* version 0.4 (May 3, 1998)
+
+Added the big final chapter, on porting and portability.
+
+Noted that styles and style hints may be added in the future, so any
+value is legal to pass to Glk style and hint functions.
+
+The Great Typedef Change -- uint32 is now called glui32. This is to prevent 
+possible namespace clashes.
+
+Added a short section about basic types (glui32, etc.)
+
+Added a glsi32 type (signed 32-bit integer), and changed the arguments in 
+glk_stream_set_position() and glk_stylehint_set() to use it.
+
+Added glk_select_poll(), to check for events and flush the screen without
+pausing.
+
+Added glk_tick(), to do annoying OS tasks on platforms which require it.
+
+Defined glk_get_line_stream() and glk_get_buffer_stream(), and changed
+their return type to glui32 (number of characters read.)
+
+Added appendix with a list of function call selectors -- a fixed id number
+for each Glk call. Also added gestalt_FunctionNameToID and 
+gestalt_FunctionIDToName to find functions at run-time.
+
+* version 0.5 (January 1, 1999)
+
+Clarified the use of the second argument in gestalt selectors which don't
+use it. To wit -- always pass 0.
+
+Fixed some fuzzy thinking about how C can pad structures (ie, any way it
+wants to.) The dispatch layer now handles this.
+
+Clarified the policy on calling glk_set_interrupt_handler() twice. The new
+handler function just replaces the old one.
+
+Added the dispatch layer. Changed all the integer identifiers to opaque
+structure pointers.
+
+Removed gestalt_FunctionToID and gestalt_IDToFunction; that functionality
+has been moved to the dispatch layer.
+
+Changed the void* buffer arguments in glk_stream_open_memory() and 
+glk_request_line_event() to char*. 
+
+Changed the return type of glk_get_char_stream() to glsi32, so that it
+could sensibly return -1 for end-of-file.
+
+Added glk_window_get_sibling().
+
+* version 0.5.1 (January 27, 1999)
+
+Added all the graphics stuff, and the Blorb layer.
+
+* version 0.5.2 (July 1, 1999)
+
+Changed the Blorb layer slightly. FORM chunks (such as AIFF) are now
+searched for and returned as their subtype, rather than just FORM.
+
+Added the sound stuff.
+
+Added glk_fileref_create_from_fileref().
+
+* version 0.6.0 (March 26, 2000)
+
+Added the hyperlinks stuff.
+
+Changed glk_gestalt_ext() to use a glui32 array, instead of a void
+pointer.
+
+* version 0.6.1 (June 29, 2000)
+
+Added gestalt_SoundMusic and gestalt_GraphicsTransparency.
+
+Added stylehint_ReverseColor.
+
+Noted that negative event type values are reserved for implementation-
+defined events.
+
+* version 0.7.0 (August 13, 2006)
+
+Added gestalt_Unicode, and many Unicode calls.
+
+* version 0.7.1 (January 22, 2011)
+
+Adjusted the glk.h header to use 32-bit typedefs for glui32 and glsi32,
+rather than assuming that "long" is the right length.
+
+New features:
+- winmethod_Border and winmethod_NoBorder constants, to request a border
+  or no border between Glk windows.
+- glk_set_terminators_line_event(), to allow line input to be submitted
+  when specific special keys (e.g., function keys) are hit.
+- glk_set_echo_line_event(), to control whether line input is echoed when
+  the line is submitted or cancelled.
+- glk_buffer_canon_decompose_uni() and glk_buffer_canon_normalize_uni(),
+  to normalize Unicode strings (Normalization Forms D and C).
+
+-----------------
+
+### add commentary on delete key(s)
+### commentary on why numeric ids for resources
+### does filemode_ReadWrite require file to exist? Spec says no, native ANSI
+implementation implies yes.
+### should the put_stream functions return number of chars written? native or
+latin-1? Should I change the stream counts to native characters?
+### terminating-character list for line input?
+### mention that file-not-found is not a strict error; neither are other
+reportable errors.
