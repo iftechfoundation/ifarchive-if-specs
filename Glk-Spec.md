@@ -1770,6 +1770,8 @@ fileref indicates the file which will be opened. fmode can be any of filemode_Re
 
 <comment>Note, again, that this doesn't match stdio's fopen() call very well. See <ref label=stream></comment>
 
+If the filemode requires the file to exist, but the file does not exist, glk_stream_open_file() returns NULL.
+
 The file may be read or written in text or binary mode; this is determined by the fileref argument. Similarly, platform-dependent attributes such as file type are determined by fileref. See <ref label=fileref>.
 
 When writing in binary mode, Unicode values (characters greater than 255) cannot be written to the file. If you try, they will be stored as 0x3F ("?") characters. In text mode, Unicode values may be stored exactly, approximated, or abbreviated, depending on what the platform's text files support.
@@ -2299,7 +2301,7 @@ The maximally safe course is also a pain in the butt, and may well be inefficien
 
 This is the real nuisance, because Glk provides a limited set of stream and file functions. And yet there are all these beautiful ANSI stdio calls, which have all these clever tricks &emdash; ungetc(), fast macro fgetc(), formatted fprintf(), not to mention the joys of direct pathname manipulation. Why bother with the Glk calls?
 
-The problem is, the stdio library really isn't always the best choice. PalmOS and Newton simply don't use stdio. The Mac has a stdio library built on top of its native file API, but it's a large extra library which porters may not wish to link in.
+The problem is, the stdio library really isn't always the best choice, particularly on mobile OSes.
 
 There's also the problem of hooking into the Glk API. Window output goes through Glk streams. <comment>It would have been lovely to use the stdio API for that, but it's not generally possible.</comment>
 
@@ -2862,6 +2864,8 @@ Call selectors 0x1200 to 0x12FF are reserved for extension projects by Carlos Sa
 The material described in this section is not part of the Glk API per se. It is an external layer which allows the library to load resources (images and sounds) from a file specified by your program. The Blorb file format is a standard IF resource archive.
 
 The Glk spec does not require that resources be stored in a Blorb file. It says only that the library knows how to load them and use them, when you so request. However, Blorb is the recommended way to supply portable resources. Most Glk libraries will support Blorb, using the interface defined in this section.
+
+The quick summary: resources are identified by type (image, sound, etc) and by an index number. <comment>But not by name. This is for historical reasons; Infocom's Z-machine architecture used this scheme.</comment>
 
 For the complete Blorb specification and tools for Blorb file manipulation, see:
 

@@ -130,14 +130,3 @@ New features:
 - glk_buffer_canon_decompose_uni() and glk_buffer_canon_normalize_uni(),
   to normalize Unicode strings (Normalization Forms D and C).
 
------------------
-
-### add commentary on delete key(s)
-### commentary on why numeric ids for resources
-### does filemode_ReadWrite require file to exist? Spec says no, native ANSI
-implementation implies yes.
-### should the put_stream functions return number of chars written? native or
-latin-1? Should I change the stream counts to native characters?
-### terminating-character list for line input?
-### mention that file-not-found is not a strict error; neither are other
-reportable errors.
