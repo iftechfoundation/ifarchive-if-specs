@@ -907,6 +907,8 @@ Note that you can resize windows, and alter the Border/NoBorder flag. But you ca
 
 The way windows are displayed is, of course, entirely up to the Glk library; it depends on what is natural for the player's machine. The borders between windows may be black lines, 3-D bars, rows of "#" characters; there may even be no borders at all. The library may not support the Border/NoBorder hint, in which case <em>every</em> pair of windows will have a visible border &emdash; or no border &emdash; between them.
 
+<comment>The Border/NoBorder was introduced in Glk 0.7.1. Prior to that, all games used the Border hint, and this remains the default. However, as noted, not all implementations display window borders. Therefore, for existing implementations, "Border" may be understood as "your normal style of window display"; "NoBorder" may be understood as "suppress any interwindow borders you may have".</comment>
+
 There may be decorations within the windows as well. A text buffer window will often have a scroll bar. The library (or player) may prefer wide margins around each text window. And so on.
 
 The library is reponsible for handling these decorations, margins, spaces, and borders. You should never worry about them. You are guaranteed that if you request a fixed size of two rows, your text grid window will have room for two rows of characters &emdash; if there is enough total space. Any margins or borders will be allowed for already. If there <em>isn't</em> enough total space (as in stages 4 and 5, above), you lose, of course.
