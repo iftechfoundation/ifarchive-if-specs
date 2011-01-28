@@ -2252,7 +2252,7 @@ This will return TRUE (1) if windows of the given type support hyperlinks. If th
 
 If you are writing a C program, you can perform a preprocessor test for the existence of GLK_MODULE_HYPERLINKS. If this is defined, so are all the functions and constants described in this section. If not, not.
 
-<h level=1 label=time>The System Clock</h>
+<h level=1 label=datetime>The System Clock</h>
 
 You can get the current time, either as a Unix timestamp (seconds since 1970) or as a broken-out structure of time elements (year, month, day, hour, minute, second).
 
@@ -2286,6 +2286,7 @@ If dealing with 64-bit values is awkward, you can also get the current time as a
 
 <deffun>
 void glk_time_to_date_utc(glktimeval_t *time, glkdate_t *date);
+void glk_time_to_date_local(glktimeval_t *time, glkdate_t *date);
 </deffun>
 
 <code>
@@ -2301,63 +2302,44 @@ typedef struct glkdate_struct {
 } glkdate_t;
 </code>
 
-Convert the given timestamp (as returned by glk_current_time()) to a broken-out structure in universal time (GMT).
+Convert the given timestamp (as returned by glk_current_time()) to a broken-out structure. The "utc" function returns a date and time in universal time (GMT); the "local" function returns local time.
 
 <comment>The seconds value may be 60 because of a leap second.</comment>
 
 <deffun>
-void glk_time_to_date_local(glktimeval_t *time, glkdate_t *date);
-</deffun>
-
-Convert the given timestamp to a broken-out structure in local time.
-
-<deffun>
 void glk_simple_time_to_date_utc(glsi32 time, glui32 factor, glkdate_t *date);
-</deffun>
-
-Convert the given timestamp (as returned by glk_current_simple_time()) to a broken-out structure in universal time (GMT). The time argument is multiplied by factor to produce a Unix timestamp.
-
-<deffun>
 void glk_simple_time_to_date_local(glsi32 time, glui32 factor, glkdate_t *date);
 </deffun>
 
-Convert the given timestamp (as returned by glk_current_simple_time()) to a broken-out structure in local time. The time argument is multiplied by factor to produce a Unix timestamp.
+Convert the given timestamp (as returned by glk_current_simple_time()) to a broken-out structure in universal or local time. The time argument is multiplied by factor to produce a Unix timestamp.
 
 <deffun>
 void glk_date_to_time_utc(glkdate_t *date, glktimeval_t *time);
-</deffun>
-
-Convert the broken-out structure (interpreted as universal time) to a timestamp. The weekday value in glkdate_t is ignored. The other values need not be in their normal ranges; they will be normalized.
-
-<deffun>
 void glk_date_to_time_local(glkdate_t *date, glktimeval_t *time);
 </deffun>
 
-Convert the broken-out structure (interpreted as local time) to a timestamp. The weekday value in glkdate_t is ignored. The other values need not be in their normal ranges; they will be normalized.
+Convert the broken-out structure (interpreted as universal or local time) to a timestamp. The weekday value in glkdate_t is ignored. The other values need not be in their normal ranges; they will be normalized.
 
 <deffun>
 glsi32 glk_date_to_simple_time_utc(glkdate_t *date, glui32 factor);
-</deffun>
-
-Convert the broken-out structure (interpreted as universal time) to a timestamp divided by factor. The weekday value in glkdate_t is ignored. The other values need not be in their normal ranges; they will be normalized.
-
-<deffun>
 glsi32 glk_date_to_simple_time_local(glkdate_t *date, glui32 factor);
 </deffun>
 
-Convert the broken-out structure (interpreted as local time) to a timestamp divided by factor. The weekday value in glkdate_t is ignored. The other values need not be in their normal ranges; they will be normalized.
+Convert the broken-out structure (interpreted as universal or local time) to a timestamp divided by factor. The weekday value in glkdate_t is ignored. The other values need not be in their normal ranges; they will be normalized.
 
-<h level=2 label=time_testing>Testing for Clock Capabilities</h>
+<h level=2 label=datetime_testing>Testing for Clock Capabilities</h>
 
-Before calling Glk clock functions, you should use the following gestalt selector.
+Before calling Glk date and time functions, you should use the following gestalt selector.
 
 <code>
-res = glk_gestalt(gestalt_Clock, 0);
+res = glk_gestalt(gestalt_DateTime, 0);
 </code>
 
 This returns 1 if the overall suite of system clock functions, as described in this chapter, is available.
 
 If this selector returns 0, you should not try to call these functions. They may have no effect, or they may cause a run-time error.
+
+<comment>Glk timer events are covered by a different selector. See <ref label=timer_events>).</comment>
 
 <h level=1 label=porting>Porting, Adapting, and Other Messy Bits</h>
 

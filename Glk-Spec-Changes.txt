@@ -130,3 +130,6 @@ New features:
 - glk_buffer_canon_decompose_uni() and glk_buffer_canon_normalize_uni(),
   to normalize Unicode strings (Normalization Forms D and C).
 
+* version 0.7.2 (###)
+
+Added the clock date and time functions, along with gestalt_DateTime.
