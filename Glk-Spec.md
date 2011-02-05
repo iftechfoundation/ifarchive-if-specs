@@ -2297,7 +2297,7 @@ typedef struct glkdate_struct {
     glsi32 weekday;  /* 0-6, 0 is Sunday */
     glsi32 hour;     /* 0-23 */
     glsi32 minute;   /* 0-59 */
-    glsi32 second;   /* 0-60 */
+    glsi32 second;   /* 0-59, maybe 60 during a leap second */
     glsi32 microsec; /* 0-999999 */
 } glkdate_t;
 </code>
@@ -2340,6 +2340,8 @@ This returns 1 if the overall suite of system clock functions, as described in t
 If this selector returns 0, you should not try to call these functions. They may have no effect, or they may cause a run-time error.
 
 <comment>Glk timer events are covered by a different selector. See <ref label=timer_events>).</comment>
+
+If you are writing a C program, you can perform a preprocessor test for the existence of GLK_MODULE_DATETIME. If this is defined, so are all the functions and data types described in this section.
 
 <h level=1 label=porting>Porting, Adapting, and Other Messy Bits</h>
 
@@ -2944,6 +2946,16 @@ These values, and the values used for future Glk calls, are integers in the rang
 <li>0x0141: glk_request_line_event_uni
 <li>0x0150: glk_set_echo_line_event
 <li>0x0151: glk_set_terminators_line_event
+<li>0x0160: glk_current_time
+<li>0x0161: glk_current_simple_time
+<li>0x0168: glk_time_to_date_utc
+<li>0x0169: glk_time_to_date_local
+<li>0x016A: glk_simple_time_to_date_utc
+<li>0x016B: glk_simple_time_to_date_local
+<li>0x016C: glk_date_to_time_utc
+<li>0x016D: glk_date_to_time_local
+<li>0x016E: glk_date_to_simple_time_utc
+<li>0x016F: glk_date_to_simple_time_local
 </list>
 
 Note that glk_main() does not have a selector, because it's provided by your program, not the library.
