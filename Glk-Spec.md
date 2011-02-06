@@ -2292,7 +2292,7 @@ void glk_time_to_date_local(glktimeval_t *time, glkdate_t *date);
 <code>
 typedef struct glkdate_struct {
     glsi32 year;     /* full (four-digit) year */
-    glsi32 month;    /* 0-11, 0 is January */
+    glsi32 month;    /* 1-12, 1 is January */
     glsi32 day;      /* 1-31 */
     glsi32 weekday;  /* 0-6, 0 is Sunday */
     glsi32 hour;     /* 0-23 */
