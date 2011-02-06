@@ -2313,6 +2313,8 @@ void glk_simple_time_to_date_local(glsi32 time, glui32 factor, glkdate_t *date);
 
 Convert the given timestamp (as returned by glk_current_simple_time()) to a broken-out structure in universal or local time. The time argument is multiplied by factor to produce a Unix timestamp.
 
+Since the resolution of these functions is no better than seconds, they will return zero for the microseconds value.
+
 <deffun>
 void glk_date_to_time_utc(glkdate_t *date, glktimeval_t *time);
 void glk_date_to_time_local(glkdate_t *date, glktimeval_t *time);
