@@ -2280,7 +2280,7 @@ The third value in the structure represents a fraction of a second, in microseco
 glsi32 glk_current_simple_time(glui32 factor);
 </deffun>
 
-If dealing with 64-bit values is awkward, you can also get the current time as a lower-resolution 32-bit value. This is simply the Unix time divided by the factor argument (which must not be zero). For example, if factor is 60, the result will be the number of minutes since 1970 (rounded towards zero). If factor is 1, you will get the Unix time directly, but the value will be truncated starting some time in 2038.
+If dealing with 64-bit values is awkward, you can also get the current time as a lower-resolution 32-bit value. This is simply the Unix time divided by the factor argument (which must not be zero). For example, if factor is 60, the result will be the number of minutes since 1970 (rounded towards negative infinity). If factor is 1, you will get the Unix time directly, but the value will be truncated starting some time in 2038.
 
 <h level=2>Time and Date Conversions</h>
 
@@ -2322,12 +2322,16 @@ void glk_date_to_time_local(glkdate_t *date, glktimeval_t *time);
 
 Convert the broken-out structure (interpreted as universal or local time) to a timestamp. The weekday value in glkdate_t is ignored. The other values need not be in their normal ranges; they will be normalized.
 
+If the time cannot be represented by the platform's time library, this may return -1 for the seconds value (high_sec and low_sec both $FFFFFFFF).
+
 <deffun>
 glsi32 glk_date_to_simple_time_utc(glkdate_t *date, glui32 factor);
 glsi32 glk_date_to_simple_time_local(glkdate_t *date, glui32 factor);
 </deffun>
 
 Convert the broken-out structure (interpreted as universal or local time) to a timestamp divided by factor. The weekday value in glkdate_t is ignored. The other values need not be in their normal ranges; they will be normalized.
+
+If the time cannot be represented by the platform's time library, this may return -1.
 
 <h level=2 label=datetime_testing>Testing for Clock Capabilities</h>
 
