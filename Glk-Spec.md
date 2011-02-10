@@ -2324,6 +2324,8 @@ Convert the broken-out structure (interpreted as universal or local time) to a t
 
 If the time cannot be represented by the platform's time library, this may return -1 for the seconds value (high_sec and low_sec both $FFFFFFFF).
 
+The glk_date_to_time_local() function may not be smart about Daylight Saving Time conversions. <comment>If implemented with the mktime() libc function, it should use the negative tm_isdst flag to "attempt to divine whether summer time is in effect".</comment>
+
 <deffun>
 glsi32 glk_date_to_simple_time_utc(glkdate_t *date, glui32 factor);
 glsi32 glk_date_to_simple_time_local(glkdate_t *date, glui32 factor);
