@@ -2322,7 +2322,7 @@ void glk_date_to_time_local(glkdate_t *date, glktimeval_t *time);
 
 Convert the broken-out structure (interpreted as universal or local time) to a timestamp. The weekday value in glkdate_t is ignored. The other values need not be in their normal ranges; they will be normalized.
 
-If the time cannot be represented by the platform's time library, this may return -1 for the seconds value (high_sec and low_sec both $FFFFFFFF).
+If the time cannot be represented by the platform's time library, this may return -1 for the seconds value. (I.e., the high_sec and low_sec fields both $FFFFFFFF. The microseconds field is undefined in this case.)
 
 The glk_date_to_time_local() function may not be smart about Daylight Saving Time conversions. <comment>If implemented with the mktime() libc function, it should use the negative tm_isdst flag to "attempt to divine whether summer time is in effect".</comment>
 
