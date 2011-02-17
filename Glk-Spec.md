@@ -1,6 +1,6 @@
 <title>Glk API Specification</title>
 
-<subtitle>API version 0.7.1</subtitle>
+<subtitle>API version 0.7.2</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -265,7 +265,7 @@ res = glk_gestalt(gestalt_Version, 0);
 
 res will be set to a 32-bit number which encodes the version of the Glk spec which the library implements. The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. <comment>So the version number 78.2.11 would be encoded as 0x004E020B.</comment>
 
-The current Glk specification version is 0.7.1, so this selector will return 0x00000701.
+The current Glk specification version is 0.7.2, so this selector will return 0x00000702.
 
 <code>
 glui32 res;
