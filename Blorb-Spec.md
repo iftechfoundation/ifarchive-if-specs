@@ -1,12 +1,12 @@
 <title>Blorb: An IF Resource Collection Format Standard</title>
 
-<subtitle>Version 2.0.2</subtitle>
+<subtitle>Version 2.0.3</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
 This is a formal specification for a common format for storing resources associated with an interactive fiction game file. Resources are data which the game can invoke, such as sounds and pictures. In addition, the executable game file may itself be a resource in a resource file. This is a convenient way to package a game and all its resources together in one file.
 
-Blorb was originally designed solely for the Z-machine, which is capable of playing sounds (Z-machine versions 3 and up) and showing images (the V6 Z-machine). However, it has been extended for use with other IF systems. The Glk portable I/O library uses Blorb as a resource format, and therefore so does the Glulx virtual machine. (See <a href="../glk/index.html">http://eblong.com/zarf/glk/</a> and <a href="../glulx/index.html">http://eblong.com/zarf/glulx/</a>.)
+Blorb was originally designed solely for the Z-machine, which is capable of playing sounds (Z-machine versions 3 and up) and showing images (the V6 Z-machine). However, it has been extended for use with other IF systems. The Glk portable I/O library uses Blorb as a resource format, and therefore so does the Glulx virtual machine. (See <a href="../glk/index.html">http://eblong.com/zarf/glk/</a> and <a href="../glulx/index.html">http://eblong.com/zarf/glulx/</a>.) ADRIFT 5 (see <a href="http://www.adrift.org.uk/">http://www.adrift.org.uk/</a>) also uses Blorb, albeit with an extended format list.
 
 This format is named "Blorb" because it wraps your possessions up in a box, and because the common save file format was at one point named "Gnusto". That has been changed to "Quetzal", but I'm not going to let that stop me.
 
@@ -172,7 +172,7 @@ There should at most one chunk with usage 'Exec'. If present, its number must be
 <li>'TAD3': TADS 3
 <li>'HUGO': Hugo
 <li>'ALAN': Alan
-<li>'ADRI': Adrift
+<li>'ADRI': ADRIFT
 <li>'LEVE': Level 9
 <li>'AGT&nbsp;': AGT
 <li>'MAGS': Magnetic Scrolls
@@ -548,6 +548,16 @@ The Glk I/O library was designed with portable resources in mind, so there shoul
 
 Remember that the resolution and scaling data is not used by Glk. That chunk is ignored by Blorb-capable Glk libraries.
 
+<h level=2>ADRIFT 5 Compatibility Issues</h>
+
+ADRIFT supports more media formats than Blorb, but has adopted Blorb as a packaging format. To permit this, the following chunk types may be used in ADRIFT blorbs:
+
+For images: 'GIF&nbsp;'.
+
+For sounds: 'WAV&nbsp;', 'MIDI', 'MP3&nbsp;'.
+
+ADRIFT Blorb files should use MIME type <code>application/x-blorb;profile="adrift"</code>. The filename suffix should be ".blorb" or ".adriftblorb". <comment>"A" or "AD" is unfortunately not a unique prefix when it comes to IF systems!</comment>
+
 <h level=1>The IFF Format</h>
 
 A description of the IFF format can be found at
@@ -643,6 +653,14 @@ MOD can reproduce music even more efficiently, but it's really retained in the s
 The PNG format is not burdened with patent restrictions; it is free; it's not lossy; and it can efficiently store many types of images, from 1-bit (monochrome) images up to 48-bit color images. JPEG is lossy and not optimal for images other than photographs, but compresses photographs well. Earlier versions of Blorb specified only PNG, but JPEG was a popular request, and the two formats should complement each other.
 
 As to other possibilities: GIF is a popular format, but was previously owned by twits who restricted its use. (Life has improved, but we have PNG now and we will stick with it.) TIFF has been suggested, but it seems to be overly baroque. Blorb is likely to stay with PNG and JPEG for the foreseeable future.
+
+- So why does ADRIFT get a bye on these format decisions?
+
+Game authors and interpreters need to agree on what formats they will use. Z-code had no cross-platform agreement when Blorb was invented, and Glulx was created to use Blorb, so Blorb's role for them is normative. GIF and MP3 are not going to become standard Blorb format types.
+
+ADRIFT, in contrast, already had cross-platform interpreters when it adopted Blorb. Blorb can therefore be valuable to ADRIFT as a packaging and metadata format, while taking a descriptive role on media formats. (The alternative would be to disallow ADRIFT Blorb files, which seems silly.)
+
+<comment>It is worth noting, however, that IF interpreters are often ported by adapting existing IF display code. IF interpreter ports can also be based on Glk libraries and the Glk API. Both routes entail the Blorb standard media format list, to some extent. Therefore, game authors have some reason to consider sticking to those formats.</comment>
 
 - What is the Blorb Policy on Color Depth?
 
