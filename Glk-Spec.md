@@ -2074,17 +2074,26 @@ As with images, sounds are kept in resources, and your program does not have to 
 
 A resource can theoretically contain any kind of sound data, of any length. A resource can even be infinitely long. <comment>This would be represented by some sound encoding with a built-in repeat-forever flag &emdash; but that is among the details which are hidden from you.</comment> A resource can also contain two or more channels of sound (stereo data). Do not confuse such in-sound channels with Glk sound channels. A single Glk sound channel suffices to play any sound, even stereo sounds.
 
-<comment>Again, Blorb is the official resource-storage format of Glk. Sounds in Blorb files can be encoded as AIFF, MOD, or MOD song data. See the Blorb specification for details.</comment>
+<comment>Again, Blorb is the official resource-storage format of Glk. Sounds in Blorb files can be encoded as Ogg, AIFF, or MOD. See the Blorb specification for details.</comment>
 
 <h level=2 label=sound_channels>Creating and Destroying Sound Channels</h>
 
 <deffun>
 schanid_t glk_schannel_create(glui32 rock);
+schanid_t glk_schannel_create_ext(glui32 rock, glui32 volume);
 </deffun>
 
 This creates a sound channel, about as you'd expect.
 
 Remember that it is possible that the library will be unable to create a new channel, in which case glk_schannel_create() will return NULL.
+
+When you create a channel using glk_schannel_create(), it has full volume, represented by the value 0x10000. Half volume would be 0x8000, three-quarters volume would be 0xC000, and so on. A volume of zero represents silence. The glk_schannel_create_ext() call lets you create a channel with the volume already set at a given level.
+
+You can overdrive the volume of a channel by setting a volume greater than 0x10000. However, this is not recommended; the library may be unable to increase the volume past full, or the sound may become distorted. You should always create sound resources with the maximum volume you will need, and then reduce the volume when appropriate using the channel-volume calls.
+
+<comment>Mathematically, these volume changes should be taken as linear multiplication of a waveform represented as linear samples. As I understand it, linear PCM encodes the sound pressure, and therefore a volume of 0x8000 should represent a 6 dB drop.</comment>
+
+Not all libraries support glk_schannel_create_ext(). You should test the gestalt_SoundChannelExt selector before you rely on it; see <ref label=sound_testing>.
 
 <deffun>
 void glk_schannel_destroy(schanid_t chan);
@@ -2116,6 +2125,16 @@ If you request sound notification, and the repeat value is greater than one, you
 
 Not all libraries support sound notification. You should test the gestalt_SoundNotify selector before you rely on it; see <ref label=sound_testing>.
 
+Note that you can play a sound on a channel whose volume is zero. This has no audible result, unless you later change the volume; but it produces notifications as usual. You can also play a sound on a paused channel; the sound is paused immediately, and does not progress.
+
+<deffun>
+glui32 glk_schannel_play_multi(schanid_t chan, glui32 *sndarray, glui32 soundcount, glui32 notify);
+</deffun>
+
+This works the same as glk_schannel_play_ext(), except that you can specify more than one sound. The sound resource numbers are given in an array. The notify argument applies to all the sounds; the repeats value for all the sounds is 1.
+
+All the sounds will begin at exactly the same time.
+
 <deffun>
 void glk_schannel_stop(schanid_t chan);
 </deffun>
@@ -2123,16 +2142,39 @@ void glk_schannel_stop(schanid_t chan);
 Stops any sound playing in the channel. No notification event is generated, even if you requested one. If no sound is playing, this has no effect.
 
 <deffun>
-void glk_schannel_set_volume(schanid_t chan, glui32 vol);
+void glk_schannel_pause(schanid_t chan);
 </deffun>
 
-Sets the volume in the channel. When you create a channel, it has full volume, represented by the value 0x10000. Half volume would be 0x8000, three-quarters volume would be 0xC000, and so on. A volume of zero represents silence, although the sound is still considered to be playing.
+Pause any sound playing in the channel. This does not generate any notification events. If the channel is already paused, this does nothing.
 
-You can call this function between sounds, or while a sound is playing. The effect is immediate.
+New sounds started in a paused channel are paused immediately.
 
-You can overdrive the volume of a channel by setting a volume greater than 0x10000. However, this is not recommended; the library may be unable to increase the volume past full, or the sound may become distorted. You should always create sound resources with the maximum volume you will need, and then call glk_schannel_set_volume() to reduce the volume when appropriate.
+A volume change in progress is <em>not</em> paused, and may proceed to completion, generating a notification if appropriate.
 
-Not all libraries support this function. You should test the gestalt_SoundVolume selector before you rely on it; see <ref label=sound_testing>.
+<deffun>
+void glk_schannel_unpause(schanid_t chan);
+</deffun>
+
+Unpause the channel. Any paused sounds begin playing where they left off. If the channel is not already paused, this does nothing.
+
+<deffun>
+void glk_schannel_set_volume(schanid_t chan, glui32 vol);
+void glk_schannel_set_volume_ext(schanid_t chan, glui32 vol, glui32 duration, glui32 notify);
+</deffun>
+
+Sets the volume in the channel, from 0 (silence) to 0x10000 (full volume). Again, you can overdrive the volume by setting a value greater than 0x10000, but this is not recommended.
+
+If the duration is zero, the change is immediate. Otherwise, the change begins immediately, and occurs smoothly over the next duration milliseconds.
+
+The notify value should be nonzero in order to request a volume notification event. If you do this, when the volume change is completed, you will get an event with type evtype_VolumeNotify. The window will be NULL, val1 will be zero, and val2 will be the nonzero value you passed as notify.
+
+The glk_schannel_set_volume() does not include duration and notify values. Both are assumed to be zero: immediate change, no notification.
+
+You can call these functions between sounds, or while a sound is playing. However, a zero-duration change while a sound is playing may produce unpleasant clicks.
+
+At most one volume change can be occurring on a sound channel at any time. If you call one of these functions while a previous volume change is in progress, the previous change is interrupted. The beginning point of the new volume change should be wherever the previous volume change was interrupted (rather than the previous change's beginning or ending point).
+
+Not all libraries support thse functions. You should test the appropriate gestalt selectors before you rely on them; see <ref label=sound_testing>.
 
 <deffun>
 void glk_sound_load_hint(glui32 snd, glui32 flag);
@@ -2162,6 +2204,18 @@ Before calling Glk sound functions, you should use the following gestalt selecto
 
 <code>
 glui32 res;
+res = glk_gestalt(gestalt_Sound2, 0);
+</code>
+
+This returns 1 if the overall suite of sound functions is available. This includes all the functions defined in this chapter. It also includes the capabilities described below under gestalt_SoundMusic, gestalt_SoundVolume, and gestalt_SoundNotify.
+
+If you are writing a C program, there is an additional complication. A library which does not support sound may not implement the sound functions at all. Even if you put gestalt tests around your sound calls, you may get link-time errors. If the glk.h file is so old that it does not declare the sound functions and constants, you may even get compile-time errors.
+
+To avoid this, you can perform a preprocessor test for the existence of GLK_MODULE_SOUND2. If this is defined, so are all the functions and constants described in this section. If not, not.
+
+Earlier versions of the Glk spec defined separate selectors for various optional capabilities. This has proven to be an unnecessarily confusing strategy, and is no longer used. The following selectors still exist, but you should not need to test them; the gestalt_Sound2 selector covers all of them.
+
+<code>
 res = glk_gestalt(gestalt_Sound, 0);
 </code>
 
@@ -2169,9 +2223,9 @@ This returns 1 if the overall suite of sound functions is available. This includ
 
 If this selector returns 0, you should not try to call these functions. They may have no effect, or they may cause a run-time error.
 
-If you are writing a C program, there is an additional complication. A library which does not support sound may not implement the sound functions at all. Even if you put gestalt tests around your sound calls, you may get link-time errors. If the glk.h file is so old that it does not declare the sound functions and constants, you may even get compile-time errors.
+This selector is guaranteed to return 1 if gestalt_Sound2 does.
 
-To avoid this, you can perform a preprocessor test for the existence of GLK_MODULE_SOUND. If this is defined, so are all the functions and constants described in this section. If not, not.
+You can perform a preprocessor test for the existence of GLK_MODULE_SOUND. If this is defined, so are the functions listed above.
 
 <code>
 res = glk_gestalt(gestalt_SoundMusic, 0);
@@ -2179,19 +2233,23 @@ res = glk_gestalt(gestalt_SoundMusic, 0);
 
 This returns 1 if the library is capable of playing music sound resources. If it returns 0, only sampled sounds can be played.<comment>"Music sound resources" means MOD songs &emdash; the only music format that Blorb currently supports. The presence of this selector is, of course, an ugly hack. It is a concession to the current state of the Glk libraries, some of which can handle AIFF but not MOD sounds.</comment>
 
+This selector is guaranteed to return 1 if gestalt_Sound2 does.
+
 <code>
-glui32 res;
 res = glk_gestalt(gestalt_SoundVolume, 0);
 </code>
 
 This selector returns 1 if the glk_schannel_set_volume() function works. If it returns zero, glk_schannel_set_volume() has no effect.
 
+This selector is guaranteed to return 1 if gestalt_Sound2 does.
+
 <code>
-glui32 res;
 res = glk_gestalt(gestalt_SoundNotify, 0);
 </code>
 
 This selector returns 1 if the library supports sound notification events. If it returns zero, you will never get such events.
+
+This selector is guaranteed to return 1 if gestalt_Sound2 does.
 
 <h level=1 label=links>Hyperlinks</h>
 
