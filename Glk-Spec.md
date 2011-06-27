@@ -2093,7 +2093,7 @@ You can overdrive the volume of a channel by setting a volume greater than 0x100
 
 <comment>Mathematically, these volume changes should be taken as linear multiplication of a waveform represented as linear samples. As I understand it, linear PCM encodes the sound pressure, and therefore a volume of 0x8000 should represent a 6 dB drop.</comment>
 
-Not all libraries support glk_schannel_create_ext(). You should test the gestalt_SoundChannelExt selector before you rely on it; see <ref label=sound_testing>.
+Not all libraries support glk_schannel_create_ext(). You should test the gestalt_Sound2 selector before you rely on it; see <ref label=sound_testing>.
 
 <deffun>
 void glk_schannel_destroy(schanid_t chan);
@@ -2123,17 +2123,21 @@ The notify value should be nonzero in order to request a sound notification even
 
 If you request sound notification, and the repeat value is greater than one, you will get the event only after the <em>last</em> repetition. If the repeat value is 0 or -1, you will never get a notification event at all. Similarly, if the sound is stopped or interrupted, or if the channel is destroyed while the sound is playing, there will be no notification event.
 
-Not all libraries support sound notification. You should test the gestalt_SoundNotify selector before you rely on it; see <ref label=sound_testing>.
+Not all libraries support sound notification. You should test the gestalt_Sound2 selector before you rely on it; see <ref label=sound_testing>.
 
 Note that you can play a sound on a channel whose volume is zero. This has no audible result, unless you later change the volume; but it produces notifications as usual. You can also play a sound on a paused channel; the sound is paused immediately, and does not progress.
 
 <deffun>
-glui32 glk_schannel_play_multi(schanid_t chan, glui32 *sndarray, glui32 soundcount, glui32 notify);
+glui32 glk_schannel_play_multi(schanid_t *chanarray, glui32 chancount, glui32 *sndarray, glui32 soundcount, glui32 notify);
 </deffun>
 
-This works the same as glk_schannel_play_ext(), except that you can specify more than one sound. The sound resource numbers are given in an array. The notify argument applies to all the sounds; the repeats value for all the sounds is 1.
+This works the same as glk_schannel_play_ext(), except that you can specify more than one sound. The channel references and sound resource numbers are given as two arrays, which must be the same length. The notify argument applies to all the sounds; the repeats value for all the sounds is 1.
 
 All the sounds will begin at exactly the same time.
+
+This returns the number of sounds that began playing correctly. (This will be a number from 0 to soundcount.)
+
+<comment>Note that you have to supply chancount and soundcount as separate arguments, even though they are required to be the same. This is an awkward consequence of the way array arguments are dispatched in Glulx.</comment>
 
 <deffun>
 void glk_schannel_stop(schanid_t chan);
