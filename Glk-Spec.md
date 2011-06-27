@@ -1,6 +1,6 @@
 <title>Glk API Specification</title>
 
-<subtitle>API version 0.7.2</subtitle>
+<subtitle>API version 0.7.3</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -265,7 +265,7 @@ res = glk_gestalt(gestalt_Version, 0);
 
 res will be set to a 32-bit number which encodes the version of the Glk spec which the library implements. The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. <comment>So the version number 78.2.11 would be encoded as 0x004E020B.</comment>
 
-The current Glk specification version is 0.7.2, so this selector will return 0x00000702.
+The current Glk specification version is 0.7.3, so this selector will return 0x00000703.
 
 <code>
 glui32 res;
@@ -2989,11 +2989,16 @@ These values, and the values used for future Glk calls, are integers in the rang
 <li>0x00F1: glk_schannel_get_rock
 <li>0x00F2: glk_schannel_create
 <li>0x00F3: glk_schannel_destroy
+<li>0x00F4: glk_schannel_create_ext
+<li>0x00F7: glk_schannel_play_multi
 <li>0x00F8: glk_schannel_play
 <li>0x00F9: glk_schannel_play_ext
 <li>0x00FA: glk_schannel_stop
 <li>0x00FB: glk_schannel_set_volume
 <li>0x00FC: glk_sound_load_hint
+<li>0x00FD: glk_schannel_set_volume_ext
+<li>0x00FE: glk_schannel_pause
+<li>0x00FF: glk_schannel_unpause
 <li>0x0100: glk_set_hyperlink
 <li>0x0101: glk_set_hyperlink_stream
 <li>0x0102: glk_request_hyperlink_event
