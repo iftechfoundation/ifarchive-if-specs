@@ -1151,7 +1151,9 @@ The event types are:
 <li>evtype_MouseInput: A mouse click in a window.
 <li>evtype_Arrange: An event signalling that the sizes of some windows have changed.
 <li>evtype_Redraw: An event signalling that graphics windows must be redrawn.
+<li>evtype_SoundNotify: The completion of a sound being played in a sound channel.
 <li>evtype_Hyperlink: The selection of a hyperlink in a window.
+<li>evtype_VolumeNotify: The completion of a gradual volume change in a sound channel.
 </list>
 
 Note that evtype_None is zero, and the other values are positive. Negative event types (0x80000000 to 0xFFFFFFFF) are reserved for implementation-defined events.
@@ -1369,7 +1371,7 @@ For more about redraw events and how they affect graphics windows, see <ref labe
 
 <h level=2>Sound Notification Events</h>
 
-On platforms that support sound, you can request to receive an evtype_SoundNotify event when a sound finishes playing. See <ref label=sound_playing>.
+On platforms that support sound, you can request to receive an evtype_SoundNotify event when a sound finishes playing. You can also request to receive an evtype_VolumeNotify event when a gradual volume change completes. See <ref label=sound_playing>.
 
 <h level=2>Hyperlink Events</h>
 
