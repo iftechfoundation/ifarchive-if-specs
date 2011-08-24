@@ -2139,6 +2139,8 @@ All the sounds will begin at exactly the same time.
 
 This returns the number of sounds that began playing correctly. (This will be a number from 0 to soundcount.)
 
+<comment>If the notify argument is nonzero, you will get a separate sound notification event as each sound finishes. They will all have the same val2 value.</comment>
+
 <comment>Note that you have to supply chancount and soundcount as separate arguments, even though they are required to be the same. This is an awkward consequence of the way array arguments are dispatched in Glulx.</comment>
 
 <deffun>
@@ -2162,6 +2164,8 @@ void glk_schannel_unpause(schanid_t chan);
 </deffun>
 
 Unpause the channel. Any paused sounds begin playing where they left off. If the channel is not already paused, this does nothing.
+
+<comment>This means, for example, that you can pause a channel that is currently not playing any sounds. If you then add a sound to the channel, it will not start playing; it will be paused at its beginning. If you later unpause the channel, the sound will commence.</comment>
 
 <deffun>
 void glk_schannel_set_volume(schanid_t chan, glui32 vol);
