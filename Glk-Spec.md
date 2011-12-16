@@ -773,9 +773,9 @@ The easy, and correct, way to think about this is that the size constraint is st
 +---------+       +---------+         +---------+
 </code>
 
-After the first split, the new pair window (O1, which covers the whole screen) knows that its first child (A) is above the second, and gets 50% of its own area. (A is the key window for this split, but a proportional split doesn't care about key windows.)
+The initial window is A. After the first split, the new pair window (O1, which covers the whole screen) knows that its new child (B) is below A, and gets 50% of its own area. (B is the key window for this split, but a proportional split doesn't care about key windows.)
 
-After the <em>second</em> split, all this remains true; O1 knows that its first child gets 50% of its space, and A is O1's key window. But now O1's first child is O2 instead of A. The newer pair window (O2) knows that <em>its</em> first child (C) is above the second, and gets a fixed size of two rows. (As measured in C's font, because C is O2's key window.)
+After the <em>second</em> split, all this remains true; O1 knows that its first child gets 50% of its space, and B is O1's key window. But now O1's first child is O2 instead of A. The newer pair window (O2) knows that <em>its</em> first child (C) is above the second, and gets a fixed size of two rows. (As measured in C's font, because C is O2's key window.)
 
 If we split C, now, the resulting pair will still be two C-font rows high &emdash; that is, tall enough for two lines of whatever font C displays. For the sake of example, we'll do this vertically.
 
