@@ -1,10 +1,10 @@
 <title>Glk API Specification</title>
 
-<subtitle>API version 0.7.3</subtitle>
+<subtitle>API version 0.7.###</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
-Copyright 1998-2011 by Andrew Plotkin. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: <a href="http://creativecommons.org/licenses/by-nc-sa/3.0">http://creativecommons.org/licenses/by-nc-sa/3.0</a>
+Copyright 1998-2012 by Andrew Plotkin. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: <a href="http://creativecommons.org/licenses/by-nc-sa/3.0">http://creativecommons.org/licenses/by-nc-sa/3.0</a>
 
 The API <em>described</em> by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that use the Glk API or libraries that implement it.
 
