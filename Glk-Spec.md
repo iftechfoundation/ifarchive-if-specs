@@ -8,7 +8,7 @@ Copyright 1998-2012 by Andrew Plotkin. This specification is licensed under a Cr
 
 The API <em>described</em> by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that use the Glk API or libraries that implement it.
 
-This document and further Glk information can be found at: <a href="http://www.eblong.com/zarf/glk/">http://www.eblong.com/zarf/glk/</a>
+This document and further Glk information can be found at: <a href="http://eblong.com/zarf/glk/">http://eblong.com/zarf/glk/</a>
 
 <contents>
 
@@ -47,7 +47,7 @@ You can think of Glk as an IF virtual machine, without the virtual machine part.
 
 An IF virtual machine has been designed specifically to go along with Glk. This VM, called Glulx, uses Glk as its interface; each Glk call corresponds to an input/output opcode of the VM.
 
-For more discussion of this approach, see <ref label=vmio>. Glulx is documented at <a href="http://www.eblong.com/zarf/glulx/">http://www.eblong.com/zarf/glulx/</a>.
+For more discussion of this approach, see <ref label=vmio>. Glulx is documented at <a href="http://eblong.com/zarf/glulx/">http://eblong.com/zarf/glulx/</a>.
 
 Of course, Glk can be used with other IF systems. The advantage of Glulx is that it provides the game author with direct and complete access to the Glk API. Other IF systems typically have an built-in abstract I/O API, which maps only partially onto Glk. For these systems, Glk tends to be a least-common-denominator interface: highly portable, but not necessarily featureful. (Even if Glk has a feature, it may not be available through the layers of abstraction.)
 
@@ -3057,7 +3057,7 @@ The quick summary: resources are identified by type (image, sound, etc) and by a
 
 For the complete Blorb specification and tools for Blorb file manipulation, see:
 
-<a href="http://www.eblong.com/zarf/blorb/">http://www.eblong.com/zarf/blorb/</a>
+<a href="http://eblong.com/zarf/blorb/">http://eblong.com/zarf/blorb/</a>
 
 <h level=3>How This Works</h>
 
