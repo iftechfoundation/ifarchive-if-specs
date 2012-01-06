@@ -133,3 +133,13 @@ New features:
 * version 0.7.2 (February 17, 2011)
 
 Added the clock date and time functions, along with gestalt_DateTime.
+
+* version 0.7.3 (October 10, 2011)
+
+Added some new sound-playing functions, along with gestalt_Sound2.
+
+New features:
+- can pause and unpause a sound channel.
+- can change a sound channel's volume gradually over an interval, and
+  get an event notification when the volume change is complete.
+
