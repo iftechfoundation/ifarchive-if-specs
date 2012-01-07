@@ -1792,6 +1792,31 @@ This works just like glk_stream_open_file(), except that in binary mode, charact
 
 In text mode, the file is written and read in a platform-dependent way, which may or may not handle all Unicode characters. A text-mode file created with glk_stream_open_file_uni() may have the same format as a text-mode file created with glk_stream_open_file(); or it may use a more Unicode-friendly format.
 
+<h level=3 label=resource_streams>Resource Streams</h>
+
+You can open a stream which reads from (but not writes to) a resource file.
+
+<comment>Typically this is embedded in a Blorb file, as Blorb is the official resource-storage format of Glk. A Blorb file can contain images and sounds, but it can also contain raw data files, which are accessed by the following functions. A data file is identified by number, not by a filename.</comment>
+
+<comment>If the running program is not associated with a Blorb file, the library may look for data files as actual files instead. These would be named "DATA1", "DATA2", etc, as described in "Other Resource Arrangements" in the Blorb spec: <a href="http://eblong.com/zarf/blorb/">http://eblong.com/zarf/blorb/</a></comment>
+
+<deffun>
+strid_t glk_stream_open_resource(glui32 filenum, glui32 textmode, glui32 rock);
+strid_t glk_stream_open_resource_uni(glui32 filenum, glui32 textmode, glui32 rock);
+</deffun>
+
+Open the given data resource for reading (only), as a normal or Unicode stream. If the textmode argument is zero, the resource is opened as a binary file; if nonzero, as text. <comment>Note that there is no other notion of file usage -- the resource does not have to be specified as "saved game" or whatever.</comment>
+
+If no resource chunk of the given number exists, the open function returns NULL.
+
+As with file streams, a binary resource stream reads the resource as bytes (for a normal stream) or as four-byte (big-endian) words (for a Unicode stream). A text resource stream reads characters encoded as Latin-1 (for normal) or UTF-8 (for Unicode).
+
+<code>
+res = glk_gestalt(gestalt_ResourceStream, 0);
+</code>
+
+This returns 1 if the glk_stream_open_resource() and glk_stream_open_resource_uni() functions are available. If it returns 0, you should not call them.
+
 <h level=2>Other Stream Functions</h>
 
 <deffun>
@@ -1867,9 +1892,27 @@ frefid_t glk_fileref_create_by_name(glui32 usage, char *name, glui32 rock);
 
 This creates a reference to a file with a specific name. The file will be in a fixed location relevant to your program, and visible to the player. <comment>This usually means "in the same directory as your program."</comment>
 
-Since filenames are highly platform-specific, you should use glk_fileref_create_by_name() with care. It is legal to pass any string in the name argument. However, the library may have to mangle, transform, or truncate the string to make it a legal native filename. <comment>For example, if you create two filerefs with the names "File" and "FILE", they may wind up pointing to the <em>same</em> file; the platform may not support case distinctions in file names. Another example: on a platform where file type is specified by filename suffix, the library will add an appropriate suffix based on the usage; any suffix in the string will be overwritten or added to. For that matter, remember that the period is not a legal character in Acorn filenames...</comment>
+Earlier versions of the Glk spec specified that the library may have to extend, truncate, or change your name argument in order to produce a legal native filename. This remains true. However, since Glk was originally proposed, the world has largely reached concensus about what a filename looks like. Therefore, it is worth including some recommended library behavior here. Libraries that share this behavior will more easily be able to exchange files, which may be valuable both to authors (distributing data files for games) and for players (moving data between different computers or different applications).
 
-The most conservative approach is to pass a string of no more than 8 characters, consisting entirely of upper-case letters and numbers, starting with a letter. You can then be reasonably sure that the resulting filename will display all the characters you specify &emdash; in some form.
+The library should take the given filename argument, and delete any slashes or backslashes. It should also truncate the argument at the first period (delete the first period and any following characters). If the result is the empty string, change it to the string "null".
+
+It should then append an appropriate suffix, depending on the usage: ".glkdata" for fileusage_Data, ".glksave" for fileusage_SavedGame, ".txt" for fileusage_Transcript and fileusage_InputRecord.
+
+The above behavior is <em>not</em> a requirement of the Glk spec. Older implementations can continue doing what they do. Some programs (e.g. web-based interpreters) may not have access to a traditional filesystem at all, and to them these recommendations will be meaningless.
+
+On the other side of the coin, the game file should not press these limitations. Best practice is for the game to pass a filename containing only letters and digits, beginning with a letters, and not mixing upper and lower case. Avoid overly-long filenames.
+
+<comment>The earlier Glk spec gave more stringent recommendations: "No more than 8 characters, consisting entirely of upper-case letters and numbers, starting with a letter". The DOS era is safely contained, if not over, so this has been relaxed. The I7 manual recommends "23 characters or fewer".</comment>
+
+<comment>To address other complications:</comment>
+
+<comment>Some filesystems are case-insensitive. If you create two filerefs with the names "File" and "FILE", they may wind up pointing to the same file, or they may not. Avoid doing this.</comment>
+
+<comment>Some programs will look for all files in the same directory as the program itself (or, for interpreted games, in the same directory as the game file). Others may keep a directory in a location appropriate for the user (e.g., ~/Library on MacOS). It is reasonable to keep saved games in game-specific directories, but data files should go in a common directory, as they may be exchanged between games. Transcripts and input records can go either way.</comment>
+
+<comment>When updating an older library to follow these recommendations, consider backwards compatibility for games already installed. When opening an existing file (that is, not in a write-only mode) it may be worth looking under the older name (suffix) before the newer one.</comment>
+
+<comment>Game-save files are already stored with a variety of file suffixes, since that usage goes back to the oldest IF interpreters, long predating Glk. It is reasonable to treat them in some special way, while hewing closer to these recommendations for data files.</comment>
 
 <deffun>
 frefid_t glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui32 rock);
@@ -1877,7 +1920,7 @@ frefid_t glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui32 roc
 
 This copies an existing file reference, but changes the usage. (The original fileref is not modified.)
 
-The use of this function can be tricky. If you change the type of the fileref (fileusage_Data, fileusage_SavedGame, etc), the new reference may or may not point to the same actual disk file. <comment>This generally depends on whether the platform uses suffixes to indicate file type.</comment> If you do this, and open both file references for writing, the results are unpredictable. It is safest to change the type of a fileref only if it refers to a nonexistent file.
+The use of this function can be tricky. If you change the type of the fileref (fileusage_Data, fileusage_SavedGame, etc), the new reference may or may not point to the same actual disk file. <comment>Most platforms use suffixes to indicate file type, so it typically will not. See the earlier comments about recommended file suffixes.</comment> If you do this, and open both file references for writing, the results are unpredictable. It is safest to change the type of a fileref only if it refers to a nonexistent file.
 
 If you change the mode of a fileref (fileusage_TextMode, fileusage_BinaryMode), but leave the rest of the type unchanged, the new fileref will definitely point to the same disk file as the old one.
 
