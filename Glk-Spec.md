@@ -1811,6 +1811,8 @@ If no resource chunk of the given number exists, the open function returns NULL.
 
 As with file streams, a binary resource stream reads the resource as bytes (for a normal stream) or as four-byte (big-endian) words (for a Unicode stream). A text resource stream reads characters encoded as Latin-1 (for normal) or UTF-8 (for Unicode).
 
+When reading from a resource stream, newlines are not remapped, even if they normally would be when reading from a text file on the host OS. If you read a line (glk_get_line_stream or glk_get_line_stream_uni), a Unix newline (0x0A) terminates the line.
+
 <code>
 res = glk_gestalt(gestalt_ResourceStream, 0);
 </code>
@@ -1894,7 +1896,7 @@ This creates a reference to a file with a specific name. The file will be in a f
 
 Earlier versions of the Glk spec specified that the library may have to extend, truncate, or change your name argument in order to produce a legal native filename. This remains true. However, since Glk was originally proposed, the world has largely reached concensus about what a filename looks like. Therefore, it is worth including some recommended library behavior here. Libraries that share this behavior will more easily be able to exchange files, which may be valuable both to authors (distributing data files for games) and for players (moving data between different computers or different applications).
 
-The library should take the given filename argument, and delete any slashes or backslashes. It should also truncate the argument at the first period (delete the first period and any following characters). If the result is the empty string, change it to the string "null".
+The library should take the given filename argument, and delete any characters illegal for a filename. Slashes and backslashes will both be deleted (regardless of OS); others may be as well. The library should also truncate the argument at the first period (delete the first period and any following characters). If the result is the empty string, change it to the string "null".
 
 It should then append an appropriate suffix, depending on the usage: ".glkdata" for fileusage_Data, ".glksave" for fileusage_SavedGame, ".txt" for fileusage_Transcript and fileusage_InputRecord.
 
@@ -1910,7 +1912,7 @@ On the other side of the coin, the game file should not press these limitations.
 
 <comment>Some programs will look for all files in the same directory as the program itself (or, for interpreted games, in the same directory as the game file). Others may keep a directory in a location appropriate for the user (e.g., ~/Library on MacOS). It is reasonable to keep saved games in game-specific directories, but data files should go in a common directory, as they may be exchanged between games. Transcripts and input records can go either way.</comment>
 
-<comment>When updating an older library to follow these recommendations, consider backwards compatibility for games already installed. When opening an existing file (that is, not in a write-only mode) it may be worth looking under the older name (suffix) before the newer one.</comment>
+<comment>When updating an older library to follow these recommendations, consider backwards compatibility for games already installed. When opening an existing file (that is, not in a write-only mode) it may be worth looking under the older name (suffix) if the newer one does not already exist.</comment>
 
 <comment>Game-save files are already stored with a variety of file suffixes, since that usage goes back to the oldest IF interpreters, long predating Glk. It is reasonable to treat them in some special way, while hewing closer to these recommendations for data files.</comment>
 
