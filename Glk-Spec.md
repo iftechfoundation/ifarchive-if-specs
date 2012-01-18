@@ -1896,7 +1896,7 @@ This creates a reference to a file with a specific name. The file will be in a f
 
 Earlier versions of the Glk spec specified that the library may have to extend, truncate, or change your name argument in order to produce a legal native filename. This remains true. However, since Glk was originally proposed, the world has largely reached concensus about what a filename looks like. Therefore, it is worth including some recommended library behavior here. Libraries that share this behavior will more easily be able to exchange files, which may be valuable both to authors (distributing data files for games) and for players (moving data between different computers or different applications).
 
-The library should take the given filename argument, and delete any characters illegal for a filename. Slashes and backslashes will both be deleted (regardless of OS); others may be as well. The library should also truncate the argument at the first period (delete the first period and any following characters). If the result is the empty string, change it to the string "null".
+The library should take the given filename argument, and delete any characters illegal for a filename. This will include all of the following characters (and more, if the OS requires it): slash, backslash, angle brackets (less-than and greater-than), colon, double-quote, pipe (vertical bar), question-mark, asterisk. The library should also truncate the argument at the first period (delete the first period and any following characters). If the result is the empty string, change it to the string "null".
 
 It should then append an appropriate suffix, depending on the usage: ".glkdata" for fileusage_Data, ".glksave" for fileusage_SavedGame, ".txt" for fileusage_Transcript and fileusage_InputRecord.
 
@@ -1910,7 +1910,9 @@ On the other side of the coin, the game file should not press these limitations.
 
 <comment>Some filesystems are case-insensitive. If you create two filerefs with the names "File" and "FILE", they may wind up pointing to the same file, or they may not. Avoid doing this.</comment>
 
-<comment>Some programs will look for all files in the same directory as the program itself (or, for interpreted games, in the same directory as the game file). Others may keep a directory in a location appropriate for the user (e.g., ~/Library on MacOS). It is reasonable to keep saved games in game-specific directories, but data files should go in a common directory, as they may be exchanged between games. Transcripts and input records can go either way.</comment>
+<comment>Some programs will look for all files in the same directory as the program itself (or, for interpreted games, in the same directory as the game file). Others may keep files in a data-specific directory appropriate for the user (e.g., ~/Library on MacOS).</comment>
+
+<comment>If a game interpreter uses a data-specific directory, there is a question of whether to use a common location, or divide it into game-specific subdirectories. (Or to put it another way: should the namespace of named files be per-game or app-wide?) Since data files may be exchanged between games, they should be given an app-wide namespace. In contrast, saved games should be per-game, as they can never be exchanged. Transcripts and input records can go either way.</comment>
 
 <comment>When updating an older library to follow these recommendations, consider backwards compatibility for games already installed. When opening an existing file (that is, not in a write-only mode) it may be worth looking under the older name (suffix) if the newer one does not already exist.</comment>
 
