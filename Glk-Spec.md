@@ -2996,6 +2996,7 @@ These values, and the values used for future Glk calls, are integers in the rang
 <li>0x0046: glk_stream_get_position
 <li>0x0047: glk_stream_set_current
 <li>0x0048: glk_stream_get_current
+<li>0x0049: glk_stream_open_resource
 <li>0x0060: glk_fileref_create_temp
 <li>0x0061: glk_fileref_create_by_name
 <li>0x0062: glk_fileref_create_by_prompt
@@ -3072,6 +3073,7 @@ These values, and the values used for future Glk calls, are integers in the rang
 <li>0x0132: glk_get_line_stream_uni
 <li>0x0138: glk_stream_open_file_uni
 <li>0x0139: glk_stream_open_memory_uni
+<li>0x013A: glk_stream_open_resource_uni
 <li>0x0140: glk_request_char_event_uni
 <li>0x0141: glk_request_line_event_uni
 <li>0x0150: glk_set_echo_line_event
