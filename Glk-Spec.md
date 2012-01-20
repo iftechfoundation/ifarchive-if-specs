@@ -1796,7 +1796,7 @@ In text mode, the file is written and read in a platform-dependent way, which ma
 
 You can open a stream which reads from (but not writes to) a resource file.
 
-<comment>Typically this is embedded in a Blorb file, as Blorb is the official resource-storage format of Glk. A Blorb file can contain images and sounds, but it can also contain raw data files, which are accessed by the following functions. A data file is identified by number, not by a filename.</comment>
+<comment>Typically this is embedded in a Blorb file, as Blorb is the official resource-storage format of Glk. A Blorb file can contain images and sounds, but it can also contain raw data files, which are accessed by the following functions. A data file is identified by number, not by a filename. The Blorb usage field will be 'Data'.</comment>
 
 <comment>If the running program is not associated with a Blorb file, the library may look for data files as actual files instead. These would be named "DATA1", "DATA2", etc, as described in "Other Resource Arrangements" in the Blorb spec: <a href="http://eblong.com/zarf/blorb/">http://eblong.com/zarf/blorb/</a></comment>
 

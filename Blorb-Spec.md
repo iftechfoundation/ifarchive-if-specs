@@ -1,6 +1,6 @@
 <title>Blorb: An IF Resource Collection Format Standard</title>
 
-<subtitle>Version 2.0.3</subtitle>
+<subtitle>Version 2.0.3###</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -43,11 +43,12 @@ There is one index entry for each resource. (But not for the optional chunks.) E
 
 The index entries should be in the same order as the resource chunks in the file.
 
-The usage field tells what kind of resource is being described. There are currently three values defined:
+The usage field tells what kind of resource is being described. There are currently four values defined:
 
 <list>
 <li>'Pict': Picture resource
 <li>'Snd&nbsp;': Sound resource
+<li>'Data': Data file resource
 <li>'Exec': Code resource
 </list>
 
