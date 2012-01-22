@@ -143,3 +143,7 @@ New features:
 - can change a sound channel's volume gradually over an interval, and
   get an event notification when the volume change is complete.
 
+* version 0.7.4
+
+- recommendation for unifying the way interpreters handle file suffixes. For data files, at least.
+- a way to embed data files in a Blorb archive, so that the game can read them directly.
