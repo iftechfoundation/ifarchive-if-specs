@@ -1796,20 +1796,20 @@ In text mode, the file is written and read in a platform-dependent way, which ma
 
 You can open a stream which reads from (but not writes to) a resource file.
 
-<comment>Typically this is embedded in a Blorb file, as Blorb is the official resource-storage format of Glk. A Blorb file can contain images and sounds, but it can also contain raw data files, which are accessed by the following functions. A data file is identified by number, not by a filename. The Blorb usage field will be 'Data'.</comment>
+<comment>Typically this is embedded in a Blorb file, as Blorb is the official resource-storage format of Glk. A Blorb file can contain images and sounds, but it can also contain raw data files, which are accessed by the following functions. A data file is identified by number, not by a filename. The Blorb usage field will be 'Data'. The chunk type will be 'TEXT' for text resources, 'BINA' for binary resources.</comment>
 
-<comment>If the running program is not associated with a Blorb file, the library may look for data files as actual files instead. These would be named "DATA1", "DATA2", etc, as described in "Other Resource Arrangements" in the Blorb spec: <a href="http://eblong.com/zarf/blorb/">http://eblong.com/zarf/blorb/</a></comment>
+<comment>If the running program is not associated with a Blorb file, the library may look for data files as actual files instead. These would be named "DATA1", "DATA2", etc, with a suffix distinguishing text and binary files. See "Other Resource Arrangements" in the Blorb spec: <a href="http://eblong.com/zarf/blorb/">http://eblong.com/zarf/blorb/</a></comment>
 
 <deffun>
-strid_t glk_stream_open_resource(glui32 filenum, glui32 textmode, glui32 rock);
-strid_t glk_stream_open_resource_uni(glui32 filenum, glui32 textmode, glui32 rock);
+strid_t glk_stream_open_resource(glui32 filenum, glui32 rock);
+strid_t glk_stream_open_resource_uni(glui32 filenum, glui32 rock);
 </deffun>
 
-Open the given data resource for reading (only), as a normal or Unicode stream. If the textmode argument is zero, the resource is opened as a binary file; if nonzero, as text. <comment>Note that there is no other notion of file usage -- the resource does not have to be specified as "saved game" or whatever.</comment>
+Open the given data resource for reading (only), as a normal or Unicode stream. <comment>Note that there is no notion of file usage -- the resource does not have to be specified as "saved game" or whatever.</comment>
 
 If no resource chunk of the given number exists, the open function returns NULL.
 
-As with file streams, a binary resource stream reads the resource as bytes (for a normal stream) or as four-byte (big-endian) words (for a Unicode stream). A text resource stream reads characters encoded as Latin-1 (for normal) or UTF-8 (for Unicode).
+As with file streams, a binary resource stream reads the resource as bytes (for a normal stream) or as four-byte (big-endian) words (for a Unicode stream). A text resource stream reads characters encoded as Latin-1 (for normal) or UTF-8 (for Unicode). <comment>Thus, the difference between text and binary resources is only important when opened as a Unicode stream.</comment>
 
 When reading from a resource stream, newlines are not remapped, even if they normally would be when reading from a text file on the host OS. If you read a line (glk_get_line_stream or glk_get_line_stream_uni), a Unix newline (0x0A) terminates the line.
 
