@@ -174,7 +174,7 @@ For Glulx games (and any other game format which uses the Glk API), the data for
 
 <h level=1>Executable Resource Chunks</h>
 
-There should at most one chunk with usage 'Exec'. If present, its number must be zero. Its content is a VM or game executable. Its chunk type describes its format:
+There should at most one chunk with usage 'Exec'. <comment>But see below.</comment> If present, its number must be zero. Its content is a VM or game executable. Its chunk type describes its format:
 
 <list>
 <li>'ZCOD': Z-code
@@ -195,13 +195,19 @@ There should at most one chunk with usage 'Exec'. If present, its number must be
 
 <comment>The EXEC (native) chunk type is not likely to be useful, because it is underspecified. Nothing (beyond the chunk data itself) indicates what CPU or operating system the executable is intended for. Again, it is defined here following the Babel format list.</comment>
 
-<comment>Some formats might support multiple executable chunks; for example, a VM which supports concurrent processes. In such a case, chunk zero should contain the code to execute first, or at the top level.</comment>
-
 A resource file which contains an executable chunk contains everything needed to run the executable. An interpreter can begin interpreting when handed such a resource file; it sees that there is an executable chunk, loads it, and runs it.
 
 A resource file which does not contain an executable chunk can only be used in tandem with an executable file. The interpreter must be handed both the resource file and the executable file in order to begin interpreting.
 
 If an interpreter is handed inconsistent arguments &emdash; that is, a resource file with no executable chunk, or a resource file with an executable chunk plus an executable file &emdash; it should complain righteously to the user.
+
+<h level=2>Multiple Executable Chunks</h>
+
+As of this spec, no IF system puts more than one 'Exec' chunk in a Blorb file, or has any need to. However, this could change in the future.
+
+One possible use (noted as a comment in earlier versions of this spec) is to support several loadable libraries or game segments. In such a case, chunk zero should contain the code to execute first, or at the top level.
+
+Another possibility is to distribute several versions of a game in one Blorb package. IF platforms are famed for the fragility of their save files; a player who downloads an updated game file is likely to find that it no longer loads her old saved games. This could be avoided if the updated Blorb actually contained multiple game files, one per 'Exec' chunk. Chunk zero would be the preferred (most recent) game version, but when loading a save file, the interpreter would select whichever game version was compatible with it.
 
 <h level=1>The Game Identifier Chunk</h>
 
