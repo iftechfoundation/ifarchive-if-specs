@@ -1,12 +1,12 @@
 <title>Blorb: An IF Resource Collection Format Standard</title>
 
-<subtitle>Version 2.0.3###</subtitle>
+<subtitle>Version 2.0.3</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
 This is a formal specification for a common format for storing resources associated with an interactive fiction game file. Resources are data which the game can invoke, such as sounds and pictures. In addition, the executable game file may itself be a resource in a resource file. This is a convenient way to package a game and all its resources together in one file.
 
-Blorb was originally designed solely for the Z-machine, which is capable of playing sounds (Z-machine versions 3 and up) and showing images (the V6 Z-machine). However, it has been extended for use with other IF systems. The Glk portable I/O library uses Blorb as a resource format, and therefore so does the Glulx virtual machine. (See <a href="../glk/index.html">http://eblong.com/zarf/glk/</a> and <a href="../glulx/index.html">http://eblong.com/zarf/glulx/</a>.) ADRIFT 5 (see <a href="http://www.adrift.org.uk/">http://www.adrift.org.uk/</a>) also uses Blorb, albeit with an extended format list.
+Blorb was originally designed solely for the Z-machine, which is capable of playing sounds (Z-machine versions 3 and up) and showing images (the V6 Z-machine). However, it has been extended for use with other IF systems. The Glk portable I/O library uses Blorb as a resource format, and therefore so does the Glulx virtual machine. (See <a href="http://eblong.com/zarf/glk/">http://eblong.com/zarf/glk/</a> and <a href="http://eblong.com/zarf/glulx/">http://eblong.com/zarf/glulx/</a>.) ADRIFT 5 (see <a href="http://www.adrift.org.uk/">http://www.adrift.org.uk/</a>) also uses Blorb, albeit with an extended format list.
 
 This format is named "Blorb" because it wraps your possessions up in a box, and because the common save file format was at one point named "Gnusto". That has been changed to "Quetzal", but I'm not going to let that stop me.
 
@@ -111,7 +111,7 @@ An AIFF (Audio IFF) file has chunk type 'FORM', and formtype 'AIFF'. AIFF is an 
 
 <code>
 <a href="http://www.digitalpreservation.gov/formats/fdd/fdd000005.shtml">http://www.digitalpreservation.gov/formats/fdd/fdd000005.shtml</a>
-<a href="../ftp/aiff-c.9.26.91.ps">http://eblong.com/zarf/ftp/aiff-c.9.26.91.ps</a>
+<a href="http://eblong.com/zarf/ftp/aiff-c.9.26.91.ps">http://eblong.com/zarf/ftp/aiff-c.9.26.91.ps</a>
 </code>
 
 <h level=2>Ogg Sounds</h>
@@ -162,6 +162,16 @@ Note that an AIFF need not contain 8-bit sound samples, as a sound built into a 
 
 The intent of allowing song files is both to allow higher quality, and to save space. Note samples are the largest part of a MOD file, and if the samples are stored in resources, they can be shared between songs. (Typically note samples will be given high resource numbers, so that they do not conflict with sounds used directly by the game. However, it is legal for the game to use a note sample as a sampled-sound effect, if it wants.)
 
+<h level=1>Data Resource Chunks</h>
+
+Each data file is stored as one chunk, with chunk type 'TEXT' or 'BINA' (denoting text or binary data). The format and contents are up to the game to interpret.
+
+This feature was designed to support Glulx, but data resources can be accessed by any game format if the interpreter supports them.
+
+For Glulx games (and any other game format which uses the Glk API), the data format must follow the conventions described in the Glk spec. (<a href="http://eblong.com/zarf/glk/">http://eblong.com/zarf/glk/</a>, "Resource Streams".) 
+
+<comment>To summarize: if the data file is opened via glk_stream_open_resource(), then it will be read as a stream of bytes; text will be assumed to be encoded as Latin-1. If it is opened via glk_stream_open_resource_uni(), then a 'TEXT' chunk will be assumed to be a stream of characters encoded as UTF-8; 'BINA' will be assumed to be a stream of big-endian four-byte integers. If read by lines (glk_get_line_stream(), etc), resource text should use Unix line breaks in all cases.</comment>
+
 <h level=1>Executable Resource Chunks</h>
 
 There should at most one chunk with usage 'Exec'. If present, its number must be zero. Its content is a VM or game executable. Its chunk type describes its format:
@@ -209,7 +219,7 @@ For Z-code, the contents of the game identifier chunk are defined in the common 
 
 The "Initial PC" field of the IFhd chunk (bytes 10 through 12) has no meaning for resource files. It should be set to zero.
 
-For Glulx, the contents of the game identifier chunk are defined in the Glulx specification. This can be found at <a href="../glulx/index.html">http://eblong.com/zarf/glulx/</a>.
+For Glulx, the contents of the game identifier chunk are defined in the Glulx specification. This can be found at <a href="http://eblong.com/zarf/glulx/">http://eblong.com/zarf/glulx/</a>.
 
 <h level=1>The Color Palette Chunk</h>
 
@@ -594,7 +604,7 @@ When reading an IFF file, a program should always ignore any chunk it doesn't un
 
 It may be convenient for an interpreter to be able to access resources in formats other than a resource file. In particular, when developing a game, an author will want to load images and sounds from individual files, rather than having to re-package all the resources whenever any one of them changes.
 
-Such resource arrangements are platform-specific, and the details are left to the interpreter. However, one suggestion is to have a single directory which contains all the resources as files, with one file per resource. (PNG files for images, and so on. The contents of each file would be exactly the same as the contents of the equivalent chunk, minus the initial eight bytes of type/length information.) Files would be named something like "PIC1", "PIC2"..., "SND1", "SND2"..., and so on. A Z-code file (if present) would be named "STORY". Other chunks would be named as follows:
+Such resource arrangements are platform-specific, and the details are left to the interpreter. However, one suggestion is to have a single directory which contains all the resources as files, with one file per resource. (PNG files for images, and so on. The contents of each file would be exactly the same as the contents of the equivalent chunk, minus the initial eight bytes of type/length information.) Files would be named something like "PIC1", "PIC2"..., "SND1", "SND2"..., "DATA1", "DATA2"..., and so on. An executable game file (if present) would be named "STORY". Other chunks would be named as follows:
 
 <list>
 <li>"IDENT": game identifier chunk
