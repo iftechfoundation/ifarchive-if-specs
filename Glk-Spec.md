@@ -1,6 +1,6 @@
 <title>Glk API Specification</title>
 
-<subtitle>API version 0.7.###</subtitle>
+<subtitle>API version 0.7.4</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -1887,6 +1887,8 @@ fmode must be one of these values:
 The fmode argument should generally match the fmode which will be used to open the file.
 
 <comment>It is likely that the prompt or file tool will have a "cancel" option. If the player chooses this, glk_fileref_create_by_prompt() will return NULL. This is a major reason why you should make sure the return value is valid before you use it.</comment>
+
+The recommended file suffixes for files are ".glkdata" for fileusage_Data, ".glksave" for fileusage_SavedGame, ".txt" for fileusage_Transcript and fileusage_InputRecord.
 
 <deffun>
 frefid_t glk_fileref_create_by_name(glui32 usage, char *name, glui32 rock);
