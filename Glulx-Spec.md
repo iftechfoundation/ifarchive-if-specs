@@ -824,7 +824,7 @@ The table of opcodes:
 <li>0x1C9: jisinf
 </list>
 
-Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM. Opcodes 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. These are not documented here. See <ref label=otherif>.
+Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM. Opcodes 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. These are not documented here. Opcodes 0x7900 to 0x79FF are (apparently) reserved for experimental features in the Git interpreter. See <ref label=otherif>.
 
 <h level=2>Integer Math</h>
 
