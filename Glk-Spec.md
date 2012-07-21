@@ -1796,9 +1796,11 @@ In text mode, the file is written and read in a platform-dependent way, which ma
 
 You can open a stream which reads from (but not writes to) a resource file.
 
-<comment>Typically this is embedded in a Blorb file, as Blorb is the official resource-storage format of Glk. A Blorb file can contain images and sounds, but it can also contain raw data files, which are accessed by the following functions. A data file is identified by number, not by a filename. The Blorb usage field will be 'Data'. The chunk type will be 'TEXT' for text resources, 'BINA' for binary resources.</comment>
+<comment>Typically this is embedded in a Blorb file, as Blorb is the official resource-storage format of Glk. A Blorb file can contain images and sounds, but it can also contain raw data files, which are accessed by the following functions. A data file is identified by number, not by a filename. The Blorb usage field will be 'Data'. The chunk type will be 'TEXT' for text resources, 'BINA' or 'FORM' for binary resources.</comment>
 
-<comment>If the running program is not associated with a Blorb file, the library may look for data files as actual files instead. These would be named "DATA1", "DATA2", etc, with a suffix distinguishing text and binary files. See "Other Resource Arrangements" in the Blorb spec: <a href="http://eblong.com/zarf/blorb/">http://eblong.com/zarf/blorb/</a></comment>
+<comment>For a 'FORM' Blorb chunk, the stream should start reading at the beginning of the chunk header -- that is, it should read the 'FORM' and length words before the chunk content. For 'TEXT' and 'BINA' chunks, the stream should skip the header and begin with the chunk content. This distinction is important when embedding AIFF sounds or Quetzal saved games, for example.</comment>
+
+<comment>If the running program is not associated with a Blorb file, the library may look for data files as actual files instead. These would be named "DATA1", "DATA2", etc, with a suffix distinguishing text and binary files. See "Other Resource Arrangements" in the Blorb spec: <a href="http://eblong.com/zarf/blorb/">http://eblong.com/zarf/blorb/</a>. The stream should always begin at the beginning of the file, in this case; there is no BINA/FORM distinction to worry about.</comment>
 
 <deffun>
 strid_t glk_stream_open_resource(glui32 filenum, glui32 rock);
