@@ -286,6 +286,8 @@ EXCEPTION: A version 3.* interpreter should accept version 2.0 game files. The o
 
 For Inform-generated Glulx files, this descriptive value is 49 6E 66 6F, which is to say ASCII 'Info'. There then follow several more bytes of data relevant to the Inform compiler. See the Glulx chapter of the Inform Technical Manual.</comment>
 
+<comment>Note that version 2.0 (pre-Unicode) has been obsolete since 2006. There are still 2.0 game files out there, so interpreters should still support them. However, there are no 2.0-only interpreters left; so compilers may freely target 3.*.</comment>
+
 <h level=2 label=instruction>Instruction Format</h>
 
 There are 2^28 Glulx opcodes, numbered from 0 to 0FFFFFFF. If this proves insufficient, more may be added in the future.
