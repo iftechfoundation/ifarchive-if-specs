@@ -1782,7 +1782,9 @@ If the filemode requires the file to exist, but the file does not exist, glk_str
 
 The file may be read or written in text or binary mode; this is determined by the fileref argument. Similarly, platform-dependent attributes such as file type are determined by fileref. See <ref label=fileref>.
 
-When writing in binary mode, Unicode values (characters greater than 255) cannot be written to the file. If you try, they will be stored as 0x3F ("?") characters. In text mode, Unicode values may be stored exactly, approximated, or abbreviated, depending on what the platform's text files support.
+When writing in binary mode, byte values are written directly to the file. (Writing calls such as glk_put_char_stream() are defined in terms of Latin-1 characters, so the binary file can be presumed to use Latin-1. Newlines will remain as 0x0A bytes.) Unicode values (characters greater than 255) cannot be written to the file. If you try, they will be stored as 0x3F ("?") characters.
+
+When writing in text mode, character data is written in an encoding appropriate to the platform; this may be Latin-1 or some other format. Newlines may be converted to other line break sequences. Unicode values may be stored exactly, approximated, or abbreviated, depending on what the platform's text files support.
 
 <deffun>
 strid_t glk_stream_open_file_uni(frefid_t fileref, glui32 fmode, glui32 rock);
@@ -1790,7 +1792,20 @@ strid_t glk_stream_open_file_uni(frefid_t fileref, glui32 fmode, glui32 rock);
 
 This works just like glk_stream_open_file(), except that in binary mode, characters are written and read as four-byte (big-endian) values. This allows you to write and read any Unicode character.
 
-In text mode, the file is written and read in a platform-dependent way, which may or may not handle all Unicode characters. A text-mode file created with glk_stream_open_file_uni() may have the same format as a text-mode file created with glk_stream_open_file(); or it may use a more Unicode-friendly format.
+In text mode, the file is written and read using the UTF-8 Unicode encoding. Files should be written without a byte-ordering mark. This ensures that text-mode files created by glk_stream_open_file() and glk_stream_open_file_uni() will be identical if only ASCII characters (32-127) are written.
+
+<comment>Previous versions of this spec said, of glk_stream_open_file_uni(): "In text mode, the file is written and read in a platform-dependent way, which may or may not handle all Unicode characters." This left open the possibility of other native text-file formats, as well as richer formats such as RTF or HTML. Richer formats do not seem to have ever been used; and at this point, UTF-8 is widespread enough for us to mandate it.</comment>
+
+To summarize:
+
+<list>
+<li>glk_stream_open_file (byte stream), text mode: platform native text
+<li>glk_stream_open_file (byte stream), binary mode: Latin-1
+<li>glk_stream_open_file_uni (word stream), text mode: UTF-8
+<li>glk_stream_open_file_uni (word stream), binary mode: four-byte (big-endian) integers
+</list>
+
+<comment>See also the comments about text and binary mode, <ref label=fileref>.</comment>
 
 <h level=3 label=resource_streams>Resource Streams</h>
 
@@ -1860,6 +1875,8 @@ You always provide a usage argument when you create a fileref. The usage indicat
 </list>
 
 In general, you should use text mode if the player expects to read the file with a platform-native text editor; you should use binary mode if the file is to be read back by your program, or if the data must be stored exactly. Text mode is appropriate for fileusage_Transcript; binary mode is appropriate for fileusage_SavedGame and probably for fileusage_InputRecord. fileusage_Data files may be text or binary, depending on what you use them for.
+
+<comment>See also the comments about encoding, <ref label=file_streams>.</comment>
 
 <h level=2>The Types of File References</h>
 
