@@ -1805,6 +1805,8 @@ To summarize:
 <li>glk_stream_open_file_uni (word stream), binary mode: four-byte (big-endian) integers
 </list>
 
+However, if the fileref was created via a prompt (glk_fileref_create_by_prompt), the player may have selected format options that override these rules.
+
 <comment>See also the comments about text and binary mode, <ref label=fileref>.</comment>
 
 <h level=3 label=resource_streams>Resource Streams</h>
@@ -1876,6 +1878,8 @@ You always provide a usage argument when you create a fileref. The usage indicat
 
 In general, you should use text mode if the player expects to read the file with a platform-native text editor; you should use binary mode if the file is to be read back by your program, or if the data must be stored exactly. Text mode is appropriate for fileusage_Transcript; binary mode is appropriate for fileusage_SavedGame and probably for fileusage_InputRecord. fileusage_Data files may be text or binary, depending on what you use them for.
 
+When a fileref is created via a user prompt (glk_fileref_create_by_prompt), it may include extra file type information. <comment>For example, a prompt to write a transcript file might include a choice of text encodings, or even alternate formats such as RTF or HTML.</comment> This player-selected information will override the default encoding rules noted above. When a fileref is created non-interactively (glk_fileref_create_by_name, glk_fileref_create_temp) the default rules always apply.
+
 <comment>See also the comments about encoding, <ref label=file_streams>.</comment>
 
 <h level=2>The Types of File References</h>
@@ -1910,6 +1914,8 @@ The fmode argument should generally match the fmode which will be used to open t
 <comment>It is likely that the prompt or file tool will have a "cancel" option. If the player chooses this, glk_fileref_create_by_prompt() will return NULL. This is a major reason why you should make sure the return value is valid before you use it.</comment>
 
 The recommended file suffixes for files are ".glkdata" for fileusage_Data, ".glksave" for fileusage_SavedGame, ".txt" for fileusage_Transcript and fileusage_InputRecord.
+
+The prompt may also include a choice of file formats. This will affect the format of the file (written or parsed), as noted earlier.
 
 <deffun>
 frefid_t glk_fileref_create_by_name(glui32 usage, char *name, glui32 rock);
