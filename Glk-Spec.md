@@ -651,6 +651,10 @@ I'm using some math terminology already, so I'll explain it briefly. The "root" 
 
 There are Glk functions to determine the root window, and to determine the parent of any given window. Note that every window's parent is a pair window. (Except for the root window, which has no parent.)
 
+A note about zero-size windows: a window may wind up with a height or width of zero. (Because of a fixed height of zero, or a percentage allocation of zero, or simply because the application display area does not have enough space.) The library should support this by hiding the window and its contents entirely. Any border between the window and its sibling should also disappear.
+
+<comment>When a window has zero size, it is reasonable for the library to stop passing input events to it. The input request is not cancelled, but the UI may not be able to give keyboard focus or mouse events to a zero-size region of the screen. Therefore, a program which sets a window to zero size should not rely on input from it.</comment>
+
 <h level=2 label=window_opening>Window Opening, Closing, and Constraints</h>
 
 <deffun>
@@ -749,7 +753,7 @@ Then the user maliciously starts squeezing the window down, in stages:
 +---------+
 </code>
 
-The logic remains the same. B always gets half the space. At stage 3, there's no room left for A, so it winds up with zero height. Nothing displayed in A will be visible. At stage 4, there isn't even room in the upper 50% to give C its two rows; so it only gets one. Finally, C is squashed out of existence as well.
+The logic remains the same. B always gets half the space. At stage 3, there's no room left for A, so it winds up with zero height. Nothing displayed in A will be visible. At stage 4, there isn't even room in the upper 50% to give C its two rows; so it only gets one. Finally, C is squashed out of existence as well. (Without sufficient space to display a complete line of text, it counts as "zero size".)
 
 When a window winds up undersized, it remembers what size it should be. In the example above, A remembers that it should be two rows; if the user expands the window to the original size, it would return to the original layout.
 
