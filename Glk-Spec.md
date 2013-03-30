@@ -537,7 +537,7 @@ A window has a type. Currently there are four window types:
 <list>
 <li>Text buffer windows: A stream of text. <comment>The "story window" of an Infocom game.</comment> You can only print at the end of the stream, and input a line of text at the end of the stream.
 <li>Text grid windows: A grid of characters in a fixed-width font. <comment>The "status window" of an Infocom game.</comment> You can print anywhere in the grid.
-<li>Graphics windows: A grid of colored pixels. Graphics windows do not support text input or output, but there are image commands to draw in them. <comment>This is an optional capability; not all Glk libraries support graphics. See <ref label=graphics_testing>.</comment>
+<li>Graphics windows: A grid of colored pixels. Graphics windows do not support text output, but there are image commands to draw in them. Graphics windows can accept character (keystroke) input, but not line input. <comment>This is an optional capability; not all Glk libraries support graphics. See <ref label=graphics_testing>.</comment>
 <li>Blank windows: A blank window. Blank windows support neither input nor output. <comment>They exist mostly to be an example of a "generic" window. You are unlikely to want to use them.</comment>
 </list>
 
@@ -1015,7 +1015,7 @@ In some libraries, you can receive a graphics-redraw event (evtype_Redraw) at an
 
 For a description of the drawing functions that apply to graphics windows, see <ref label=graphics_graphics>.
 
-Graphics windows support no text input or output.
+Graphics windows do not support text output, nor line input. They may support character input. <comment>Character input for graphics windows was added in Glk spec 0.7.5. Older interpreters may not support this feature.</comment>
 
 Not all libraries support graphics windows. You can test whether Glk graphics are available using the gestalt system. In a C program, you can also test whether the graphics functions are defined at compile-time. See <ref label=graphics_testing>. <comment>As with all windows, you should also test for NULL when you create a graphics window.</comment>
 
@@ -1184,7 +1184,7 @@ The upshot of this is that you should not call glk_select_poll() very often. If 
 
 <h level=2 label=char_events>Character Input Events</h>
 
-You can request character input from text buffer and text grid windows. There are separate functions for requesting Latin-1 input and Unicode input; see <ref label=unicode_testing>.
+You can request character input from text buffer, text grid, and graphics windows. There are separate functions for requesting the availability of particular Latin-1 and Unicode characters; see <ref label=unicode_testing>. To test whether graphics windows support character input, use the gestalt_GraphicsCharInput selector.
 
 <deffun>
 void glk_request_char_event(winid_t win);
@@ -1210,7 +1210,7 @@ In the event structure, win tells what window the event came from. val1 tells wh
 
 <h level=2 label=line_events>Line Input Events</h>
 
-You can request line input from text buffer and text grid windows. There are separate functions for requesting Latin-1 input and Unicode input; see <ref label=unicode_testing>.
+You can request line input from text buffer and text grid windows. There are separate functions for requesting the availability of particular Latin-1 and Unicode characters; see <ref label=unicode_testing>.
 
 <deffun>
 void glk_request_line_event(winid_t win, char *buf, glui32 maxlen, glui32 initlen);
@@ -2141,6 +2141,12 @@ res = glk_gestalt(gestalt_GraphicsTransparency, 0);
 </code>
 
 This returns 1 if images with alpha channels can actually be drawn with the appropriate degree of transparency. If it returns 0, the alpha channel is ignored; fully transparent areas will be drawn in an implementation-defined color. <comment>The JPEG format does not support transparency or alpha channels; the PNG format does.</comment>
+
+<code>
+res = glk_gestalt(gestalt_GraphicsCharInput, 0);
+</code>
+
+This returns 1 if graphics windows can accept character input requests. If it returns zero, do not call glk_request_char_event() or glk_request_char_event_uni() on a graphics window.
 
 <h level=1 label=sound>Sound</h>
 
