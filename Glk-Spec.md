@@ -2315,7 +2315,7 @@ Earlier versions of the Glk spec defined separate selectors for various optional
 res = glk_gestalt(gestalt_Sound, 0);
 </code>
 
-This returns 1 if the overall suite of sound functions is available. This includes glk_schannel_create(), glk_schannel_destroy(), glk_schannel_iterate(), glk_schannel_get_rock(), glk_schannel_play(), glk_schannel_play_ext(), glk_schannel_stop(), glk_schannel_set_volume(), and glk_sound_load_hint().
+This returns 1 if the older (pre-0.7.3) suite of sound functions is available. This includes glk_schannel_create(), glk_schannel_destroy(), glk_schannel_iterate(), glk_schannel_get_rock(), glk_schannel_play(), glk_schannel_play_ext(), glk_schannel_stop(), glk_schannel_set_volume(), and glk_sound_load_hint().
 
 If this selector returns 0, you should not try to call these functions. They may have no effect, or they may cause a run-time error.
 
