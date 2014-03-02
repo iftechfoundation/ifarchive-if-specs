@@ -1,6 +1,6 @@
 <title>Blorb: An IF Resource Collection Format Standard</title>
 
-<subtitle>Version 2.0.3</subtitle>
+<subtitle>Version 2.0.4</subtitle>
 
 <subtitle>Andrew Plotkin &lt;erkyrath@eblong.com&gt;</subtitle>
 
@@ -274,6 +274,35 @@ The frontispiece image may be of any legal Blorb type (except a placeholder rect
 4 bytes         4               chunk length
 4 bytes         number          number of a Pict resource
 </code>
+
+<h level=1>The Resource Description Chunk</h>
+
+For a game to be fully accessible to visually impaired users, it should provide textual descriptions to be displayed as alternatives to images. Similarly, audio resources should have textual descriptions as alternatives for hearing-impaired users.
+
+The resource description chunk allows the Blorb file to offer this information.
+
+<code>
+4 bytes         'RDes'          chunk ID
+4 bytes         len             chunk length
+4 bytes         num             number of entries
+                ...             entries
+</code>
+
+The entries are variable-length, and look like:
+
+<code>
+4 bytes         usage           resource usage
+4 bytes         number          number of resource
+4 bytes         length          length of text (bytes)
+length bytes    text            textual description (UTF-8,
+                                  not null-terminated)
+</code>
+
+There should be at most one entry for each resource -- that is, each (usage, number) pair.
+
+Resource descriptions are not required, but they are recommended for significant sounds and images. (Images used for decoration, such as window borders or text dividers, may not need textual descriptions.) Data and executable chunks do not need descriptions; if they appear in this chunk, the interpreter can ignore them.
+
+<comment>An interpreter with a web interface would apply the textual description of an image as an "alt" attribute on the &lt;img&gt; tag.</comment>
 
 <h level=1>Metadata</h>
 
@@ -596,9 +625,11 @@ Each chunk has the following format:
 
 <code>
 4 bytes         id              Chunk type
-4 bytes         m               Chunk length
+4 bytes         m               Chunk data length
 m bytes         ...             Chunk data
 </code>
+
+Remember that the chunk length <em>never</em> includes the eight-byte header (the type and length). This is true for the top-level FORM and internal FORMs as well.
 
 If a chunk has an odd length, it <em>must</em> be followed by a single padding byte whose value is zero. (This padding byte is not included in the chunk length m.) This allows all chunks to be aligned on even byte boundaries.
 
@@ -616,6 +647,7 @@ Such resource arrangements are platform-specific, and the details are left to th
 <li>"IDENT": game identifier chunk
 <li>"PALETTE": color palette
 <li>"FRONTIS": frontispiece identifier
+<li>"RESDESC": resource textual descriptions
 <li>"METADATA": metadata document
 <li>"RELEASE": release number
 <li>"RESOL": resolution chunk
