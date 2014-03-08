@@ -826,7 +826,7 @@ The table of opcodes:
 <li>0x1C9: jisinf
 </list>
 
-Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM. Opcodes 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. These are not documented here. Opcodes 0x7900 to 0x79FF are (apparently) reserved for experimental features in the Git interpreter. See <ref label=otherif>.
+Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM. Opcodes 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Opcodes 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. These are not documented here. Opcodes 0x7900 to 0x79FF are (apparently) reserved for experimental features in the Git interpreter. See <ref label=otherif>.
 
 <h level=2>Integer Math</h>
 
@@ -1988,7 +1988,7 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 <li>Float (11): Returns 1 if the interpreter supports the floating-point arithmetic opcodes.
 </list>
 
-Selectors 0x1000 to 0x10FF are reserved for use by FyreVM. Selectors 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. These are not documented here. See <ref label=otherif>.
+Selectors 0x1000 to 0x10FF are reserved for use by FyreVM. Selectors 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Selectors 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. These are not documented here. See <ref label=otherif>.
 
 <comment>The Unicode selector is slightly redundant. Since the Unicode operations exist in Glulx spec 3.0 and higher, you can get the same information by testing GlulxVersion against 0x00030000. However, it's clearer to have a separate selector. Similarly, the MemCopy selector is true exactly when GlulxVersion is 0x00030100 or higher.</comment>
 
