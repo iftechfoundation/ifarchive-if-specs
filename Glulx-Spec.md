@@ -1954,6 +1954,145 @@ Constant PARAM_8_cpv__start = #cpv__start;
   rfalse;
 ];
 
+! FUNC_8_CP__Tab: implements CP__Tab() as of Inform 6.33.
+[ FUNC_8_CP__Tab obj id
+  otab max res; ! locals
+  if (FUNC_1_Z__Region(obj)~=1) {
+    ERROR("[** Programming error: tried to find the ~.~ of (something) **]");
+    rfalse;
+  }
+  otab = obj--&gt;(3+((PARAM_7_num_attr_bytes)/4));
+  if (otab == 0) return 0;
+  max = otab--&gt;0;
+  otab = otab+4;
+  @binarysearch id 2 otab 10 max 0 0 res;
+  return res;
+];
+
+! FUNC_9_RA__Pr: implements RA__Pr() as of Inform 6.33.
+[ FUNC_9_RA__Pr obj id
+  cla prop ix; ! locals
+  if (id &amp; $FFFF0000) {
+	cla = PARAM_0_classes_table--&gt;(id &amp; $FFFF);
+	if (~~FUNC_11_OC__Cl(obj, cla)) return 0;
+	@ushiftr id 16 id;
+	obj = cla;
+  }
+  prop = FUNC_8_CP__Tab(obj, id);
+  if (prop==0) return 0;
+  if (OBJ_IN_CLASS(obj) &amp;&amp; cla == 0) {
+	if (id &lt; PARAM_1_indiv_prop_start
+	    || id &gt;= PARAM_1_indiv_prop_start+8)
+	  return 0;
+  }
+  if (PARAM_6_self--&gt;0 ~= obj) {
+	@aloadbit prop 72 ix;
+	if (ix) return 0;
+  }
+  return prop--&gt;1;
+];
+
+! FUNC_10_RL__Pr: implements RL__Pr() as of Inform 6.33.
+[ FUNC_10_RL__Pr obj id
+  cla prop ix; ! locals
+  if (id &amp; $FFFF0000) {
+	cla = PARAM_0_classes_table--&gt;(id &amp; $FFFF);
+	if (~~FUNC_11_OC__Cl(obj, cla)) return 0;
+	@ushiftr id 16 id;
+	obj = cla;
+  }
+  prop = FUNC_8_CP__Tab(obj, id);
+  if (prop==0) return 0;
+  if (OBJ_IN_CLASS(obj) &amp;&amp; cla == 0) {
+	if (id &lt; PARAM_1_indiv_prop_start
+	    || id &gt;= PARAM_1_indiv_prop_start+8)
+	  return 0;
+  }
+  if (PARAM_6_self--&gt;0 ~= obj) {
+	@aloadbit prop 72 ix;
+	if (ix) return 0;
+  }
+  @aloads prop 1 ix;
+  return WORDSIZE * ix;
+];
+
+! FUNC_11_OC__Cl: implements OC__Cl() as of Inform 6.33.
+[ FUNC_11_OC__Cl obj cla
+  zr jx inlist inlistlen; ! locals
+  zr = FUNC_1_Z__Region(obj);
+  if (zr == 3) {
+	if (cla == PARAM_5_string_metaclass) rtrue;
+	rfalse;
+  }
+  if (zr == 2) {
+	if (cla == PARAM_4_routine_metaclass) rtrue;
+	rfalse;
+  }
+  if (zr ~= 1) rfalse;
+  if (cla == PARAM_2_class_metaclass) {
+	if (OBJ_IN_CLASS(obj)
+	  || obj == PARAM_2_class_metaclass or PARAM_5_string_metaclass
+	     or PARAM_4_routine_metaclass or PARAM_3_object_metaclass)
+	  rtrue;
+	rfalse;
+  }
+  if (cla == PARAM_3_object_metaclass) {
+	if (OBJ_IN_CLASS(obj)
+	  || obj == PARAM_2_class_metaclass or PARAM_5_string_metaclass
+	     or PARAM_4_routine_metaclass or PARAM_3_object_metaclass)
+	  rfalse;
+	rtrue;
+  }
+  if (cla == PARAM_5_string_metaclass or PARAM_4_routine_metaclass)
+    rfalse;
+  if (~~OBJ_IN_CLASS(cla)) {
+	ERROR("[** Programming error: tried to apply 'ofclass' with non-class **]");
+	rfalse;
+  }
+  inlist = FUNC_9_RA__Pr(obj, 2);
+  if (inlist == 0) rfalse;
+  inlistlen = FUNC_10_RL__Pr(obj, 2) / WORDSIZE;
+  for (jx=0 : jx&lt;inlistlen : jx++) {
+	if (inlist--&gt;jx == cla) rtrue;
+  }
+  rfalse;
+];
+
+! FUNC_12_RV__Pr: implements RV__Pr() as of Inform 6.33.
+[ FUNC_12_RV__Pr obj id
+  addr; ! locals
+  addr = FUNC_9_RA__Pr(obj, id);
+  if (addr == 0) {
+	if (id &gt; 0 &amp;&amp; id &lt; PARAM_1_indiv_prop_start) {
+	  return PARAM_8_cpv__start--&gt;id;
+	}
+	ERROR("[** Programming error: tried to read (something) **]");
+	return 0;
+  }
+  return addr--&gt;0;
+];
+
+! FUNC_13_OP__Pr: implements OP__Pr() as of Inform 6.33.
+[ FUNC_13_OP__Pr obj id
+  zr; ! locals
+  zr = FUNC_1_Z__Region(obj);
+  if (zr == 3) {
+	if (id == print or print_to_array) rtrue;
+	rfalse;
+  }
+  if (zr == 2) {
+	if (id == call) rtrue;
+	rfalse;
+  }
+  if (zr ~= 1) rfalse;
+  if (id &gt;= PARAM_1_indiv_prop_start
+      &amp;&amp; id &lt; PARAM_1_indiv_prop_start+8) {
+	if (OBJ_IN_CLASS(obj)) rtrue;
+  }
+  if (FUNC_9_RA__Pr(obj, id) ~= 0)
+	rtrue;
+  rfalse;
+];
 </code>
 
 <h level=2 label=opcodes_misc>Miscellaneous</h>
