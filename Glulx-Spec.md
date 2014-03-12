@@ -1777,9 +1777,11 @@ accelparam L1 L2
 
 Store the value L2 in the parameter table at position L1. If the terp does not know about parameter L1, this does nothing.
 
-The list of accelerated functions is as follows. They are defined as if in Inform source code. (Consider Inform's "strict" mode to be off, for the purposes of operators such as .&amp; and --&gt;.) ERROR() represents code which displays an error, as described above.
+The list of accelerated functions is as follows. They are defined as if in Inform 6 source code. (Consider Inform's "strict" mode to be off, for the purposes of operators such as .&amp; and --&gt;.) ERROR() represents code which displays an error, as described above.
 
 (Functions may be added to this list in future versions of the Glulx spec. Existing functions will not be removed or altered. Functions and parameters numbered 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. These are not documented here. See <ref label=otherif>.)
+
+Note that functions 2 through 7 are deprecated; they behave badly if the Inform 6 NUM_ATTR_BYTES option (parameter 7) is changed from its default value (7). They will not be removed, but new games should use functions 8 through 13 instead.
 
 <code>
 Constant PARAM_0_classes_table = #classes_table;
@@ -1951,6 +1953,7 @@ Constant PARAM_8_cpv__start = #cpv__start;
 	rtrue;
   rfalse;
 ];
+
 </code>
 
 <h level=2 label=opcodes_misc>Miscellaneous</h>
