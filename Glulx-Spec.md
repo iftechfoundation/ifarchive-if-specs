@@ -1961,7 +1961,7 @@ Constant PARAM_8_cpv__start = #cpv__start;
     ERROR("[** Programming error: tried to find the ~.~ of (something) **]");
     rfalse;
   }
-  otab = obj--&gt;(3+((PARAM_7_num_attr_bytes)/4));
+  otab = obj--&gt;(3+(PARAM_7_num_attr_bytes/4));
   if (otab == 0) return 0;
   max = otab--&gt;0;
   otab = otab+4;
