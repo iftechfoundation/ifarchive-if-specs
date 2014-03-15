@@ -1,5 +1,5 @@
 The Glulx Inform Technical Reference
-Inform version 6.21(G0.35) to 6.31N
+Inform version 6.21(G0.35) to 6.33
 http://eblong.com/zarf/glulxe/
 (Last update: Mar 1, 2014)
 
