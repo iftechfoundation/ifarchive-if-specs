@@ -422,7 +422,7 @@ The decoding table has the following format:
 
 The table length is measured in bytes, from the beginning of the table to the end of the last node. The node count includes both branch and leaf nodes. <comment>There will, of course, be an odd number of nodes, and (N+1)/2 of them will be leaves.</comment> The root address indicates which node is the root of the tree; it is not necessarily the first node. This is an absolute address, not an offset from the beginning of the table.
 
-<comment>The Inform compiler generated an incorrect node count field through April 2014. It is therefore untrustworthy in older game files.</comment>
+<comment>The Inform compiler generated an incorrect node count field through April 2014. This field will thus be too large (never too small) in older game files.</comment>
 
 There then follow all the nodes, with no extra data before, between, or after them. They need not be in any particular order. There are several possible types of nodes, distinguished by their first byte.
 
