@@ -3133,7 +3133,7 @@ Note that glk_main() does not have a selector, because it's provided by your pro
 
 There is no way to use these selectors directly in the Glk API. <comment>An earlier version of Glk had gestalt selectors gestalt_FunctionNameToID and gestalt_FunctionIDToName, but these have been withdrawn.</comment> They are defined and used only by the dispatch layer.
 
-Call selectors 0x1100 to 0x11FF (and the same range of gestalt selectors) are reserved for extension projects by Dannii Willis. Call selectors 0x1200 to 0x12FF (and gestalt selector 0x1200) are reserved for extension projects by Carlos Sanchez. These are not documented here.
+Call selectors 0x1100 to 0x11FF (and the same range of gestalt selectors) are reserved for extension projects by Dannii Willis. Call selectors 0x1200 to 0x12FF (and gestalt selector 0x1200) are reserved for extension projects by Carlos Sanchez. Call selectors 0x2200 to 0x22FF (and the same range of gestalt selectors) are reserved for iOS extension features by Andrew Plotkin. These are not documented here.
 
 <h level=2 label=blorblayer>The Blorb Layer</h>
 
