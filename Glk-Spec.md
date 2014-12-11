@@ -1951,6 +1951,8 @@ On the other side of the coin, the game file should not press these limitations.
 
 <comment>Game-save files are already stored with a variety of file suffixes, since that usage goes back to the oldest IF interpreters, long predating Glk. It is reasonable to treat them in some special way, while hewing closer to these recommendations for data files.</comment>
 
+<comment>In case anyone cares, fileusage_Data (".glkdata") can be associated with the MIME type application/x-glkdata; fileusage_SavedGame (".glksave") with application/x-glksave. ".glksave" files are commonly Quetzal save data (but might be other formats for IF systems other than Z-code and Glulx). ".glkdata" can contain any data, obviously. So knowing the MIME type doesn't get you much, but we offer them anyway.</comment>
+
 <deffun>
 frefid_t glk_fileref_create_from_fileref(glui32 usage, frefid_t fref, glui32 rock);
 </deffun>
