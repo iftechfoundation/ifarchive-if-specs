@@ -1332,6 +1332,20 @@ restoreundo S1
 Restore the VM state from temporary storage. S1 is set to 1 if the operation failed.
 
 <deffun>
+hasundo S1
+</deffun>
+
+Test whether a VM state is available in temporary storage. S1 is set to 0 if a state is available, 1 if not. If this returns 0, then restoreundo is expected to succeed.
+
+<deffun>
+discardundo
+</deffun>
+
+Discard a VM state (the most recently saved) from temporary storage. If none is available, this does nothing.
+
+The hasundo and discardundo opcodes were added in Glulx 3.1.3. You can check for their existence with the ExtUndo gestalt selector.
+
+<deffun>
 protect L1 L2
 </deffun>
 
@@ -2130,6 +2144,7 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 <li>Acceleration (9): Returns 1 if the interpreter supports the accelfunc and accelparam opcodes. (This must true for any terp supporting Glulx 3.1.1.)
 <li>AccelFunc (10): Returns 1 if the terp implements the accelerated function given in L2.
 <li>Float (11): Returns 1 if the interpreter supports the floating-point arithmetic opcodes.
+<li>ExtUndo (12): Returns 1 if the interpreter supports the hasundo and discardundo opcodes. (This must true for any terp supporting Glulx 3.1.3. On a terp which does not support undo functionality, these opcodes will be callable but will fail.)
 </list>
 
 Selectors 0x1000 to 0x10FF are reserved for use by FyreVM. Selectors 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Selectors 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. These are not documented here. See <ref label=otherif>.
