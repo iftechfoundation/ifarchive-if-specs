@@ -152,7 +152,7 @@ New features:
 - ADDITION (July 2012): clarify that IFF-style data files (FORM chunks)
   are considered to include their headers when embedded.
 
-* version 0.7.5 (###)
+* version 0.7.5 (February 13, 2017)
 
 - graphics windows can support character input.
 - specify that a Unicode file stream in text mode should use UTF-8.
