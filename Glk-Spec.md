@@ -1784,6 +1784,8 @@ fileref indicates the file which will be opened. fmode can be any of filemode_Re
 
 If the filemode requires the file to exist, but the file does not exist, glk_stream_open_file() returns NULL.
 
+<comment>Unfortunately, many (most) older interpreters will throw a fatal error in this case (missing file for filemode_Read) rather than returning NULL. Therefore it is best to call glk_fileref_does_file_exist() before trying to read a file.</comment>
+
 The file may be read or written in text or binary mode; this is determined by the fileref argument. Similarly, platform-dependent attributes such as file type are determined by fileref. See <ref label=fileref>.
 
 When writing in binary mode, byte values are written directly to the file. (Writing calls such as glk_put_char_stream() are defined in terms of Latin-1 characters, so the binary file can be presumed to use Latin-1. Newlines will remain as 0x0A bytes.) Unicode values (characters greater than 255) cannot be written to the file. If you try, they will be stored as 0x3F ("?") characters.
