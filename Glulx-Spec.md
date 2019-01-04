@@ -830,7 +830,7 @@ The table of opcodes:
 <li>0x1C9: jisinf
 </list>
 
-Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM. Opcodes 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Opcodes 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. These are not documented here. Opcodes 0x7900 to 0x79FF are (apparently) reserved for experimental features in the Git interpreter. See <ref label=otherif>.
+Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM. Opcodes 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Opcodes 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. Opcodes 0x1400 to 0x14FF are reserved for iOS extension features by ZZO38. These are not documented here. Opcodes 0x7900 to 0x79FF are (apparently) reserved for experimental features in the Git interpreter. See <ref label=otherif>.
 
 <h level=2>Integer Math</h>
 
@@ -1402,6 +1402,8 @@ These systems are currently defined:
 <li>20: The FyreVM channel system. See <ref label=otherif>.
 </list>
 
+The values 140-14F are reserved for extension projects by ZZO38. These are not documented here.
+
 It is important to recall that when Glulx starts up, the Glk I/O system is <em>not</em> set. And when Glk starts up, there are no windows and no current output stream. To make anything appear to the user, you must first do three things: select the Glk I/O system, open a Glk window, and set its stream as the current one. (It is illegal in Glk to send output when there is no stream set. Sending output to Glulx's "null" I/O system is legal, but pointless.)
 
 <deffun>
@@ -1797,7 +1799,7 @@ Store the value L2 in the parameter table at position L1. If the terp does not k
 
 The list of accelerated functions is as follows. They are defined as if in Inform 6 source code. (Consider Inform's "strict" mode to be off, for the purposes of operators such as .&amp; and --&gt;.) ERROR() represents code which displays an error, as described above.
 
-(Functions may be added to this list in future versions of the Glulx spec. Existing functions will not be removed or altered. Functions and parameters numbered 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. These are not documented here. See <ref label=otherif>.)
+(Functions may be added to this list in future versions of the Glulx spec. Existing functions will not be removed or altered. Functions and parameters numbered 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Functions and parameters numbered 0x1400 to 0x14FF are reserved for extension projects by ZZO38. These are not documented here. See <ref label=otherif>.)
 
 Note that functions 2 through 7 are deprecated; they behave badly if the Inform 6 NUM_ATTR_BYTES option (parameter 7) is changed from its default value (7). They will not be removed, but new games should use functions 8 through 13 instead.
 
@@ -2149,7 +2151,7 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 <li>ExtUndo (12): Returns 1 if the interpreter supports the hasundo and discardundo opcodes. (This must true for any terp supporting Glulx 3.1.3. On a terp which does not support undo functionality, these opcodes will be callable but will fail.)
 </list>
 
-Selectors 0x1000 to 0x10FF are reserved for use by FyreVM. Selectors 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Selectors 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. These are not documented here. See <ref label=otherif>.
+Selectors 0x1000 to 0x10FF are reserved for use by FyreVM. Selectors 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Selectors 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. Selectors 0x1400 to 0x14FF are reserved for iOS extension features by ZZO38. These are not documented here. See <ref label=otherif>.
 
 <comment>The Unicode selector is slightly redundant. Since the Unicode operations exist in Glulx spec 3.0 and higher, you can get the same information by testing GlulxVersion against 0x00030000. However, it's clearer to have a separate selector. Similarly, the MemCopy selector is true exactly when GlulxVersion is 0x00030100 or higher.</comment>
 
