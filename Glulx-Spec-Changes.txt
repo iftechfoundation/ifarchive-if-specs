@@ -1,21 +1,51 @@
-* version 3.0.0 (###)
+Glulx -- specification change log
 
-Added full Unicode support.
+3.1.3: (###)
 
-* version 3.1.0 (###)
+    Added the @hasundo and @discardundo opcodes.
 
-Added the @mzero, @mcopy, @malloc, and @mfree opcodes.
+3.1.2: (Aug 17, 2010)
+    Added support for floating-point. (29 float opcodes, and a gestalt
+    selector for them.)
+    Deprecated 8-bit and 16-bit locals. Also deprecated the use of the
+    copyb and copys opcodes with a local-variable operand.
+    Noted that opcodes 0x1000 to 0x10FF are reserved for FyreVM; also
+    gestalt selectors 0x1000 to 0x10FF, and I/O system 20.
+    Clarified that you may not use @setmemsize when the memory heap is 
+    active.
+    Clarified that glk_put_string() cannot accept encoded Glulx strings.
+    More accelerated functions (late update: March 27, 2014)
 
-* version 3.1.1 (###)
+3.1.1: (Mar 11, 2009)
+    Added support for accelerated function calls. This adds @accelfunc
+    and @accelparam opcodes, and selectors to go along with them.
+    Admitted that branching from one function to another is legal.
+    (Interpreters have always permitted it.)
 
-Added the acceleration opcodes.
+3.1.0: (Feb 11, 2007)
+    Added support for block operations and heap memory allocation. This
+    adds @mcopy, @mzero, @malloc, and @mfree opcodes, and selectors to
+    go along with them.
 
-* version 3.1.2 (August 18, 2010)
+3.0.0: (Aug 13, 2006)
+    Added Unicode support. This means a new selector; a @streamunichar
+    opcode; an E2 (Unicode) string type; a couple of new Unicode compression
+    node types; and a type-14 call stub, for printing said node types.
+    Note that a Glulx 3.0 interpreter can execute Glulx 2.0 game files.
 
-Added floating-point opcodes.
-Deprecated 8-bit and 16-bit locals.
-More accelerated functions (late update: March 27, 2014)
+2.0.0: (Mar 29, 2000)
+    Added modular I/O system system; setiosys, getiosys opcodes to
+    support it. The default I/O system is no longer Glk, which makes
+    this an incompatible change.
 
-* version 3.1.3 (###)
+(Previous versions were all called "1.0.0")
 
-Added the @hasundo and @discardundo opcodes.
+* : (Feb 15, 2000)
+    Added search opcodes; jumpabs; callf opcodes; defined gestalt
+    selectors
+
+* : (Aug 17, 1999)
+    Added support for compressed strings.
+
+* : (Apr 1, 1999)
+    Initial draft
