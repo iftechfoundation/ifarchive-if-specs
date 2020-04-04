@@ -3,28 +3,28 @@ Blorb spec -- change log
 0.9: (1997-09-09?)
 
 1.0: (1998-01-24)
-	Official out-of-draft-status version.
+    Official out-of-draft-status version.
 
 1.1: (2000-02-04)
 
 2.0: (2006-04-20)
-	Frontispiece chunk. Metadata chunk. Adaptive palette chunk.
-	Added Ogg audio format. Deprecated song audio format.
-	Placeholder image resources.
+    Frontispiece chunk. Metadata chunk. Adaptive palette chunk.
+    Added Ogg audio format. Deprecated song audio format.
+    Placeholder image resources.
 
 2.0.1: (2006-04-27)
-	Add game formats from Babel treaty.
-	Deprecate story name chunk in favor of metadata.
+    Add game formats from Babel treaty.
+    Deprecate story name chunk in favor of metadata.
 
 2.0.2: (2010-10-09)
-	Implementation details about MOD audio format.
+    Implementation details about MOD audio format.
 
 2.0.3: (2012-01-25)
-	Data resources.
-	Discuss the idea of multiple executable chunks.
-	ADRIFT extra formats.
+    Data resources.
+    Discuss the idea of multiple executable chunks.
+    ADRIFT extra formats.
 
 2.0.4: (2014-03-02)
-	Resource description chunk (alt text strings).
+    Resource description chunk (alt text strings).
 
 
