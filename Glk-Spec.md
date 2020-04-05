@@ -1747,7 +1747,6 @@ You always provide a usage argument when you create a fileref. The usage indicat
 - fileusage_Transcript: A file which contains a stream of text from the game (often an echo stream from a window.)
 - fileusage_InputRecord: A file which records player input.
 - fileusage_Data: Any other kind of file (preferences, statistics, arbitrary data.)
-
 - fileusage_BinaryMode: The file contents will be stored exactly as they are written, and read back in the same way. The resulting file may not be viewable on platform-native text file viewers.
 - fileusage_TextMode: The file contents will be transformed to a platform-native text file as they are written out. Newlines may be converted to linefeeds or linefeed-plus-carriage-return combinations; Latin-1 characters may be converted to native character codes. When reading a file in text mode, native line breaks will be converted back to newline (0x0A) characters, and native character codes may be converted to Latin-1 or UTF-8. [[Line breaks will always be converted; other conversions are more questionable. If you write out a file in text mode, and then read it back in text mode, high-bit characters (128 to 255) may be transformed or lost.]]
 
