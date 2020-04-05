@@ -546,7 +546,7 @@ The interpretation of the value depends on the exponent value:
 
 - If E is FF and M is zero, the value is positive or negative infinity, depending on S. Infinite values represent overflows. (+Inf is 7F800000; -Inf is FF800000.)
 - If E is FF and M is nonzero, the value is a positive or negative NaN ("not a number"), depending on S. NaN values represent arithmetic failures. (+NaN values are in the range 7F800001 to 7FFFFFFF; -NaN are FF800001 to FFFFFFFF.)
-- If E is 00 and M is zero, the value is a positive or negative zero, depending on S. Zero values represent underflows, and also, you know, zero. (+0 is 00000000; -0 is 80000000.)
+- If E is 00 and M is zero, the value is a positive or negative zero, depending on S. Zero values represent underflows, and also, you know, zero. (+0 is 00000000; −0 is 80000000.)
 - If E is 00 and M is nonzero, the value is a "denormalized" number, very close to zero: plus or minus 2^(-149)*M.
 - If E is anything else, the value is a "normalized" number: plus or minus 2^(E-150)*(800000+M).
 
@@ -558,7 +558,7 @@ Some example values:
 
 - 0.0   =  00000000 (S=0, E=00, M=0)
 - 1.0   =  3F800000 (S=0, E=7F, M=0)
-- -2.0  =  C0000000 (S=1, E=80, M=0)
+- −2.0  =  C0000000 (S=1, E=80, M=0)
 - 100.0 =  42C80000 (S=0, E=85, M=480000)
 - pi    =  40490FDB (S=0, E=80, M=490FDB)
 - 2*pi  =  40C90FDB (S=0, E=81, M=490FDB)
@@ -567,17 +567,17 @@ Some example values:
 To give you an idea of the behavior of the special values:
 
 - 1 / 0    =  +Inf
-- -1 / 0   =  -Inf
+- −1 / 0   =  −Inf
 - 1 / Inf  =  0
-- 1 / -Inf =  -0
+- 1 / -Inf =  −0
 - 0 / 0    =  NaN
 - 2 * 0    =  0
-- 2 * -0   =  -0
+- 2 * −0   =  −0
 - +Inf * 0 =  NaN
 - +Inf * 1 =  +Inf
 - +Inf + +Inf =  +Inf
 - +Inf * +Inf =  +Inf
-- +Inf - +Inf =  NaN
+- +Inf − +Inf =  NaN
 - +Inf / +Inf =  NaN
 
 NaN is sticky; almost *any* mathematical operation involving a NaN produces NaN. (There are a few exceptions.)
@@ -1175,7 +1175,7 @@ Set the current size of the memory map. The new value must be a multiple of 256,
 
 When the memory size grows, the new space is filled with zeroes. When it shrinks, the contents of the old space are lost.
 
-If the allocation heap is active (see [*](#opcodes_malloc)) you may not use setmemsize -- the memory map is under the control of the heap system. If you free all heap objects, the heap will then no longer be active, and you can use setmemsize.
+If the allocation heap is active (see [*](#opcodes_malloc)) you may not use setmemsize – the memory map is under the control of the heap system. If you free all heap objects, the heap will then no longer be active, and you can use setmemsize.
 
 Since memory allocation is never guaranteed, you must be prepared for the possibility that setmemsize will fail. The opcode stores the value zero if it succeeded, and 1 if it failed. If it failed, the memory size is unchanged.
 
@@ -1191,7 +1191,7 @@ Glulx is able to maintain a list of dynamically-allocated memory objects. These 
 
 Some interpreters do not have the capability to manage an allocation heap. On such interpreters, malloc will always fail. You can check this in advance with the MAlloc gestalt selector.
 
-When you first allocate a block of memory, the heap becomes active. The current end of memory -- that is, the current getmemsize value -- becomes the beginning address of the heap. The memory map is then extended to accomodate the memory block.
+When you first allocate a block of memory, the heap becomes active. The current end of memory – that is, the current getmemsize value – becomes the beginning address of the heap. The memory map is then extended to accomodate the memory block.
 
 Subsequent memory allocations and deallocations are done within the heap. The interpreter may extend or reduce the memory map, as needed, when allocations and deallocations occur. While the heap is active, you may not manually resize the memory map with setmemsize; the heap system is responsible for doing that.
 
@@ -1217,7 +1217,7 @@ If the allocation fails, this stores zero.
 mfree L1
 ```
 
-Free the memory block at address L1. This *must* be the address of an extant block -- that is, a value returned by malloc and not previously freed.
+Free the memory block at address L1. This *must* be the address of an extant block – that is, a value returned by malloc and not previously freed.
 
 This operation does not change the contents of the memory block (or, indeed, the contents of the memory map at all).
 
@@ -1398,7 +1398,7 @@ These opcodes were added in Glulx version 3.1.2. However, not all interpreters m
 numtof L1 S1
 ```
 
-Convert an integer value to the closest equivalent float. (That is, if L1 is 1, then 3F800000 -- the float encoding of 1.0 -- will be stored in S1.) Integer zero is converted to (positive) float zero.
+Convert an integer value to the closest equivalent float. (That is, if L1 is 1, then 3F800000 – the float encoding of 1.0 – will be stored in S1.) Integer zero is converted to (positive) float zero.
 
 If the value is less than -1000000 or greater than 1000000 (hex), the conversion may not be exact. (More specifically, it may round to a nearby multiple of a power of 2.)
 
@@ -1438,9 +1438,9 @@ ceil L1 S1
 floor L1 S1
 ```
 
-Round L1 up (towards +Inf) or down (towards -Inf) to the nearest integral value. (The result is still in float format, however.) These opcodes are idempotent.
+Round L1 up (towards +Inf) or down (towards −Inf) to the nearest integral value. (The result is still in float format, however.) These opcodes are idempotent.
 
-The result keeps the sign of L1; in particular, floor(0.5) is 0 and ceil(-0.5) is -0. Rounding -0 up or down gives -0. Rounding an infinite value gives infinity.
+The result keeps the sign of L1; in particular, floor(0.5) is 0 and ceil(−0.5) is −0. Rounding −0 up or down gives −0. Rounding an infinite value gives infinity.
 
 ```
 sqrt L1 S1
@@ -1450,7 +1450,7 @@ log L1 S1
 
 Compute the square root of L1, e^L1, and log of L1 (base e).
 
-sqrt(-0) is -0. sqrt returns NaN for all other negative values. exp(+0) and exp(-0) are 1; exp(-Inf) is +0. log(+0) and log(-0) are -Inf. log returns NaN for all other negative values.
+sqrt(−0) is −0. sqrt returns NaN for all other negative values. exp(+0) and exp(−0) are 1; exp(−Inf) is +0. log(+0) and log(−0) are −Inf. log returns NaN for all other negative values.
 
 ```
 pow L1 L2 S1
@@ -1472,7 +1472,7 @@ The special cases are breathtaking. The following is quoted (almost) directly fr
 - pow(x, −Inf) returns +0 for |x| > 1.
 - pow(x, +Inf) returns +0 for |x| < 1.
 - pow(x, +Inf) returns +Inf for |x| > 1.
-- pow(−Inf, y) returns -0 for y an odd integer < 0.
+- pow(−Inf, y) returns −0 for y an odd integer < 0.
 - pow(−Inf, y) returns +0 for y < 0 and not an odd integer.
 - pow(−Inf, y) returns -Inf for y an odd integer > 0.
 - pow(−Inf, y) returns +Inf for y > 0 and not an odd integer.
@@ -1491,9 +1491,9 @@ atan L1 S1
 
 Compute the standard trigonometric functions.
 
-sin and cos return values in the range -1 to 1. sin, cos, and tan of infinity are NaN.
+sin and cos return values in the range −1 to 1. sin, cos, and tan of infinity are NaN.
 
-asin is always in the range -pi/2 to pi/2; acos is always in the range 0 to pi. asin and acos of values greater than 1, or less than -1, are NaN. atan(±Inf) is ±pi/2.
+asin is always in the range −pi/2 to pi/2; acos is always in the range 0 to pi. asin and acos of values greater than 1, or less than −1, are NaN. atan(±Inf) is ±pi/2.
 
 ```
 atan2 L1 L2 S1
@@ -1503,16 +1503,16 @@ Computes the arctangent of L1/L2, using the signs of both arguments to determine
 
 Again with the special cases:
 
-- atan2(±0, -0) returns ±pi.
+- atan2(±0, −0) returns ±pi.
 - atan2(±0, +0) returns ±0.
 - atan2(±0, x) returns ±pi for x < 0.
 - atan2(±0, x) returns ±0 for x > 0.
 - atan2(y, ±0) returns +pi/2 for y > 0.
-- atan2(y, ±0) returns -pi/2 for y < 0.
-- atan2(±y, -Inf) returns ±pi for finite y.
+- atan2(y, ±0) returns −pi/2 for y < 0.
+- atan2(±y, −Inf) returns ±pi for finite y.
 - atan2(±y, +Inf) returns ±0 for finite y.
 - atan2(±Inf, x) returns ±pi/2 for finite x.
-- atan2(±Inf, -Inf) returns ±3*pi/4.
+- atan2(±Inf, −Inf) returns ±3*pi/4.
 - atan2(±Inf, +Inf) returns ±pi/4.
 
 ### Floating-Point Comparisons { #opcodes_floatbranch }
@@ -1541,9 +1541,9 @@ jfeq L1 L2 L3 L4
 
 Branch to L4 if the difference between L1 and L2 is less than or equal to (plus or minus) L3. The sign of L3 is ignored.
 
-If any of the arguments are NaN, this will not branch. If L3 is infinite, this will always branch -- unless L1 and L2 are opposite infinities. (Opposite infinities are never equal, regardless of L3. Infinities of the same sign are always equal.)
+If any of the arguments are NaN, this will not branch. If L3 is infinite, this will always branch – unless L1 and L2 are opposite infinities. (Opposite infinities are never equal, regardless of L3. Infinities of the same sign are always equal.)
 
-If L3 is (plus or minus) zero, this tests for exact equality. Note that +0 is considered exactly equal to -0.
+If L3 is (plus or minus) zero, this tests for exact equality. Note that +0 is considered exactly equal to −0.
 
 ```
 jfne L1 L2 L3 L4
@@ -1560,7 +1560,7 @@ jfge L1 L2 L3
 
 Branch to L3 if L1 is less than (less than or equal to, greater than, greater than or equal to) L2.
 
-+0 and -0 behave identically in comparisons. In particular, +0 is considered equal to -0, not greater than -0.
++0 and −0 behave identically in comparisons. In particular, +0 is considered equal to −0, not greater than −0.
 
 ### Random Number Generator { #opcodes_rand }
 
@@ -1615,7 +1615,7 @@ All three of these opcodes operate on a collection of fixed-size data structures
 
 The following flags may be set in the Options argument. Note that not all flags can be used with all types of searches.
 
-- KeyIndirect (0x01): This flag indicates that the Key argument passed to the opcode is the address of the actual key. If this flag is not used, the Key argument is the key value itself. (In this case, the KeySize *must* be 1, 2, or 4 -- the native sizes of Glulx values. If the KeySize is 1 or 2, the lower bytes of the Key are used and the upper bytes ignored.)
+- KeyIndirect (0x01): This flag indicates that the Key argument passed to the opcode is the address of the actual key. If this flag is not used, the Key argument is the key value itself. (In this case, the KeySize *must* be 1, 2, or 4 – the native sizes of Glulx values. If the KeySize is 1 or 2, the lower bytes of the Key are used and the upper bytes ignored.)
 - ZeroKeyTerminates (0x02): This flag indicates that the search should stop (and return failure) if it encounters a structure whose key is all zeroes. If the searched-for key happens to also be all zeroes, the success takes precedence.
 - ReturnIndex (0x04): This flag indicates that search should return the array index of the structure that it finds, or -1 (0xFFFFFFFF) for failure. If this flag is not used, the search returns the address of the structure that it finds, or 0 for failure.
 

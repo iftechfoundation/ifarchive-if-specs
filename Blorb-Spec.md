@@ -266,7 +266,7 @@ The entries are variable-length, and look like:
     length bytes    text            textual description (UTF-8,
                                       not null-terminated)
 
-There should be at most one entry for each resource -- that is, each (usage, number) pair.
+There should be at most one entry for each resource – that is, each (usage, number) pair.
 
 Resource descriptions are not required, but they are recommended for significant sounds and images. (Images used for decoration, such as window borders or text dividers, may not need textual descriptions.) Data and executable chunks do not need descriptions; if they appear in this chunk, the interpreter can ignore them.
 
@@ -490,7 +490,7 @@ Some older Z-code Blorb files contain an 'SNam' (story name) chunk, which contai
 
 Previous versions of the Blorb spec did not discuss file naming. However, with the relapse of MacOS into filename suffix semantics, it is impossible for us to pretend that the issue is an implementation detail.
 
-It is always legal for a Blorb file to have a ".blorb" filename suffix. However, interpreters have a natural interest in locating <em>their</em> sort of Blorb files -- Z-code, Glulx, or so on -- and it is generally easier for them to do this by filename suffix, rather than by opening each Blorb and looking at its resource index. Therefore, ".zblorb" and ".gblorb" should be used to designate Blorb files containing Z-code and Glulx games, respectively.
+It is always legal for a Blorb file to have a ".blorb" filename suffix. However, interpreters have a natural interest in locating <em>their</em> sort of Blorb files – Z-code, Glulx, or so on – and it is generally easier for them to do this by filename suffix, rather than by opening each Blorb and looking at its resource index. Therefore, ".zblorb" and ".gblorb" should be used to designate Blorb files containing Z-code and Glulx games, respectively.
 
 On platforms which limit filename suffixes to three characters, the suffixes ".blb", ".zlb", and ".glb" may be used instead. But this practice, at least, I can deprecate without qualm. I hope.
 

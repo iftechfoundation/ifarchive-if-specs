@@ -1696,7 +1696,7 @@ You can open a stream which reads from (but not writes to) a resource file.
 
 [[Typically this is embedded in a Blorb file, as Blorb is the official resource-storage format of Glk. A Blorb file can contain images and sounds, but it can also contain raw data files, which are accessed by the following functions. A data file is identified by number, not by a filename. The Blorb usage field will be 'Data'. The chunk type will be 'TEXT' for text resources, 'BINA' or 'FORM' for binary resources.]]
 
-[[For a 'FORM' Blorb chunk, the stream should start reading at the beginning of the chunk header -- that is, it should read the 'FORM' and length words before the chunk content. For 'TEXT' and 'BINA' chunks, the stream should skip the header and begin with the chunk content. This distinction is important when embedding AIFF sounds or Quetzal saved games, for example.]]
+[[For a 'FORM' Blorb chunk, the stream should start reading at the beginning of the chunk header – that is, it should read the 'FORM' and length words before the chunk content. For 'TEXT' and 'BINA' chunks, the stream should skip the header and begin with the chunk content. This distinction is important when embedding AIFF sounds or Quetzal saved games, for example.]]
 
 [[Note that this FORM distinction was added to the Glk 0.7.4 spec in July 2012, several months after the spec went out. This is bad form, no pun intended, but I don't think it'll cause headaches. No games use the resource stream feature yet, as far as I know. A Glk library written in the interregnum of early 2012 will fail to recognize FORM chunks, and if a game tries to use one, glk_stream_open_resource will return NULL.]]
 
@@ -1707,7 +1707,7 @@ strid_t glk_stream_open_resource(glui32 filenum, glui32 rock);
 strid_t glk_stream_open_resource_uni(glui32 filenum, glui32 rock);
 ```
 
-Open the given data resource for reading (only), as a normal or Unicode stream. [[Note that there is no notion of file usage -- the resource does not have to be specified as "saved game" or whatever.]]
+Open the given data resource for reading (only), as a normal or Unicode stream. [[Note that there is no notion of file usage – the resource does not have to be specified as "saved game" or whatever.]]
 
 If no resource chunk of the given number exists, the open function returns NULL.
 

@@ -185,5 +185,5 @@ The parse table:
 
 The Tokenise__ routine fills this in. It uses period, comma, and double-quote as word separators. (The word separator list is fixed, but can be changed by modifying or replacing Tokenise__.)
 
-By a happy coincidence, in both Z-code and Glulx code, parsetable-->1 is the value of the first word entered. This makes the bi-platform library a little bit simpler.
+By a happy coincidence, in both Z-code and Glulx code, parsetable`-->`1 is the value of the first word entered. This makes the bi-platform library a little bit simpler.
 
