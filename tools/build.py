@@ -33,10 +33,19 @@ match = re.search('\\s*#([^{]+){', source, re.M)
 title = match.group(1).strip()
 
 # Convert Markdown to HTML.
+# The NumberingTocExtension arguments are slightly different for the Glulx Technical reference; its headers aren't the same depth as the other files.
+if 'Technical' in title:
+    number_top_start = 1
+    toc_depth = '3-5'
+else:
+    number_top_start = 0
+    toc_depth = '2-5'
+
+# Do the Markdown conversion.
 converter = markdown.Markdown(extensions=[
     'attr_list',
     LFencedCodeExtension(preclass='DefFun'),
-    NumberingTocExtension(number_top_start=0, baselevel=1, toc_depth='2-5'),
+    NumberingTocExtension(number_top_start=number_top_start, baselevel=1, toc_depth=toc_depth),
     CommentExtension()
 ])
 result = converter.convert(source)
