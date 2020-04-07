@@ -7,7 +7,7 @@ html: $(HTMLTARGETS)
 pdf: $(PDFTARGETS)
 
 dist/%.html : %.md
-	python3 tools/build.py $< tools/template.html $@
+	python3 tools/makehtml.py $< tools/template.html $@
 
 dist/%.pdf : dist/%.html
 	wkhtmltopdf -q -s Letter $< $@
