@@ -3,17 +3,33 @@
 Inform version 6.21(G0.35) to 6.33
 {: .VersionHeader }
 
-Andrew Plotkin `<erkyrath@eblong.com>`
+Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
 (Last update: Mar 1, 2014)
 {: .DateHeader }
 
+Copyright 2020 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: [http://creativecommons.org/licenses/by-nc-sa/3.0][by-nc-sa]
+
+[iftf]: https://iftechfoundation.org/
+[by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/3.0
+
+This document and further Glulx information can be found at:
+[https://github.com/iftechfoundation/ifarchive-if-specs](https://github.com/iftechfoundation/ifarchive-if-specs)
+
+----
+
+This document describes data conventions used by the [Inform 6][i6] compiler when generating Glulx game files. The I6 library needs to read some of this data. This document serves as a way to coordinate compiler and library code. These conventions are not part of the Glulx VM specification.
+
+Most game authors will never have to worry about this document.
+
+[i6]: https://inform-fiction.org/Welcome.html
+
 ## Compiler Table Formats
 
-Most game authors will never have to worry about this section. It describes various tables used by the compiler and the library. These tables have somewhat different formats in Glulx than in the Z-machine.
-
 In these tables, I'm using the terms "long", "short", and "byte" to describe four-byte, two-byte, and one-byte values respectively.
+
+Most of this information exists in Inform-generated Z-code files as well. Some of the text below assumes that you are familiar with Inform's Z-machine conventions.
 
 ### Static Data
 

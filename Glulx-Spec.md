@@ -3,15 +3,20 @@
 VM specification version 3.1.3
 {: .VersionHeader }
 
-Andrew Plotkin `<erkyrath@eblong.com>`
+Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-Copyright 1999-2015 by Andrew Plotkin. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: [http://creativecommons.org/licenses/by-nc-sa/3.0](http://creativecommons.org/licenses/by-nc-sa/3.0)
+Copyright 2020 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: [http://creativecommons.org/licenses/by-nc-sa/3.0][by-nc-sa]
+
+[iftf]: https://iftechfoundation.org/
+[by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/3.0
 
 The virtual machine *described* by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that run on the Glulx VM or make use of it, including compilers, interpreters, debuggers, and so on.
 
 This document and further Glulx information can be found at:
-[http://eblong.com/zarf/glulx/](http://eblong.com/zarf/glulx/)
+[https://github.com/iftechfoundation/ifarchive-if-specs](https://github.com/iftechfoundation/ifarchive-if-specs)
+
+----
 
 [TOC]
 

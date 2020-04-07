@@ -1,16 +1,21 @@
-# Glk API Specification {: .Title }
+# Glk: A Portable Interface Standard for IF {: .Title }
 
-API version 0.7.5
+API specification version 0.7.5
 {: .VersionHeader }
 
-Andrew Plotkin `<erkyrath@eblong.com>`
+Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-Copyright 1998-2017 by Andrew Plotkin. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: [http://creativecommons.org/licenses/by-nc-sa/3.0](http://creativecommons.org/licenses/by-nc-sa/3.0)
+Copyright 2020 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: [http://creativecommons.org/licenses/by-nc-sa/3.0][by-nc-sa]
+
+[iftf]: https://iftechfoundation.org/
+[by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/3.0
 
 The API *described* by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that use the Glk API or libraries that implement it.
 
-This document and further Glk information can be found at: [http://eblong.com/zarf/glk/](http://eblong.com/zarf/glk/)
+This document and further Glk information can be found at: [https://github.com/iftechfoundation/ifarchive-if-specs](https://github.com/iftechfoundation/ifarchive-if-specs)
+
+----
 
 [TOC]
 

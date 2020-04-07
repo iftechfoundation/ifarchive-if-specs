@@ -13,4 +13,4 @@ dist/%.pdf : dist/%.html
 	wkhtmltopdf -q -s Letter $< $@
 
 clean:
-	-rm -f $(HTMLTARGETS)
+	-rm -f $(HTMLTARGETS) $(PDFTARGETS)

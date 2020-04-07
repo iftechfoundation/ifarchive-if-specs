@@ -1,10 +1,19 @@
 # Blorb: An IF Resource Collection Format Standard {: .Title }
 
-Version 2.0.4
+Format specification version 2.0.4
 {: .VersionHeader }
 
-Andrew Plotkin `<erkyrath@eblong.com>`
+Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
+
+Copyright 2020 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: [http://creativecommons.org/licenses/by-nc-sa/3.0][by-nc-sa]
+
+[iftf]: https://iftechfoundation.org/
+[by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/3.0
+
+This document and further Blorb information can be found at: [https://github.com/iftechfoundation/ifarchive-if-specs](https://github.com/iftechfoundation/ifarchive-if-specs)
+
+----
 
 This is a formal specification for a common format for storing resources associated with an interactive fiction game file. Resources are data which the game can invoke, such as sounds and pictures. In addition, the executable game file may itself be a resource in a resource file. This is a convenient way to package a game and all its resources together in one file.
 
