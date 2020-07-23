@@ -90,15 +90,15 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 `-Cu`: Treat the source files as being in UTF-8 (Unicode) encoding.
 
-> Older options `-C1`, `-C2`, etc., are documented in the DM4 (§36); they treated the source files as being in one of the Latin-N encodings. `-Cu` is a new extension.
+[[Older options `-C1`, `-C2`, etc., are documented in the DM4 (§36); they treated the source files as being in one of the Latin-N encodings. `-Cu` is a new extension.]]
 
-> When `-Cu` is used, the compiler does not add any characters to the Z-machine's "cheap" alphabet table. You can use the `Zcharacter` directive to add selected Unicode characters; see §36.
+[[When `-Cu` is used, the compiler does not add any characters to the Z-machine's "cheap" alphabet table. You can use the `Zcharacter` directive to add selected Unicode characters; see §36.]]
 
 `-G`: Compile to Glulx format rather than Z-machine. The default output file will be given an `.ulx` extension.
 
 `-G -vX.Y.Z`: In Glulx, specify the VM version number to note in the generated game file. For example, `-G -v3.1.0` would generate a game file that specifies VM spec 3.1.0.
 
-> Normally the compiler works out the earliest version number compatible with the features used by your game. You can use this option to specify a later version.
+[[Normally the compiler works out the earliest version number compatible with the features used by your game. You can use this option to specify a later version.]]
 
 `-H`: In Glulx format, use Huffman encoding to compress strings. This is the default; to use uncompressed text, use `-~H`.
 
@@ -124,11 +124,11 @@ These were referred to as "memory settings" in the DM4 (§39). However, they now
 
 The `$LIST` setting will show a page of output listing all dollar-sign settings for Z-machine games. To see all settings for Glulx games, give the `-G` argument before `$LIST`.
 
-> If you supply one of these settings as a command-line option on MacOS or Unix, remember that the shell treats the dollar sign as a special character. You must escape the dollar sign so that it reaches the compiler:
+[[If you supply one of these settings as a command-line option on MacOS or Unix, remember that the shell treats the dollar sign as a special character. You must escape the dollar sign so that it reaches the compiler:]]
 
 	inform \$MAX_VERBS=255 source.inf
 
-> If you supply such a setting in a source file, using the `!%` format, you should *not* use the backslash.
+[[If you supply such a setting in a source file, using the `!%` format, you should *not* use the backslash.]]
 
 *New since the DM4:*
 
@@ -240,9 +240,9 @@ Directives in Inform 6 are not case-sensitive. These declarations are equivalent
 
 The DM4 does not state this, but it has been true in every version of the Inform compiler, so we can accept it as a principle of the language.
 
-> The DM4 mostly shows directives in title case: `Global`, `Zcharacter`, `Ifdef`. This is the manual's code style, not a language requirement.
+[[The DM4 mostly shows directives in title case: `Global`, `Zcharacter`, `Ifdef`. This is the manual's code style, not a language requirement.]]
 
-> Variable names and symbols are also case-insensitive. Language keywords, such as `if` and `return`, are not; they must be given in lower case. Case is also significant for the built-in print tokens `(A)`, `(a)`, `(The)`, and `(the)`; see §26.
+[[Variable names and symbols are also case-insensitive. Language keywords, such as `if` and `return`, are not; they must be given in lower case. Case is also significant for the built-in print tokens `(A)`, `(a)`, `(The)`, and `(the)`; see §26.]]
 
 Directives can also be written with a `#` sign:
 
@@ -254,7 +254,7 @@ For standalone directives, the `#` sign is optional. However, a few directives c
 	
 When one of these directives appears within a routine or object definition, the `#` sign is required.
 
-> The compiler does not always detect directives appearing invalidly within a definition. However, using non-"if" directives in this way is unsupported. It may not work as expected and it may be reported as an error in the future.
+[[The compiler does not always detect directives appearing invalidly within a definition. However, using non-"if" directives in this way is unsupported. It may not work as expected and it may be reported as an error in the future.]]
 
 **Array**
 
@@ -266,7 +266,7 @@ The `Array` directive (§2.4) supports a new form, which is new in 6.30:
 
 This defines `arrname` as a hybrid array, in which the first *word* `array-->0` contains the length (N), and the following N *bytes* `array->WORDSIZE`, `array->(WORDSIZE+1)` ... `array->(WORDSIZE+N-1)` contain the specified expression values or string characters.
 
-> This hybrid form is used by the `print_to_array` method (§3.12) and various library functions.
+[[This hybrid form is used by the `print_to_array` method (§3.12) and various library functions.]]
 
 All forms of the `Array` directive support the `static` keyword, which is new in 6.34:
 
@@ -275,7 +275,7 @@ All forms of the `Array` directive support the `static` keyword, which is new in
 
 The `static` keyword must appear before the array type (`->`, `-->`, `string`, `table`, or `buffer`). It indicates that the array should be placed in non-writable memory.
 
-> In Z-code, this places the array at the end of readable memory (after the dictionary and before the beginning of code storage). In Glulx, it places the array at the end of ROM (after string storage). A static array declaration should always provide initial values, since it cannot be updated at runtime. 
+[[In Z-code, this places the array at the end of readable memory (after the dictionary and before the beginning of code storage). In Glulx, it places the array at the end of ROM (after string storage). A static array declaration should always provide initial values, since it cannot be updated at runtime. ]]
 
 **Dictionary**
 
@@ -289,7 +289,7 @@ The first form simply adds the word if it is not already in the dictionary. The 
 
 The values can be numeric literals or constants. They can be 0-255 for Z-code, or 0-65535 for Glulx.
 
-> `dict_par2` cannot be set by this directive. It is always the verb number, or zero for words that are not verbs.
+[[`dict_par2` cannot be set by this directive. It is always the verb number, or zero for words that are not verbs.]]
 
 **Ifv3**
 
@@ -322,7 +322,7 @@ The declaration holds through the next `Origsource` directive (but does not appl
 
 The `Replace` directive (§25) allows you to redefine a function which has already been defined (such as in a library or in the veneer).
 
-> The DM4 says that you can only replace functions in files marked with the `System_file` directive. This limitation has been removed.
+[[The DM4 says that you can only replace functions in files marked with the `System_file` directive. This limitation has been removed.]]
 
 The `Replace` directive has two forms, of which the second is new in 6.33:
 
@@ -350,9 +350,9 @@ The action statements `<Action>` and `<<Action>>` (§6) now support up to four a
 
 All provided arguments are passed to the `R_Process()` veneer function.
 
-> As in previous version of Inform, the Action argument can either be a bare action name or a parenthesized expression which produces an action value. Thus, `<Take lamp>` and `<(##Take) lamp>` are equivalent.
+[[As in previous version of Inform, the Action argument can either be a bare action name or a parenthesized expression which produces an action value. Thus, `<Take lamp>` and `<(##Take) lamp>` are equivalent.]]
 
-> This statement does not follow the traditional IF command syntax, which would put the actor first: "ACTOR, ACTION NOUN". Inform's lexer is not able to handle that ordering consistently, so the statement has to put the actor last.
+[[This statement does not follow the traditional IF command syntax, which would put the actor first: "ACTOR, ACTION NOUN". Inform's lexer is not able to handle that ordering consistently, so the statement has to put the actor last.]]
 
 The capitalized `(A)` print token joins `(a)`, `(The)`, and `(the)` as of 6.30; see §26.
 
@@ -376,7 +376,7 @@ If the first argument to a function is named `_vararg_count`, arguments will be 
 
 Literals beginning with `$+` and `$-` are compiled as floating-point constants. For example: `$+1.0`, `$-1e3`, `$+2.5e-3`. The constants `FLOAT_INFINITY`, `FLOAT_NINFINITY`, `FLOAT_NAN` are also defined.
 
-> Note that the standard Inform arithmetic operators (`+`, `-`, etc) do not work with floating-point values. You must use Glulx opcodes (`@fadd`, `@fsub`, etc).
+[[Note that the standard Inform arithmetic operators (`+`, `-`, etc) do not work with floating-point values. You must use Glulx opcodes (`@fadd`, `@fsub`, etc).]]
 
 The `print_to_array()` method (§3.12) requires two arguments, rather than one (as in Z-code).
 
@@ -402,7 +402,7 @@ You can work around the lack of `obj.prop()` by writing:
 
 In general, Inform 6 is able to compile older source code to V3 if the source *and the library* avoids the `obj.prop()` syntax. This means you cannot use the Inform 6 library. You must use the [Inform 5 library][i5lib], or one of the alternative libraries designed for V3, such as [metro84][] or [PunyInform][].
 
-> It is possible to re-implement a limited version of `obj.prop()` for V3 by replacing the `CA__Pr` and `Cl__Ms` veneer routines. Some alternative libraries do this.
+[[It is possible to re-implement a limited version of `obj.prop()` for V3 by replacing the `CA__Pr` and `Cl__Ms` veneer routines. Some alternative libraries do this.]]
 
 # Bugs
 
