@@ -27,11 +27,11 @@ This addendum covers updates to the Inform 6 language and compiler.
 
 The changes described here are mostly to DM4 chapters 1-7, 36, and 38 and up. (Section references such as "§1" refer to [DM4 chapters][dm4].) The intermediate chapters (the bulk of the DM4!) concern the Inform 6 library, which is *not* covered by this document.
 
-The Inform library described by the DM4 is version 6/9, which was released along with Inform 6.21 in April of 1999. The library was subsequently updated to 6/10 (a bug-fix release) and then 6/11 (Glulx support and some additional features) before the author shifted his focus to Inform 7 development.
+The Inform library described by the DM4 is version [6/9][i6lib9], which was released along with Inform 6.21 in April of 1999. The library was subsequently updated to [6/10][i6lib10] (a bug-fix release) and then [6/11][i6lib11] (Glulx support and some additional features) before the author shifted his focus to [Inform 7][i7] development.
 
 The Inform library is now a [separate project managed by David Griffith][i6lib]. Updates can be found on the [project page][i6lib].
 
-The Inform 6 compiler can be used with older versions of the Inform library, back through the [Inform 5 libraries][i5lib]. There are also a number of alternative Inform libraries, such as [metro84][] and [PunyInform][] (supporting very old computers) and [Platypus][] (a redesigned library). The Inform 6 compiler should be usable with all of them.
+The Inform 6 compiler can be used with older versions of the Inform library, back through the [Inform 5 libraries][i5lib]. There also exist a number of alternative Inform libraries, such as [metro84][] and [PunyInform][] (supporting very old computers) and [Platypus][] (a redesigned library). The Inform 6 compiler should be usable with all of them.
 
 [i6lib9]: https://ifarchive.org/if-archive/infocom/compilers/inform6/library/old/inform_library69.zip
 [i6lib10]: https://ifarchive.org/if-archive/infocom/compilers/inform6/library/old/inform_library610.zip
