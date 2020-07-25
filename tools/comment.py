@@ -5,6 +5,10 @@
 # and translates them into spans of the form
 #     <span class="Comment">Text.</span>
 #
+# In addition, every paragraph which *starts* with a Comment span will
+# be given class="CommentPara". This lets you, e.g., indent comment
+# paragraphs.
+#
 # A comment span can include code sections if you write:
 #
 # [[Here is some code.
@@ -22,6 +26,7 @@
 
 from markdown.extensions import Extension
 from markdown.inlinepatterns import InlineProcessor
+from markdown.treeprocessors import Treeprocessor
 import xml.etree.ElementTree as etree
 
 MYPATTERN = r'\[\[([^]]+)\]\]'
@@ -80,7 +85,17 @@ class CommentPattern(InlineProcessor):
         return el, match.start(0), match.end(0)
         
 
+class CommentParaTreeprocessor(Treeprocessor):
+    def run(self, doc):
+        for el in doc.iter():
+            if el.tag == 'p':
+                # Check that the first child is a comment span. el.text is the text before the first span, so we also check that that's empty.
+                if len(el) and not el.text and el[0].tag == 'span' and el[0].attrib.get('class') == 'Comment':
+                    el.attrib['class'] = 'CommentPara'
+
+
 class CommentExtension(Extension):
     def extendMarkdown(self, md):
         md.inlinePatterns.register(CommentPattern(MYPATTERN), 'comment', 0)
+        md.treeprocessors.register(CommentParaTreeprocessor(), 'commentpara', 5)
         
