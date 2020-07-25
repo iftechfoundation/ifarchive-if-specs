@@ -1,5 +1,5 @@
 
-HTMLTARGETS = dist/Glk-Spec.html dist/Glulx-Spec.html dist/Glulx-Inform-Tech.html dist/Blorb-Spec.html
+HTMLTARGETS = dist/Glk-Spec.html dist/Glulx-Spec.html dist/Glulx-Inform-Tech.html dist/Blorb-Spec.html dist/I6-Addendum.html
 PDFTARGETS = dist/Glk-Spec.pdf dist/Glulx-Spec.pdf dist/Glulx-Inform-Tech.pdf dist/Blorb-Spec.pdf
 
 html: $(HTMLTARGETS)
