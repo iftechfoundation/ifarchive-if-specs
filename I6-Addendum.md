@@ -124,11 +124,9 @@ These were referred to as "memory settings" in the DM4 (§39). However, they now
 
 The `$LIST` setting will show a page of output listing all dollar-sign settings for Z-machine games. To see all settings for Glulx games, give the `-G` argument before `$LIST`.
 
-[[If you supply one of these settings as a command-line option on MacOS or Unix, remember that the shell treats the dollar sign as a special character. You must escape the dollar sign so that it reaches the compiler:]]
-
+[[If you supply one of these settings as a command-line option on MacOS or Unix, remember that the shell treats the dollar sign as a special character. You must escape the dollar sign so that it reaches the compiler:
 	inform \$MAX_VERBS=255 source.inf
-
-[[If you supply such a setting in a source file, using the `!%` format, you should *not* use the backslash.]]
+If you supply such a setting in a source file, using the `!%` format, you should *not* use the backslash.]]
 
 *New since the DM4:*
 
