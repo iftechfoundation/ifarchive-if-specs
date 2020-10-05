@@ -37,7 +37,7 @@ title = match.group(1).strip()
 # Which extensions we use depends on which file we're processing! This is hacky.
 extlist = [
     'attr_list',
-    LFencedCodeExtension(preclass='DefFun'),
+    LFencedCodeExtension(preclass='DefFun', preclass2='Plain'),
     CommentExtension(),
 ]
 
@@ -48,6 +48,10 @@ if 'Addendum' in title:
 elif 'Technical' in title:
     extlist.append(
         NumberingTocExtension(number_top_start=1, baselevel=1, toc_depth='3-5')
+    )
+elif 'Babel' in title:
+    extlist.append(
+        NumberingTocExtension(number_top_start=1, baselevel=1, toc_depth='2-5', header_link_label='\xA7')
     )
 else:
     extlist.append(

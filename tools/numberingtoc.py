@@ -12,6 +12,9 @@
 # [TOC] and the headers.
 # - The first top-level section can start at any number (use the
 # keyword argument number_top_start=N).
+# - You can adjust the number of a section by adding {: data-tocname="N" }.
+# A letter or other string is okay too, but of course then following sections
+# can't auto-increment.
 # - Internal links of the form "[*](#id)" will be linked with the
 # text 'section INDEX, "TITLE"'.
 #
@@ -28,6 +31,7 @@ class NumberingTocTreeprocessor(TocTreeprocessor):
         super(NumberingTocTreeprocessor, self).__init__(md, config)
 
         self.number_top_start = config['number_top_start']
+        self.header_link_label = config['header_link_label']
 
     def replace_section_links(self, el, toc_map):
         if el.tag == 'a' and el.text == '*':
@@ -36,7 +40,7 @@ class NumberingTocTreeprocessor(TocTreeprocessor):
                 val = val[1:]
                 if val in toc_map:
                     sect, name = toc_map[val]
-                    el.text = 'section %s, "%s"' % (sect, name,)
+                    el.text = '%s%s, "%s"' % (self.header_link_label, sect, name,)
         for child in el:
             self.replace_section_links(child, toc_map)
         
@@ -61,6 +65,9 @@ class NumberingTocTreeprocessor(TocTreeprocessor):
                 # Do not override pre-existing ids
                 if "id" not in el.attrib:
                     innertext = stashedHTML2text(text, self.md)
+                    # Escaping isn't quite right for `<foo>` in headers; fix it.
+                    innertext = innertext.replace('&lt;', '<')
+                    innertext = innertext.replace('&gt;', '>')
                     el.attrib["id"] = unique(self.slugify(innertext, self.sep), used_ids)
 
                 depth = int(el.tag[-1]) - self.toc_top + 1
@@ -73,7 +80,15 @@ class NumberingTocTreeprocessor(TocTreeprocessor):
                             firstval = self.number_top_start
                         numbering.append(firstval)
                 else:
-                    numbering[depth-1] = numbering[depth-1] + 1
+                    numval = el.attrib.get('data-tocname')
+                    if not numval:
+                        # This might be a number or a letter, but let's try to handle it as a number if possible. Makes for better incrementing later.
+                        numval = numbering[depth-1] + 1
+                        try:
+                            numval = int(numval)
+                        except:
+                            pass
+                    numbering[depth-1] = numval
 
                 indexstr = '.'.join([ str(val) for val in numbering ])
                 namestr = el.attrib.get('data-toc-label', text)
@@ -85,7 +100,10 @@ class NumberingTocTreeprocessor(TocTreeprocessor):
                     'name': indexstr + '. ' + namestr
                 })
 
-                el.text = indexstr + '. ' + el.text
+                # If a tag looks like "## `<foo>`", then there may be no text.
+                # (We'll still generate the subtag.)
+                eltext = el.text if el.text else ''
+                el.text = indexstr + '. ' + eltext
                 
                 # Remove the data-toc-label attribute as it is no longer needed
                 if 'data-toc-label' in el.attrib:
@@ -120,6 +138,7 @@ class NumberingTocExtension(TocExtension):
         self.config = dict(tempext.config)
 
         self.config['number_top_start'] = [ 1, 'The index value of the first top-level section' ]
+        self.config['header_link_label'] = [ 'section ', 'The label to add before internal links' ]
 
         # Skip the base class's __init__ and go straight to the grand-base!
         Extension.__init__(self, **kwargs)

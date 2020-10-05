@@ -15,6 +15,8 @@
 #
 # - You can specify a class for the outer <pre> tag (as distinct from
 # the inner <code> tag). Use the keyword argument preclass=VAL.
+# - If you also provide preclass2=VAL2, this applies to ~~~ blocks
+# (as distinct from ``` blocks).
 # - Code highlighting is not supported.
 #
 # License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
@@ -33,7 +35,8 @@ class LFencedCodeExtension(Extension):
 
     def __init__(self, **kwargs):
         self.config = {
-            'preclass': [ '', 'Class for the <pre> tag.' ]
+            'preclass': [ '', 'Class for the <pre> tag.' ],
+            'preclass2': [ '', 'Class for the <pre> tag (~~~ blocks).' ]
         }
         super(LFencedCodeExtension, self).__init__(**kwargs)
 
@@ -60,6 +63,7 @@ class LFencedBlockPreprocessor(Preprocessor):
         super(LFencedBlockPreprocessor, self).__init__(md)
 
         self.preclass = config['preclass']
+        self.preclass2 = config.get('preclass2', self.preclass)
 
     def run(self, lines):
         """ Match and store LFenced Code Blocks in the HtmlStash. """
@@ -68,9 +72,12 @@ class LFencedBlockPreprocessor(Preprocessor):
         while 1:
             m = self.FENCED_BLOCK_RE.search(text)
             if m:
-                preclass = ''
-                if self.preclass:
-                    preclass = self.LANG_TAG % self.preclass
+                delim = m.group('fence')[0]
+                preclass = self.preclass
+                if delim == '~':
+                    preclass = self.preclass2
+                if preclass:
+                    preclass = self.LANG_TAG % preclass
                     
                 lang = ''
                 if m.group('lang'):
