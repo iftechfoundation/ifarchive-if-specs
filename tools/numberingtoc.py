@@ -23,7 +23,13 @@
 # Base Markdown package: https://github.com/Python-Markdown/markdown
 
 from markdown.extensions.toc import TocExtension, TocTreeprocessor
-from markdown.extensions.toc import Extension, string_type, stashedHTML2text, unique, nest_toc_tokens
+from markdown.extensions.toc import Extension, stashedHTML2text, unique, nest_toc_tokens
+
+# This is different in earlier versions of the Markdown package.
+try:
+    from markdown.extensions.toc import string_type
+except:
+    string_type = str
 
 class NumberingTocTreeprocessor(TocTreeprocessor):
 
