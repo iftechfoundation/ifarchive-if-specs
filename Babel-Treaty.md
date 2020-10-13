@@ -123,6 +123,10 @@ The following parties are the initial signatories:
 - the Windows Frotz interpreter for Windows;
 - the Babel software.
 
+Current signatories now include:
+
+- the design system Alan.
+
 Other design systems and tools are welcome to join. It is important to
 note that the treaty also provides for support of works of IF produced
 by design systems now obsolete or fallen into disuse.
@@ -571,7 +575,14 @@ its IFID is "LEVEL9-" followed by the MD5 hash of the story file.
 ##### The IFID for a legacy AdvSys story file
 
 
-The IFID for an AdvSys story file is ADVSYS- followed by the MD5
+The IFID for a legacy AdvSys story file is ADVSYS- followed by the MD5
+checksum of the file.
+
+
+##### The IFID for a legacy Alan story file
+
+
+The IFID for a legacy Alan story file is ALAN- followed by the MD5
 checksum of the file.
 
 
@@ -605,22 +616,6 @@ The IFID for a story file, or an executable program, not covered in
 the rest of [*](#the-ifid-unique-identifier) above or in subsections
 below, is by definition its md5 hash code, with hexadecimal characters
 a to f written in upper case, A to F.
-
-
-##### IFIDs for ALAN story files
-
-At present the design system ALAN, a living format (i.e., whose
-compiler is still in use), is not a signatory to the Treaty: our
-attempts to make contact have been unsuccessful. We wish to make it
-easy for ALAN to join the Treaty later, if it so chooses.
-
-The IFID for any ALAN story file compiled by a version of ALAN
-which does not follow the Treaty is ALAN- followed by the MD5
-checksum.
-
-Should ALAN later sign the Treaty, it will likely then begin to
-make story files which contain IFIDs allocated by the ALAN compiler.
-This clause does not apply to such story files.
 
 
 #### The IFID for a blorbed story file
