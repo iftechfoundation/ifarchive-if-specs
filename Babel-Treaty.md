@@ -1747,6 +1747,11 @@ The value is required to be one of the following, and in this casing
 	Cruel		- can get stuck by doing something which isn't obviously
 				irrevocable (even after the act)
 
+This scale is understood to be less clear-cut and less generally
+applicable than was believed when this Treaty was first written. It is left
+to the author to decide what value is appropriate, or whether any value
+is appropriate.
+
 
 ### Resources
 
