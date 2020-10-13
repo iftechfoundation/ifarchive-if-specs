@@ -1321,7 +1321,7 @@ in the following example:
 	<identification>
 		<ifid>1974A053-7DB0-4103-93A1-767C1382C0B7</ifid>
 		<format>zcode</format>
-		<bafn>55</bafn>
+		<tuid>plvzam05bmz3enh8</tuid>
 	</identification>
 
 #### `<ifid>`
@@ -1409,6 +1409,16 @@ this document. This ensures that format-specific tags can be used
 without confusion.)
 
 
+#### `<tuid>`
+
+This is an optional tag, whose value is a string of letters and digits.
+If supplied, it should be the Interactive Fiction Database identifier
+(TUID) for the work: for instance, "Curses" is "plvzam05bmz3enh8".
+
+The Interactive Fiction Database is presently found at
+[ifdb.tads.org](https://ifdb.tads.org/).
+
+
 #### `<bafn>`
 
 This is an optional tag, whose value is a non-negative integer. If
@@ -1416,13 +1426,11 @@ supplied, it should be the "Baf's Guide to the IF Archive" identifying
 number for the work: for instance, "Curses" is 55; "The PK Girl" is
 1897.
 
-This tag is provided solely for the convenience of people who wish
+This tag was provided solely for the convenience of people who wish
 to translate existing metadata at Baf's Guide to new iFiction records,
-particularly for items in obscure or long-dead formats. Its use is
-not required.
-
-It is not expected that iFiction records generated for new games
-by design systems will contain this tag.
+particularly for items in obscure or long-dead formats. As Baf's Guide
+is no longer extant, it is not expected that iFiction records generated
+for new games will contain this tag.
 
 
 ### Bibliographic
