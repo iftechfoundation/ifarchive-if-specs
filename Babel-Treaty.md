@@ -1104,6 +1104,10 @@ where XXXXX is the IFID.
 
 ### Serving
 
+*Note: The IF-archive has not implemented this section. An effort is
+in progress to support metadata in a manner compatible with IFDB. This
+may result in changes to the plan proposed here.*
+
 The IF-archive will arrange that page hits are URLs in the following
 IFID-based form result in predictable data served back:
 
@@ -1136,6 +1140,10 @@ the leafname: "Bronze Manual.pdf", for instance
 
 
 ### Contributing
+
+*Note: The IF-archive has not implemented this section. An effort is
+in progress to support metadata in a manner compatible with IFDB. This
+may result in changes to the plan proposed here.*
 
 (a) The IF-archive will provide mechanisms for volunteers to upload
 records on games which are not themselves being uploaded, via a
