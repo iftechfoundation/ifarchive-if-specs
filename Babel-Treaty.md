@@ -327,14 +327,20 @@ That is, "ZCODE", hyphen, release number, hyphen, serial code. In every
 case except three, the serial code will consist of six digits. The
 exceptions are:
 
-	ZCODE-5-------			Zork I, Z-machine v1 release
+	ZCODE-2-AS000C			Zork I, Z-machine v1 release
 	ZCODE-15-UG3AU5			Zork I, Z-machine v2 release
 	ZCODE-7-UG3AU5			Zork II, Z-machine v2 release
 
-Only one instance is known where the serial code is numerical but does
-not consist of the compilation date in YYMMDD format:
+A few other instances are known where the serial code is either non-ASCII
+or a numerical string which is not a compilation date in YYMMDD format.
+These appear to be either beta-test versions or copies modified by users
+to alter the serial number. In these cases, non-ASCII characters should
+be changed to hyphens. Some examples:
 
-	ZCODE-67-000000			Sorcerer, beta test version
+	ZCODE-5-------			Zork I, Z-machine v1 release
+	ZCODE-15-------			Zork I, Z-machine v2 release
+	ZCODE-15-999999			Enchanter, test or modified version
+	ZCODE-67-000000			Sorcerer, test or modified version
 
 Post-1990 story files have IFIDs in the following form:
 
@@ -355,8 +361,8 @@ A sufficient algorithm to determine the IFID is therefore:
 	any non-alphanumeric characters (in particular, nulls)
 	to hyphens.
 5.	If the first character of the serial code is 0, 1, 2, 3, 4, 5,
-	6, 7, or 9, and the serial code is not "000000", add "-" and
-	the checksum in hexadecimal.
+	6, 7, or 9 (but not 8), and the serial code is not "000000",
+	"999999", or "------", add "-" and the checksum in hexadecimal.
 
 The serial code characters are held in bytes 0x12 to 0x17 of a story
 file; the release number is an unsigned integer in bytes 0x02 and 0x03,
@@ -1863,8 +1869,7 @@ uuencoded binary data, or violating XML rules.)
 
 #### `<zcode>`
 
-This section contains only optional tags, *and is subject to
-revision by Graham*.
+This section contains only optional tags.
 
 	<zcode>
 		<version>8</version>
