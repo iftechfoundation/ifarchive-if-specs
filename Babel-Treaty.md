@@ -1004,7 +1004,7 @@ obtain special XYZ software in order to play it." and a link to
 the XYZ home page.
 
 (e) If possible, to allow the user to edit the metadata of games
-in his collection (in a way which does _not_ involve alteration to
+in their collection (in a way which does _not_ involve alteration to
 the story file, but simply editing of the interpreter's own copy
 of the metadata for its archive of games - see below);
 
@@ -1074,7 +1074,7 @@ works:
 -	(ii) If not, the upload will be allowed, and will become the
 	"main" version held by the IF-archive under that IFID: the new
 	upload's cover art and iFiction will replace the old. The
-	librarian may, at his discretion, delete the old story file, so
+	librarian may, at their discretion, delete the old story file, so
 	that only the new version remains. Such replacements with
 	revised versions are likely to be fairly common.
 
@@ -1296,7 +1296,7 @@ here.
 All other sections can be produced by a design system, but those marked
 above as originating with the author will stem fairly directly from
 the author's explicit instructions, whereas the others are likely to be
-generated automatically on his behalf. (For instance, the author will at
+generated automatically on their behalf. (For instance, the author will at
 some stage actually type the title, but the design system would likely
 calculate the pixel dimensions of the cover art, the serial number of
 the compiled story file, etc., automatically on each compilation.)
@@ -1521,8 +1521,8 @@ form is
 Guidelines:
 
 - A design system should make determined efforts to get the author to
-give his or her name, or else take some active step to declare him or
-herself anonymous.
+give their name, or else take some active step to declare themself
+anonymous.
 - The `<author>` must be a name or names, and must not be a sentence or
 partial sentence describing the authorship (e.g. "by James Madison",
 "written by Geoffrey Chaucer", "a novelty by Jack Djill").
@@ -1599,7 +1599,7 @@ count.
 #### `<genre>`
 
 The `<genre>` tag is optional. This is the author's choice of description
-of the genre of his work.
+of the genre of their work.
 
 Guidelines:
 
