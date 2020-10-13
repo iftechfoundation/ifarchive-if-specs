@@ -55,7 +55,7 @@ Most serious works of IF written since 1990 have been placed at the
 IF-archive, a community project which - subject to copyright issues -
 aims to preserve the whole corpus of IF, making it available to
 players of the present and future. Other web-based databases of IF
-exist, such as "Baf's Guide", which catalogue reviews and bibliographic
+exist, such as IFDB, which catalogue reviews and bibliographic
 data about works of IF but do not actually archive the story files:
 here copyright is not an issue. As a result, the IF-archive is the
 most complete collection of actual IF known to exist, but omits some
@@ -1041,7 +1041,7 @@ accept metadata on existing works (whether or not archived) as they
 are provided by volunteers ("contributing").
 
 Note that other archives could provide similar facilities: it would be
-natural to be able to access Baf's Guide via the IFID, and this would
+natural to be able to access IFDB via the IFID or TUID, and this would
 make a neat way for interpreters to point to reviews, etc., on a game.
 
 
@@ -1294,7 +1294,7 @@ one of these can be given: but it is legal not to give it at all.
 an `<annotation>` section in the iFiction records it produces. The
 section is expressly intended for third parties: for players, annotating
 their own collections using iTunes-like browsers; for review sites such
-as Baf's Guide, recording reviews, ratings and other user experiences;
+as IFDB, recording reviews, ratings and other user experiences;
 and so on. Whether the IF-archive will serve records containing
 `<annotation>` is a matter of policy for the archive, and not governed
 here.
