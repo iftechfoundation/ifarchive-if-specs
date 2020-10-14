@@ -125,6 +125,7 @@ The following parties are the initial signatories:
 
 Current signatories now include:
 
+- the design system Twine;
 - the design system Alan.
 
 Other design systems and tools are welcome to join. It is important to
@@ -582,6 +583,13 @@ its IFID is "LEVEL9-" followed by the MD5 hash of the story file.
 
 
 The IFID for a legacy AdvSys story file is ADVSYS- followed by the MD5
+checksum of the file.
+
+
+##### The IFID for a legacy Twine story file
+
+
+The IFID for a legacy Twine story file is TWINE- followed by the MD5
 checksum of the file.
 
 
