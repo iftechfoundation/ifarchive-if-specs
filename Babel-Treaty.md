@@ -256,7 +256,8 @@ ID code (henceforth a "IFID").
 
 (Inform 7 creates a fresh IFID for a project whenever it opens a project
 which does not already have one. The IFID is generated using a UUID
-unique ID generating algorithm in the sense of ISO/IEC 11578:1996.
+unique ID generating algorithm in the sense of ISO/IEC 11578:1996,
+with lower-case letters capitalized in accordance with the definition above.
 This is transparent to the user, except that a warning has been placed
 in the documentation: if a project already having a IFID is duplicated,
 and then the two copies are independently developed into quite different
