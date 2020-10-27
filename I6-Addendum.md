@@ -259,13 +259,25 @@ When one of these directives appears within a routine or object definition, the 
 
 **Array**
 
-The `Array` directive (§2.4) supports a new form, which is new in 6.30:
+The `Array` directive (§2.4) supports four ways to specify values:
+
+	Array arrname --> N; 
+	Array arrname --> expr1 expr2 ... exprN; 
+	Array arrname --> [ expr1 expr2 ... exprN ]; 
+	Array arrname --> "string";
+
+The third form, with square brackets, is not documented in the DM4, but it has been supported since 6.0. Expressions between the brackets may be delimited by optional semicolons.
+
+[[The bracket form allows us to define a one-entry array with an initializer: `Array arrname --> [ expr ];` This would not otherwise be possible. Note that zero-entry arrays are not permitted.]]
+
+The `Array` directive supports a new array type in 6.30:
 
 	Array arrname buffer N; 
 	Array arrname buffer expr1 expr2 ... exprN; 
+	Array arrname buffer [ expr1 expr2 ... exprN ]; 
 	Array arrname buffer "string";
 
-This defines `arrname` as a hybrid array, in which the first *word* `array-->0` contains the length (N), and the following N *bytes* `array->WORDSIZE`, `array->(WORDSIZE+1)` ... `array->(WORDSIZE+N-1)` contain the specified expression values or string characters.
+The `buffer` keyword defines `arrname` as a hybrid array, in which the first *word* `array-->0` contains the length (N), and the following N *bytes* `array->WORDSIZE`, `array->(WORDSIZE+1)` ... `array->(WORDSIZE+N-1)` contain the specified expression values or string characters.
 
 [[This hybrid form is used by the `print_to_array` method (§3.12) and various library functions.]]
 
