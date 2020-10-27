@@ -255,7 +255,7 @@ For standalone directives, the `#` sign is optional. However, a few directives c
 	
 When one of these directives appears within a routine or object definition, the `#` sign is required.
 
-[[The compiler does not always detect directives appearing invalidly within a definition. However, using non-"if" directives in this way is unsupported. It may not work as expected and it may be reported as an error in the future.]]
+[[As of 6.35, the compiler will report errors for non-"if" directives appearing within a definition. In earlier versions, this error was not always checked.]]
 
 **Array**
 
