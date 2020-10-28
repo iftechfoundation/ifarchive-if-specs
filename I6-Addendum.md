@@ -54,7 +54,7 @@ The Inform compiler has many options which control its compilation behavior. The
 All options can be supplied to the compiler in three ways (§39):
 
 - As a command-line argument
-- In a separate file, specified with `+icl_path=file.icl`
+- In a separate file, specified with `(file.icl)`
 - At the head of the first source file, in a comment beginning with `!%`
 
 The third method is new since the DM4. It allows you to store your game's compilation options in the same file as its source code.
@@ -82,6 +82,8 @@ For example, this source file will be compiled in Glulx format, searching the `i
 The options specified with `!%` must be at the *start* of the source file, with no blank lines or other comments before or between them.
 
 Note that this section of the file is parsed before the source encoding is set. (Indeed, this section could specify the source encoding!) Therefore, options in this section must be plain ASCII.
+
+`!%` options take precedence over command-line options. Command-line options are read in order; later options (including `(file.icl)` inclusions) take precedence over earlier ones.
 
 ### Switch options (dash)
 
