@@ -54,7 +54,7 @@ The Inform compiler has many options which control its compilation behavior. The
 All options can be supplied to the compiler in three ways (§39):
 
 - As a command-line argument
-- In a separate file, specified with `(file.icl)`
+- In a separate file, specified with `(file.icl)` or `--config file.icl`
 - At the head of the first source file, in a comment beginning with `!%`
 
 The third method is new since the DM4. It allows you to store your game's compilation options in the same file as its source code.
@@ -123,13 +123,18 @@ You can also give a comma-separated list of paths: `+include_path=DIR1,DIR2,DIR3
 
 A double plus sign adds a new path or paths to an existing list. For example, `++include_path=DIRNAME` will add DIRNAME to the paths which are searched for include files. The newly-added paths will be searched first.
 
+On the command line (but not in ICL files or comments), path options can be also specified in Unix style:
+
+	--path PATH=dir
+	--addpath PATH=dir
+
 ### Compiler settings (dollar)
 
 These were referred to as "memory settings" in the DM4 (§39). However, they now encompass a wide range of compiler behavior.
 
 The `$LIST` setting will show a page of output listing all dollar-sign settings for Z-machine games. To see all settings for Glulx games, give the `-G` argument before `$LIST`.
 
-[[If you supply one of these settings as a command-line option on MacOS or Unix, remember that the shell treats the dollar sign as a special character. You must escape the dollar sign so that it reaches the compiler:
+[[If you supply a dollar-sign setting as a command-line option on MacOS or Unix, remember that the shell treats the dollar sign as a special character. You must escape the dollar sign so that it reaches the compiler:
 	inform \$MAX_VERBS=255 source.inf
 If you supply such a setting in a source file, using the `!%` format, you should *not* use the backslash.]]
 
@@ -138,6 +143,11 @@ If you supply such a setting in a source file, using the `!%` format, you should
 Settings marked "internal memory setting" do not affect the compiled game file. They just tell the Inform compiler to pre-allocate more work space, allowing it to compile a larger game. If you see a compile error which mentions one of these, set it higher and try again.
 
 All other settings *do* affect the compiled game file in some way. Most often they modify the way that game data is laid out in memory.
+
+On the command line (but not in ICL files or comments), compiler settings can also be specified in Unix style. This avoids the need to escape dollar signs:
+
+	--list
+	--opt SETTING=number
 
 **$ALLOC_CHUNK_SIZE**
 
