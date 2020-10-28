@@ -123,7 +123,7 @@ You can also give a comma-separated list of paths: `+include_path=DIR1,DIR2,DIR3
 
 A double plus sign adds a new path or paths to an existing list. For example, `++include_path=DIRNAME` will add DIRNAME to the paths which are searched for include files. The newly-added paths will be searched first.
 
-On the command line (but not in ICL files or comments), path options can be also specified in Unix style:
+On the command line (but not in ICL files or comments), path options can be also specified in Unix style. (This is new in 6.35.)
 
 	--path PATH=dir
 	--addpath PATH=dir
@@ -144,7 +144,7 @@ Settings marked "internal memory setting" do not affect the compiled game file. 
 
 All other settings *do* affect the compiled game file in some way. Most often they modify the way that game data is laid out in memory.
 
-On the command line (but not in ICL files or comments), compiler settings can also be specified in Unix style. This avoids the need to escape dollar signs:
+On the command line (but not in ICL files or comments), compiler settings can also be specified in Unix style. (New in 6.35.) This avoids the need to escape dollar signs.
 
 	--list
 	--opt SETTING=number
