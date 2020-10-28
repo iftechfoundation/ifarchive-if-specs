@@ -24,6 +24,12 @@ However, the language has not remained completely static. Most notably, the comp
 
 As a result, the DM4 is now a bit out of date. This document is meant to fill in the gaps for the Inform 6 user of today.
 
+---
+
+[TOC]
+
+---
+
 ## Language versus library
 
 This addendum covers updates to the Inform 6 language and compiler. A few errata are also included.

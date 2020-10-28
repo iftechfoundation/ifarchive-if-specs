@@ -7,6 +7,7 @@
 import sys
 import re
 import markdown
+from markdown.extensions.toc import TocExtension
 
 from numberingtoc import NumberingTocExtension
 from lfencecode import LFencedCodeExtension
@@ -43,8 +44,10 @@ extlist = [
 
 # The NumberingTocExtension arguments are slightly different for the Glulx Technical reference; its headers aren't the same depth as the other files.
 if 'Addendum' in title:
-    # Do not use NumberingTocExtension
-    pass
+    # Use the regular TocExtension instead of NumberingTocExtension
+    extlist.append(
+        TocExtension()
+    )
 elif 'Technical' in title:
     extlist.append(
         NumberingTocExtension(number_top_start=1, baselevel=1, toc_depth='3-5')
