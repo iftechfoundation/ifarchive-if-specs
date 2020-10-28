@@ -26,7 +26,7 @@ As a result, the DM4 is now a bit out of date. This document is meant to fill in
 
 ## Language versus library
 
-This addendum covers updates to the Inform 6 language and compiler.
+This addendum covers updates to the Inform 6 language and compiler. A few errata are also included.
 
 The changes described here are mostly to DM4 chapters 1-7, 36, and 38 and up. (Section references such as "§1" refer to [DM4 chapters][dm4].) The intermediate chapters (the bulk of the DM4!) concern the Inform 6 library, which is *not* covered by this document.
 
@@ -384,6 +384,37 @@ The capitalized `(A)` print token joins `(a)`, `(The)`, and `(the)` as of 6.30; 
 	print (A) lamp;
 
 This calls the `CInDefArt()` veneer function.
+
+## Class behavior
+
+The DM4 (§3.8) gives this example of multiple inheritance:
+
+	Object "goose that lays the golden eggs"
+		class Bird Treasure;`
+
+> [This goose] inherits from Object first and then Bird and then Treasure, attribute settings and property values from later-mentioned classes overriding earlier ones, so if these classes should give contradictory instructions then Treasure gets the last word.
+
+In fact this is not true (and never has been). The language behavior is somewhat complex.
+
+Property values are determined by the *first* class listed, whether that is given as a directive (`Treasure goose`) or a `class` keyword (`Object goose class Treasure`). Of course, if the object itself gives a property value, that overrides all inherited values.
+
+If one class inherits from another, the derived class property overrides the superclass property, as one would expect.
+
+*Additive* properties follow the same logic, but their values accumulate, rather than overriding each other. An additive property gains values from the object's own definition (first), then from each class in (forward) listing order.
+
+[[This supports the I6 library convention that additive properties (`before`, `after`, `life`) contain lists of inline routines. These are tested in forward order; each routine may return `true` to indicate that the event is handled, or `false` to pass control to the next routine. The precedence order is thus, again, the object followed by each class in listing order.]]
+
+Attributes follow the same rule, except that *classes cannot negate attributes set by other classes*.
+
+	Class Bird has ~heavy;
+	Class Treasure has heavy;
+	Object goose class Bird Treasure;
+
+In this example, the goose object gains the `heavy` attribute because at least one of its classes sets it. This will be true no matter what order the classes are listed in. The `has ~heavy` declaration in class `Bird` has no effect.
+
+Objects can of course use `has ~attr` to negate attributes inherited from classes. Derived classes can negate attributes inherited from superclasses. The limitation applies only to conflicts between an object's classes.
+
+[[This is arguably a compiler bug, but it has been established behavior since Inform 6.0, so it may not be practical to change it.]]
 
 ## Glulx support
 
