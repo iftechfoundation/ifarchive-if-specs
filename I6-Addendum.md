@@ -1,6 +1,6 @@
 # Inform 6 Reference Addendum {: .Title }
 
-Language and compiler changes: releases 6.30 to 6.35
+Language and compiler changes: releases 6.30 to 6.35 (in development)
 {: .VersionHeader }
 
 Maintained by IFTF: `<specs@ifarchive.org>`
