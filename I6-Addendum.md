@@ -91,6 +91,8 @@ Note that this section of the file is parsed before the source encoding is set. 
 
 `!%` options take precedence over command-line options. Command-line options are read in order; later options (including `(file.icl)` inclusions) take precedence over earlier ones.
 
+[[It would be better if command-line options took precedence over `!%` options. This would allow one-off changes while recompiling existing source code. This change may be considered in the future.]]
+
 ### Switch options (dash)
 
 Classic options begin with a dash -- the traditional style of command-line tools. For example, the `-h` option (help) shows a page of output documenting how to run the compiler. `-h2` will show a page listing all options that begin with a dash (§Table3).
