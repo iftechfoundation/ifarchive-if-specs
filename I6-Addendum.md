@@ -393,6 +393,23 @@ The capitalized `(A)` print token joins `(a)`, `(The)`, and `(the)` as of 6.30; 
 
 This calls the `CInDefArt()` veneer function.
 
+## Operators
+
+The table of condition operators (§Table1B) shows `&&`, `||`, and `~~` as having equal precedence. This is ambiguous about expressions like `(~~X && Y)`. In fact, the compiler has always (at least since 6.0) parsed this as applying `~~` to the conjunction `(X && Y)`:
+
+	! These statements are equivalent:
+	val = ~~X && Y;
+	val = ~~(X && Y);
+
+If you want the `~~` to apply only to `X`, you must add explicit parentheses:
+
+	! Not equivalent to the above!
+	val = (~~X) && Y;
+
+Similarly, the bitwise expression `(~X & Y)` is parsed as `(~(X & Y))`.
+
+Given this, it makes sense to consider the logical `~~` operator as having a precedence level of 1.5, and the bitwise `~` operator as having a precedence level of 5.5.
+
 ## Class behavior
 
 The DM4 (§3.8) gives this example of multiple inheritance:
