@@ -341,6 +341,26 @@ This is mentioned in the DM4 as being for compiler maintenance only (§Table5). 
 
 This misnamed directive is also used by the library (§Table5). It conditionally compiles code when building Z-code V4 and later *or* Glulx. Thus it is the converse of `Ifv3`. (The name is left over from much earlier versions of Inform.)
 
+**Lowstring**
+
+The `Lowstring` directive has been supported since (at least) Inform 5, but it is not needed in Inform 6. It is therefore deprecated and undocumented in the DM4. We will describe it here for information's sake.
+
+	Lowstring Text "text";
+
+In Z-code, this places an encoded string within readable memory (the first 64k). `Text` is defined as a constant whose value is `(address/2)`. The string can therefore be printed this way:
+
+	print (address) (2*Text);
+
+The constant can also be used with the `string` statement:
+
+	string 14 Text;
+
+This sets dynamic string 14 to the string `"text"`. However, it is more usual (and documented in §1.11) to use a string literal rather than `Lowstring`:
+
+	string 14 "text";
+
+The `Lowstring` directive is not supported in Glulx.
+
 **Origsource**
 
 The `Origsource` directive allows you to mark part of a source file as having been generated from another file. (E.g, an Inform 7 source file.) This directive is new in 6.34.
