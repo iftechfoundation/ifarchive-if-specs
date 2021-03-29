@@ -180,9 +180,19 @@ The number of extra zero bytes to add to each object table entry. This is writab
 
 The index number of the first individual property. This also determines the maximum number of common properties. (In Z-code this is 64 and cannot be changed.)
 
+**$MAX_ABBREVS**
+
+The number of abbreviations which may be used in economy (`-e`) mode. This setting is available in all versions of Inform, but in 6.35 the maximum for Z-code was raised from 64 to 96. However, this trades off against `$MAX_DYNAMIC_STRINGS`; see below.
+
 **$MAX_ARRAYS**
 
 The maximum number of arrays in one compiled game. (Internal memory setting.)
+
+**$MAX_DYNAMIC_STRINGS**
+
+The number of string variables (`"@00"`, etc) allowed in the game. In Z-code, this may be any value from 0 to 96. Setting this automatically sets `$MAX_ABBREVS` to `(96 - $MAX_DYNAMIC_STRINGS)`, as the two features draw from the same pool of 96 Z-machine abbreviations. Similarly, setting `$MAX_ABBREVS` sets `$MAX_DYNAMIC_STRINGS` to `(96 - $MAX_ABBREVS)`.
+
+(Added in 6.35. In earlier versions, 32 string variables and 64 abbreviations were available in Z-code; 64 string variables were available in Glulx.)
 
 **$MAX_GLOBAL_VARIABLES**
 
