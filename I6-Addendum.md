@@ -192,7 +192,7 @@ The maximum number of arrays in one compiled game. (Internal memory setting.)
 
 The number of string variables (`"@00"`, etc) allowed in the game. In Z-code, this may be any value from 0 to 96. Setting this in Z-code automatically sets `$MAX_ABBREVS` to `(96 - $MAX_DYNAMIC_STRINGS)`, as the two features draw from the same pool of 96 Z-machine abbreviations. Similarly, setting `$MAX_ABBREVS` sets `$MAX_DYNAMIC_STRINGS` to `(96 - $MAX_ABBREVS)`.
 
-In Glulx, the two settings are not connected and may set to any values.
+In Glulx, the two settings are not connected; `$MAX_DYNAMIC_STRINGS` may be as high as 100. (Dynamic string references have two digits, so they cannot go beyond the range `"@00"` to `"@99"`.)
 
 (Added in 6.35. In earlier versions, 32 string variables and 64 abbreviations were available in Z-code; 64 string variables were available in Glulx.)
 
