@@ -108,6 +108,8 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 [[Older options `-C1`, `-C2`, etc., are documented in the DM4 (§36); they treated the source files as being in one of the Latin-N encodings. `-Cu` is a new extension.]]
 
+[[These options also affect the `gametext.txt` file created by the `-r` option. This transcript uses the same encoding as the source code.]]
+
 [[When `-Cu` is used, the compiler does not add any characters to the Z-machine's "cheap" alphabet table. You can use the `Zcharacter` directive to add selected Unicode characters; see §36.]]
 
 `-G`: Compile to Glulx format rather than Z-machine. The default output file will be given an `.ulx` extension.
