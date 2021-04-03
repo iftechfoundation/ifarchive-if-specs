@@ -102,7 +102,7 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 *New since the DM4:*
 
-`-B`: In Z-code versions 6 and 7 (only), use different offset values for the packed addresses of routines and strings. This allows the game file to contain more executable code. (The default is `-~B`, where the routine and string segments use the same offset value.)
+`-B`: In Z-code versions 6 and 7 (only), use different offset values for the packed addresses of routines and strings. In this mode, strings are distinguished by having odd (packed) addresses, whereas routines are even. This allows the game file to contain more executable code. (The default is `-~B`, where the routine and string segments use the same offset value.)
 
 `-Cu`: Treat the source files as being in UTF-8 (Unicode) encoding.
 
