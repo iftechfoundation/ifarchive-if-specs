@@ -122,6 +122,10 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 `-k`: Output debugging information to a file `gameinfo.dbg`. This switch is documented in the DM4 (§7), but the output format has changed. It is now an extremely verbose XML format which describes every facet of the compiled game file.
 
+`-g3`: Trace calls to all functions. The DM4 documents `-g2` as doing this, but as of 6.21, `-g2` does not trace veneer functions. As of 6.35, `-g3` traces everything.
+
+[[Note that `-g2` and above will cause runtime errors in Glulx games, due to printing trace information when no output window is available.]]
+
 `-W`: Sets the number of words in the Z-code header extension table (Z-spec 1.0). The default is `-W3`. The `$ZCODE_HEADER_EXT_WORDS` setting does the same thing.
 
 `-V`: Display the compiler version and exit with no further action.
