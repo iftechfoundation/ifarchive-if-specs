@@ -120,7 +120,7 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 `-H`: In Glulx format, use Huffman encoding to compress strings. This is the default; to use uncompressed text, use `-~H`.
 
-`-k`: Output debugging information to a file `gameinfo.dbg`. This switch is documented in the DM4 (§7), but the output format has changed. It is now an extremely verbose XML format which describes every facet of the compiled game file.
+`-k`: Output debugging information to a file `gameinfo.dbg`. This switch is documented in the DM4 (§7), but the output format has changed. As of 6.33, it is an extremely verbose XML format which describes every facet of the compiled game file. Also, as of 6.35, the `-k` switch no longer automatically sets `-D`.
 
 `-g3`: Trace calls to all functions. The DM4 documents `-g2` as doing this, but as of 6.21, `-g2` does not trace veneer functions. As of 6.35, `-g3` traces everything.
 
