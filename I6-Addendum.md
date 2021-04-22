@@ -157,6 +157,13 @@ If you supply such a setting in a source file, using the `!%` format, you should
 
 *New since the DM4:*
 
+A setting that begins with a hash sign (`$#`) will define an arbitrary numeric constant in the game code. If no value is supplied, the constant is defined as zero. (This is consistent with the `Constant` directive.) Remember that Inform symbols are not case-sensitive.
+
+	$#SYMBOL
+	$#SYMBOL=number
+	
+[[Thus, passing the `$#DEBUG` argument is equivalent to the `-D` option.]]
+
 Settings marked "internal memory setting" do not affect the compiled game file. They just tell the Inform compiler to pre-allocate more work space, allowing it to compile a larger game. If you see a compile error which mentions one of these, set it higher and try again.
 
 All other settings *do* affect the compiled game file in some way. Most often they modify the way that game data is laid out in memory.
@@ -165,6 +172,7 @@ On the command line (but not in ICL files or comments), compiler settings can al
 
 	--list
 	--opt SETTING=number
+	--define SYMBOL=number
 
 **$ALLOC_CHUNK_SIZE**
 
