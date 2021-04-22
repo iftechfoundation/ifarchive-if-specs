@@ -96,7 +96,7 @@ Note that this section of the file is parsed before the source encoding is set. 
 
 [[It would be better if command-line options took precedence over `!%` options. This would allow one-off changes while recompiling existing source code. This change may be considered in the future.]]
 
-### Switch options (dash)
+## Switch options (dash)
 
 Classic options begin with a dash -- the traditional style of command-line tools. For example, the `-h` option (help) shows a page of output documenting how to run the compiler. `-h2` will show a page listing all options that begin with a dash (§Table3).
 
@@ -130,7 +130,7 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 `-V`: Display the compiler version and exit with no further action.
 
-### Path options (plus)
+## Path options (plus)
 
 Options beginning with a plus set paths used by the compiler (§39). For example, `+DIRNAME` or `+include_path=DIRNAME` set the directory which is searched for include files.
 
@@ -145,7 +145,7 @@ On the command line (but not in ICL files or comments), path options can be also
 	--path PATH=dir
 	--addpath PATH=dir
 
-### Compiler settings (dollar)
+## Compiler settings (dollar)
 
 These were referred to as "memory settings" in the DM4 (§39). However, they now encompass a wide range of compiler behavior.
 
@@ -157,12 +157,12 @@ If you supply such a setting in a source file, using the `!%` format, you should
 
 *New since the DM4:*
 
-A setting that begins with a hash sign (`$#`) will define an arbitrary numeric constant in the game code. If no value is supplied, the constant is defined as zero. (This is consistent with the `Constant` directive.) Remember that Inform symbols are not case-sensitive.
+A setting that begins with a hash sign (`$#`) will define an arbitrary numeric constant in the game code. If no value is supplied, the constant is defined as zero. This is equivalent to (and consistent with) the `Constant` directive. (New in 6.35.)
 
 	$#SYMBOL
 	$#SYMBOL=number
 	
-[[Thus, passing the `$#DEBUG` argument is equivalent to the `-D` option.]]
+[[Thus, passing the `$#DEBUG` argument is equivalent to the `-D` option. Remember that Inform symbols are not case-sensitive; `$#debug` or `$#Debug=0` does the same thing.]]
 
 Settings marked "internal memory setting" do not affect the compiled game file. They just tell the Inform compiler to pre-allocate more work space, allowing it to compile a larger game. If you see a compile error which mentions one of these, set it higher and try again.
 
