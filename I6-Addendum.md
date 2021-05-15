@@ -544,5 +544,7 @@ A great number of bugs have been fixed since Inform 6.21. The list is not includ
 
 [i6release]: https://ifarchive.org/if-archive/infocom/compilers/inform6/ReleaseNotes.html
 
+However, it is worth noting that Z-code V3 code generation had been neglected since 6.15 and a number of bugs had crept in. 6.34 and 6.35 have addressed these; V3 should once again be usable.
+
 Particular thanks to Daniel Fremont for the many bug reports uncovered by his input-fuzzing project.
 
