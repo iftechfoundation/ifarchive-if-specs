@@ -436,7 +436,7 @@ The action statements `<Action>` and `<<Action>>` (§6) now support up to four a
 
 All provided arguments are passed to the `R_Process()` veneer function.
 
-[[As in previous version of Inform, the Action argument can either be a bare action name or a parenthesized expression which produces an action value. Thus, `<Take lamp>` and `<(##Take) lamp>` are equivalent.]]
+[[As in previous versions of Inform, the Action argument can either be a bare action name or a parenthesized expression which produces an action value. Thus, `<Take lamp>` and `<(##Take) lamp>` are equivalent.]]
 
 [[This statement does not follow the traditional IF command syntax, which would put the actor first: "ACTOR, ACTION NOUN". Inform's lexer is not able to handle that ordering consistently, so the statement has to put the actor last.]]
 
