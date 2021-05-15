@@ -468,7 +468,7 @@ Given this, it makes sense to consider the logical `~~` operator as having a pre
 The DM4 (§3.8) gives this example of multiple inheritance:
 
 	Object "goose that lays the golden eggs"
-		class Bird Treasure;`
+		class Bird Treasure;
 
 > [This goose] inherits from Object first and then Bird and then Treasure, attribute settings and property values from later-mentioned classes overriding earlier ones, so if these classes should give contradictory instructions then Treasure gets the last word.
 
@@ -492,7 +492,18 @@ In this example, the goose object gains the `heavy` attribute because at least o
 
 Objects can of course use `has ~attr` to negate attributes inherited from classes. Derived classes can negate attributes inherited from superclasses. The limitation applies only to conflicts between an object's classes.
 
-[[This is arguably a compiler bug, but it has been established behavior since Inform 6.0, so it may not be practical to change it.]]
+The `copy` and `recreate` class methods likewise diverge from the manual. §3.11 says:
+
+	Plant.copy(Gilded_Branch, Poison_Ivy);
+	Treasure.recreate(Gilded_Branch);
+
+> It's rather useful that recreate and copy can be sent for any instances, not just instances which have previously been created. For example, [the copy statement above] copies over all the features of a Plant from Poison_Ivy to Gilded_Branch, but leaves any other properties and attributes of the gilded branch alone. Likewise, [the recreate statement] only resets the properties to do with Treasure, leaving the Plant properties alone.
+
+In fact, the question of what classes originated the properties and attributes does not arise. The `copy` method copies *all* attributes, positive and negative, from the source to the target. It also copies the value of every property which is declared by both the source and target and has the same length on each.
+
+The `recreate` method does a `copy` from an unmodified instance of the class, followed by a `create` call. It will therefore reset all attributes, as well as any properties declared by both the object and the class.
+
+[[These behaviors are arguably compiler bugs. However, they have been established behavior since Inform 6.0. We prefer to document them rather than trying to adjust them at this late date.]]
 
 ## Glulx support
 
