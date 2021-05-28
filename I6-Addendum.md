@@ -369,7 +369,7 @@ This is mentioned in the DM4 as being for compiler maintenance only (§Table5). 
 
 **Ifv5**
 
-This misnamed directive is also used by the library (§Table5). It conditionally compiles code when building Z-code V4 and later *or* Glulx. Thus it is the converse of `Ifv3`. (The name is left over from much earlier versions of Inform.)
+This misnamed directive is also used by the library (§Table5). It conditionally compiles code when building Z-code V4 and later *or* Glulx. Thus it is the converse of `Ifv3`. (The misleading name is left over from much earlier versions of Inform.)
 
 **Lowstring**
 
