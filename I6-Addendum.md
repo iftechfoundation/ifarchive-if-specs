@@ -398,7 +398,7 @@ The `Origsource` directive allows you to mark part of a source file as having be
 	Origsource "Filename";
 	Origsource "Filename" 10;
 	Origsource "Filename" 10 40;
-	Origsource
+	Origsource;
 
 This declares that all following lines are derived from the given filename. This will be reported in error messages and debug output. You may optionally provide a line number and a character number within the line (10 and 40, in these examples).
 
