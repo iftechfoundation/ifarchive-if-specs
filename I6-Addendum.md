@@ -174,9 +174,9 @@ On the command line (but not in ICL files or comments), compiler settings can al
 	--opt SETTING=number
 	--define SYMBOL=number
 
-**$ALLOC_CHUNK_SIZE**
+As of 6.36, the following internal memory settings are no longer needed and have no effect: `$ALLOC_CHUNK_SIZE`, `$MAX_OBJECTS`, `$MAX_CLASSES`, `$MAX_SYMBOLS`.
 
-This controls the size of various miscellaneous memory pools in the Inform compiler. (Internal memory setting.)
+Other settings which are new or updated since the DM4:
 
 **$DICT_CHAR_SIZE**
 
@@ -197,6 +197,8 @@ The index number of the first individual property. This also determines the maxi
 **$MAX_ABBREVS**
 
 The number of abbreviations which may be used in economy (`-e`) mode. This setting is available in all versions of Inform, but in 6.35 the maximum for Z-code was raised from 64 to 96. However, this trades off against `$MAX_DYNAMIC_STRINGS`; see below.
+
+In Glulx, `$MAX_ABBREVS` is not needed and has no effect.
 
 **$MAX_ARRAYS**
 
