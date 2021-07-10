@@ -164,17 +164,13 @@ A setting that begins with a hash sign (`$#`) will define an arbitrary numeric c
 	
 [[Thus, passing the `$#DEBUG` argument is equivalent to the `-D` option. Remember that Inform symbols are not case-sensitive; `$#debug` or `$#Debug=0` does the same thing.]]
 
-Settings marked "internal memory setting" do not affect the compiled game file. They just tell the Inform compiler to pre-allocate more work space, allowing it to compile a larger game. If you see a compile error which mentions one of these, set it higher and try again.
-
-All other settings *do* affect the compiled game file in some way. Most often they modify the way that game data is laid out in memory.
-
 On the command line (but not in ICL files or comments), compiler settings can also be specified in Unix style. (New in 6.35.) This avoids the need to escape dollar signs.
 
 	--list
 	--opt SETTING=number
 	--define SYMBOL=number
 
-As of 6.36, the following internal memory settings are no longer needed and have no effect: `$ALLOC_CHUNK_SIZE`, `$MAX_OBJECTS`, `$MAX_CLASSES`, `$MAX_SYMBOLS`.
+As of 6.36, the following internal memory settings are no longer needed and have no effect: `$ALLOC_CHUNK_SIZE`, `$MAX_OBJECTS`, `$MAX_CLASSES`, `$MAX_SYMBOLS`, `MAX_PROP_TABLE_SIZE`, `$MAX_INDIV_PROP_TABLE_SIZE`, `$MAX_OBJ_PROP_COUNT`, `$MAX_OBJ_PROP_TABLE_SIZE`, `$MAX_ARRAYS`, `$MAX_STATIC_DATA`, `$MAX_ADJECTIVES`, `$MAX_VERBS`, `$MAX_VERBSPACE`, `$MAX_LABELS`, `$MAX_EXPRESSION_NODES`, `$MAX_SOURCE_FILES`, `$MAX_INCLUSION_DEPTH`, `$MAX_ACTIONS`, `$MAX_LINESPACE`, `$MAX_ZCODE_SIZE`, `$MAX_LINK_DATA_SIZE`.
 
 Other settings which are new or updated since the DM4:
 
@@ -200,10 +196,6 @@ The number of abbreviations which may be used in economy (`-e`) mode. This setti
 
 In Glulx, `$MAX_ABBREVS` is not needed and has no effect.
 
-**$MAX_ARRAYS**
-
-The maximum number of arrays in one compiled game. (Internal memory setting.)
-
 **$MAX_DYNAMIC_STRINGS**
 
 The number of string variables (`"@00"`, etc) allowed in the game. In Z-code, this may be any value from 0 to 96. Setting this in Z-code automatically sets `$MAX_ABBREVS` to `(96 - $MAX_DYNAMIC_STRINGS)`, as the two features draw from the same pool of 96 Z-machine abbreviations. Similarly, setting `$MAX_ABBREVS` sets `$MAX_DYNAMIC_STRINGS` to `(96 - $MAX_ABBREVS)`.
@@ -216,29 +208,9 @@ In Glulx, the two settings are not connected; `$MAX_DYNAMIC_STRINGS` may be as h
 
 The maximum number of global variables in one compiled game. (Internal memory setting. In Z-code this is 240 and cannot be changed.)
 
-**$MAX_INCLUSION_DEPTH**
-
-The maximum number of nested `Include` directives in source files. (Internal memory setting.)
-
 **$MAX_LOCAL_VARIABLES**
 
 The maximum number of local variables in a routine. (Internal memory setting. In Z-code this is 16 and cannot be changed.)
-
-**$MAX_NUM_STATIC_STRINGS**
-
-The maximum number of compiled strings in one compiled game. (Internal memory setting. This is only meaningful in Glulx, as Z-code uses a different text layout scheme.)
-
-**$MAX_OBJ_PROP_COUNT**
-
-The maximum number of properties in one object's property table. (Internal memory setting. This is only meaningful in Glulx.)
-
-**$MAX_OBJ_PROP_TABLE_SIZE**
-
-The maximum number of words used by one object's property table. (Internal memory setting. This is only meaningful in Glulx.)
-
-**$MAX_SOURCE_FILES**
-
-The maximum number of source files in one compilation. (Internal memory setting.)
 
 **$MAX_STACK_SIZE**
 
