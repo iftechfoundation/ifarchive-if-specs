@@ -216,10 +216,6 @@ The maximum number of local variables in a routine. (Internal memory setting. In
 
 The amount of memory that the interpreter will reserve for the Glulx stack. (This is only meaningful in Glulx.)
 
-**$MAX_UNICODE_CHARS**
-
-The maximum number of unique non-ASCII characters in the game text. (Internal memory setting. This is only meaningful in Glulx, as Z-code uses a different text layout scheme.)
-
 **$MEMORY_MAP_EXTENSION**
 
 The number of extra zero bytes to add to the end of the compiled game file. This is writable memory which the game can use freely. (This is only meaningful in Glulx.)
