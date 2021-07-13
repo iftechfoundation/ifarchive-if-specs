@@ -418,6 +418,8 @@ This calls the `CInDefArt()` veneer function.
 
 ## Operators
 
+### Logical precedence
+
 The table of condition operators (§Table1B) shows `&&`, `||`, and `~~` as having equal precedence. This is ambiguous about expressions like `(~~X && Y)`. In fact, the compiler has always (at least since 6.0) parsed this as applying `~~` to the conjunction `(X && Y)`:
 
 	! These statements are equivalent:
@@ -433,7 +435,45 @@ Similarly, the bitwise expression `(~X & Y)` is parsed as `(~(X & Y))`.
 
 Given this, it makes sense to consider the logical `~~` operator as having a precedence level of 1.5, and the bitwise `~` operator as having a precedence level of 5.5.
 
+### The `or` operator
+
+The `or` operator is described in §1.8, but without a full explanation.
+
+`or` may only be used to provide a list of values to the right of a comparison operator:
+
+    if (val == 2 or 4 or 8) ...
+    if (obj in trunk or knapsack) ...
+    if (obj has container or supporter) ...
+
+The expression is true if the left-hand value matches any of the values on the right.
+
+For negative-sense operators, the expression is true if the left-hand value matches *none* of the values on the right:
+
+    if (val ~= 2 or 4 or 8) ...
+    if (obj notin trunk or knapsack) ...
+    if (obj hasnt container or supporter) ...
+
+[[Strict Boolean logic would have us write these negative comparisons with "and" rather than "or". Inform doesn't go that far. All of the expressions above follow the natural English sense of "or".]]
+
+This becomes somewhat confusing when we consider ordering comparisons. The manual gives this example:
+
+    if (x > 100 or y) ...
+
+> [...] to test whether x is bigger than the minimum of 100 and y.
+
+This is consistent with the earlier examples; the expression is true if `(x > 100)` *or* `(x > y)`. However, it takes some squinting to realize this.
+
+The `>=` and `<=` operators are even worse. The compiler treats these as *negative-sense* operators (because that's how the Z-machine architecture constructed them). Therefore:
+
+    if (x <= 100 or y) ...
+
+This is true if `x` is less than or equal to *both* `100` *and* `y`. (That is, it is treated as the exact inverse of the previous example.) This is unintuitive even if you have absorbed the previous examples.
+
+As of 6.36, if you use `or` with the `>=` and `<=` operators, the compiler will generate a warning.
+
 ## Class behavior
+
+### Inheritance
 
 The DM4 (§3.8) gives this example of multiple inheritance:
 
@@ -461,6 +501,8 @@ Attributes follow the same rule, except that *classes cannot negate attributes s
 In this example, the goose object gains the `heavy` attribute because at least one of its classes sets it. This will be true no matter what order the classes are listed in. The `has ~heavy` declaration in class `Bird` has no effect.
 
 Objects can of course use `has ~attr` to negate attributes inherited from classes. Derived classes can negate attributes inherited from superclasses. The limitation applies only to conflicts between an object's classes.
+
+### Class `copy` and `recreate`
 
 The `copy` and `recreate` class methods likewise diverge from the manual. §3.11 says:
 
