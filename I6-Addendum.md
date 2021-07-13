@@ -170,7 +170,7 @@ On the command line (but not in ICL files or comments), compiler settings can al
 	--opt SETTING=number
 	--define SYMBOL=number
 
-As of 6.36, the following internal memory settings are no longer needed and have no effect: `$ALLOC_CHUNK_SIZE`, `$MAX_OBJECTS`, `$MAX_CLASSES`, `$MAX_SYMBOLS`, `MAX_PROP_TABLE_SIZE`, `$MAX_INDIV_PROP_TABLE_SIZE`, `$MAX_OBJ_PROP_COUNT`, `$MAX_OBJ_PROP_TABLE_SIZE`, `$MAX_ARRAYS`, `$MAX_STATIC_DATA`, `$MAX_ADJECTIVES`, `$MAX_VERBS`, `$MAX_VERBSPACE`, `$MAX_LABELS`, `$MAX_EXPRESSION_NODES`, `$MAX_SOURCE_FILES`, `$MAX_INCLUSION_DEPTH`, `$MAX_ACTIONS`, `$MAX_LINESPACE`, `$MAX_ZCODE_SIZE`, `$MAX_LINK_DATA_SIZE`.
+As of 6.36, the following internal memory settings are no longer needed and have no effect: `$ALLOC_CHUNK_SIZE`, `$MAX_OBJECTS`, `$MAX_CLASSES`, `$MAX_SYMBOLS`, `MAX_PROP_TABLE_SIZE`, `$MAX_INDIV_PROP_TABLE_SIZE`, `$MAX_OBJ_PROP_COUNT`, `$MAX_OBJ_PROP_TABLE_SIZE`, `$MAX_ARRAYS`, `$MAX_STATIC_DATA`, `$MAX_ADJECTIVES`, `$MAX_VERBS`, `$MAX_VERBSPACE`, `$MAX_LABELS`, `$MAX_EXPRESSION_NODES`, `$MAX_SOURCE_FILES`, `$MAX_INCLUSION_DEPTH`, `$MAX_ACTIONS`, `$MAX_LINESPACE`, `$MAX_ZCODE_SIZE`, `$MAX_LINK_DATA_SIZE`, `$MAX_TRANSCRIPT_SIZE`, `$MAX_DICT_ENTRIES`, `$MAX_NUM_STATIC_STRINGS`, `$MAX_UNICODE_CHARS`.
 
 Other settings which are new or updated since the DM4:
 
