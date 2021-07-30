@@ -170,7 +170,7 @@ On the command line (but not in ICL files or comments), compiler settings can al
 	--opt SETTING=number
 	--define SYMBOL=number
 
-As of 6.36, the following internal memory settings are no longer needed and have no effect: `$ALLOC_CHUNK_SIZE`, `$MAX_OBJECTS`, `$MAX_CLASSES`, `$MAX_SYMBOLS`, `MAX_PROP_TABLE_SIZE`, `$MAX_INDIV_PROP_TABLE_SIZE`, `$MAX_OBJ_PROP_COUNT`, `$MAX_OBJ_PROP_TABLE_SIZE`, `$MAX_ARRAYS`, `$MAX_STATIC_DATA`, `$MAX_ADJECTIVES`, `$MAX_VERBS`, `$MAX_VERBSPACE`, `$MAX_LABELS`, `$MAX_EXPRESSION_NODES`, `$MAX_SOURCE_FILES`, `$MAX_INCLUSION_DEPTH`, `$MAX_ACTIONS`, `$MAX_LINESPACE`, `$MAX_ZCODE_SIZE`, `$MAX_LINK_DATA_SIZE`, `$MAX_TRANSCRIPT_SIZE`, `$MAX_DICT_ENTRIES`, `$MAX_NUM_STATIC_STRINGS`, `$MAX_UNICODE_CHARS`.
+As of 6.36, the following internal memory settings are no longer needed and have no effect: `$ALLOC_CHUNK_SIZE`, `$MAX_OBJECTS`, `$MAX_CLASSES`, `$MAX_SYMBOLS`, `MAX_PROP_TABLE_SIZE`, `$MAX_INDIV_PROP_TABLE_SIZE`, `$MAX_OBJ_PROP_COUNT`, `$MAX_OBJ_PROP_TABLE_SIZE`, `$MAX_ARRAYS`, `$MAX_STATIC_DATA`, `$MAX_ADJECTIVES`, `$MAX_VERBS`, `$MAX_VERBSPACE`, `$MAX_LABELS`, `$MAX_EXPRESSION_NODES`, `$MAX_SOURCE_FILES`, `$MAX_INCLUSION_DEPTH`, `$MAX_ACTIONS`, `$MAX_LINESPACE`, `$MAX_ZCODE_SIZE`, `$MAX_LINK_DATA_SIZE`, `$MAX_TRANSCRIPT_SIZE`, `$MAX_DICT_ENTRIES`, `$MAX_NUM_STATIC_STRINGS`, `$MAX_UNICODE_CHARS`, `$MAX_STATIC_STRINGS`, `$MAX_LOW_STRINGS`, `$MAX_GLOBAL_VARIABLES`, `$MAX_LOCAL_VARIABLES`, `$MAX_QTEXT_SIZE`.
 
 Other settings which are new or updated since the DM4:
 
@@ -203,14 +203,6 @@ The number of string variables (`"@00"`, etc) allowed in the game. In Z-code, th
 In Glulx, the two settings are not connected; `$MAX_DYNAMIC_STRINGS` may be as high as 100. (Dynamic string references have two digits, so they cannot go beyond the range `"@00"` to `"@99"`.)
 
 (Added in 6.35. In earlier versions, 32 string variables and 64 abbreviations were available in Z-code; 64 string variables were available in Glulx.)
-
-**$MAX_GLOBAL_VARIABLES**
-
-The maximum number of global variables in one compiled game. (Internal memory setting. In Z-code this is 240 and cannot be changed.)
-
-**$MAX_LOCAL_VARIABLES**
-
-The maximum number of local variables in a routine. (Internal memory setting. In Z-code this is 16 and cannot be changed.)
 
 **$MAX_STACK_SIZE**
 
