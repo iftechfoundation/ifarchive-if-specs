@@ -202,7 +202,7 @@ The number of string variables (`"@00"`, etc) allowed in the game. In Z-code, th
 
 In Glulx, the two settings are not connected; `$MAX_DYNAMIC_STRINGS` may be as high as 100. (Dynamic string references have two digits, so they cannot go beyond the range `"@00"` to `"@99"`.)
 
-(Added in 6.35. In earlier versions, 32 string variables and 64 abbreviations were available in Z-code; 64 string variables were available in Glulx.)
+(Added in 6.35. In earlier versions, 32 string variables and 64 abbreviations were available in Z-code; 64 string variables were available in Glulx. As of 6.36, `$MAX_DYNAMIC_STRINGS` defaults to 100 in Glulx, which is the maximum.)
 
 **$MAX_STACK_SIZE**
 
