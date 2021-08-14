@@ -366,6 +366,14 @@ This declares that all following lines are derived from the given filename. This
 
 The declaration holds through the next `Origsource` directive (but does not apply to included files). The fourth form, with no arguments, clears the declaration. 
 
+**Property**
+
+The DM4 says:
+
+> Only 62 [common properties] are available, of which the compiler uses 3 and the library a further 47.
+
+This is somewhat poorly stated. The Z-machine (V4+) permits 63 common properties (numbered 1 to 63). The compiler defines three: the `name` property plus two hidden properties which are used internally. So the game and library may declare 60 *more* common properties between them.
+
 **Replace**
 
 The `Replace` directive (§25) allows you to redefine a function which has already been defined (such as in a library or in the veneer).
