@@ -368,11 +368,31 @@ The declaration holds through the next `Origsource` directive (but does not appl
 
 **Property**
 
-The DM4 says:
+As of 6.36, it is now possible to declare an individual property with the `Property` directive:
+
+	Property individual propname;
+
+This gives us a total of four forms of the directive:
+
+	Property [additive] name;
+	Property [additive] name defaultexpr;
+	Property [additive] name alias oldname;
+	Property individual name;
+
+Note that an individual property cannot be `additive`, have a default value, or `alias` another property.
+
+The `long` keyword can be applied to any `Property` directive, but it has no effect except a deprecation warning. (All properties have been `long`, which is to say word-sized, since Inform 5.)
+
+As of 6.36, it is possible to declare a property called `long`, `additive`, or `individual`, even though these are keywords for the `Property` directive.
+
+	! This declares an additive common property called "long" with default value 12.
+	Property additive long 12;
+
+Concerning Z-code limits, the DM4 says:
 
 > Only 62 [common properties] are available, of which the compiler uses 3 and the library a further 47.
 
-This is somewhat poorly stated. The Z-machine (V4+) permits 63 common properties (numbered 1 to 63). The compiler defines three: the `name` property plus two hidden properties which are used internally. So the game and library may declare 60 *more* common properties between them.
+This is poorly phrased. The Z-machine (V4+) permits 63 common properties (numbered 1 to 63). The compiler defines three: the `name` property plus two hidden properties which are used internally. So the game and library may declare 60 *more* common properties between them.
 
 **Replace**
 
