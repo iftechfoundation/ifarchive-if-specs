@@ -6,7 +6,7 @@ Language and compiler changes: releases 6.30 to 6.36 (in development)
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: August 1, 2021)
+(Last update: September 3, 2021)
 {: .DateHeader }
 
 Copyright 2020-21 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
@@ -574,8 +574,13 @@ Early releases of Inform (through Inform 5) were designed to support all version
 
 You can work around the lack of `obj.prop()` by writing:
 
+	@push self;
+	self = obj;
 	addr = obj.prop;
 	addr();
+	@pull self;
+
+[[The lines dealing with `self` may be omitted if the property routine does not rely on `self`.]]
 
 In general, Inform 6 is able to compile older source code to V3 if the source *and the library* avoids the `obj.prop()` syntax. This means you cannot use the Inform 6 library. You must use the [Inform 5 library][i5lib], or one of the alternative libraries designed for V3, such as [metro84][] or [PunyInform][].
 
