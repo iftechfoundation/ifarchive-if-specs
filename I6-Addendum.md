@@ -194,7 +194,9 @@ The index number of the first individual property. This also determines the maxi
 
 The number of abbreviations which may be used in economy (`-e`) mode. This setting is available in all versions of Inform, but in 6.35 the maximum for Z-code was raised from 64 to 96. However, this trades off against `$MAX_DYNAMIC_STRINGS`; see below.
 
-In Glulx, `$MAX_ABBREVS` is not needed and has no effect.
+The abbreviations (`-u`) switch now tries to create `$MAX_ABBREVS` abbreviations, rather than always creating 64. (As of 6.36.)
+
+In Glulx, `$MAX_ABBREVS` is not needed and has no effect, except with the `-u` switch.
 
 **$MAX_DYNAMIC_STRINGS**
 
