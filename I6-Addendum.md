@@ -242,6 +242,12 @@ This sets the number of words in the Z-code header extension table. The default 
 
 This is the value to store in the Flags 3 word of the header extension table. (See Z-spec 1.1. This is only meaningful in Z-code.)
 
+**$ZCODE_LESS_DICT_DATA**
+
+If this is set to 1, each dictionary entry will have two bytes of data instead of the usual three. (Added in 6.36. This is only meaningful in Z-code.)
+
+With this switch set, you may not refer to `#dict_par3`. You also may not use grammar version 1, as that format needs to use the third byte for the preposition number.
+
 # Language changes
 
 A few elements of the Inform language itself have been updated or extended.
