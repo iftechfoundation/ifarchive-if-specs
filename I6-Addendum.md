@@ -423,6 +423,12 @@ The `Undef` directive allows you to remove a previously-defined constant. This d
 
 This leaves the `Const` symbol undefined. If `Const` was never defined, this does nothing.
 
+**Version**
+
+This is mentioned in the DM4 as being obsolete (§Table5). Use the `-v3` command-line switch or `!% -v3` header comment instead.
+
+As of 6.36, this directive may only be used before the first routine is defined. (This limitation reduces, but does not eliminate, various code generation bugs.)
+
 ## Statements
 
 The action statements `<Action>` and `<<Action>>` (§6) now support up to four arguments. The four-argument form is new as of 6.33.
