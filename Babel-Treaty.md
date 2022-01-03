@@ -266,6 +266,33 @@ same IFID. The documentation goes on to explain how to duplicate a
 project so that this will not occur.)
 
 
+#### The IFID for an HTML story file
+
+
+A number of design systems generate output in HTML format, including
+Twine, ChoiceScript, Adventuron, Ink, Texture, and others.
+
+Design systems may integrate an IFID into the output HTML by adding a
+`<meta>` tag to the `<head>` section of the output:
+
+	<meta property="ifiction:ifid" content="448E73DF-2D2F-47E7-A494-A46B40D4CFB3">
+
+(If the game comprises several HTML files, apply this to the start file.)
+
+You may optionally include an RDFa `prefix` or XML `xmlns` for this meta
+tag, ensuring that your HTML will be valid RDFa. This is not required.
+Some examples of this (other arrangements are possible):
+
+	<meta prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/"
+		property="ifiction:ifid" content="448E73DF-2D2F-47E7-A494-A46B40D4CFB3">
+
+	<html xmlns:ifiction="http://babel.ifarchive.org/protocol/iFiction/">
+		<head>
+			<meta property="ifiction:ifid" content="448E73DF-2D2F-47E7-A494-A46B40D4CFB3">
+		</head>
+	</html>
+
+
 #### IFIDs for legacy projects
 
 A design system may provide an algorithm to determine a IFID for a
@@ -597,8 +624,16 @@ checksum of the file.
 ##### The IFID for a legacy HTML story file
 
 
-The IFID for a legacy HTML story file is "HTML-" followed by the MD5
-checksum of the file.
+HTML games that lack the `<meta>` tag described above may include the
+text `UUID://...//` in a literal string or comment in the HTML.
+
+Older Twine games may incorporate an IFID in a `<tw-storydata>` tag in
+the HTML:
+
+	<tw-storydata name="Title" creator="Twine" ifid="8665FC08-15CD-4BEC-B15A-7F72E34F4F51" ...>
+
+Otherwise, the IFID for a legacy HTML story file is "HTML-" followed by
+the MD5 checksum of the file.
 
 
 ##### The IFID for an executable file
