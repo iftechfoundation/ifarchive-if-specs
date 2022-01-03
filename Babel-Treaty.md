@@ -1432,8 +1432,8 @@ This is an optional tag, whose value is a string of letters and digits.
 If supplied, it should be the Interactive Fiction Database identifier
 (TUID) for the work: for instance, "Curses" is "plvzam05bmz3enh8".
 
-The Interactive Fiction Database is presently found at
-[ifdb.tads.org](https://ifdb.tads.org/).
+The Interactive Fiction Database is found at
+[ifdb.org](https://ifdb.org/).
 
 
 #### `<bafn>`
