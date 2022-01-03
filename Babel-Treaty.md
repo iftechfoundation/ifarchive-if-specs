@@ -583,21 +583,21 @@ its IFID is "LEVEL9-" followed by the MD5 hash of the story file.
 ##### The IFID for a legacy AdvSys story file
 
 
-The IFID for a legacy AdvSys story file is ADVSYS- followed by the MD5
-checksum of the file.
-
-
-##### The IFID for a legacy Twine story file
-
-
-The IFID for a legacy Twine story file is TWINE- followed by the MD5
+The IFID for a legacy AdvSys story file is "ADVSYS-" followed by the MD5
 checksum of the file.
 
 
 ##### The IFID for a legacy Alan story file
 
 
-The IFID for a legacy Alan story file is ALAN- followed by the MD5
+The IFID for a legacy Alan story file is "ALAN-" followed by the MD5
+checksum of the file.
+
+
+##### The IFID for a legacy HTML story file
+
+
+The IFID for a legacy HTML story file is "HTML-" followed by the MD5
 checksum of the file.
 
 
