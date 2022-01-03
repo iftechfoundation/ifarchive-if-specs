@@ -423,6 +423,10 @@ The `Undef` directive allows you to remove a previously-defined constant. This d
 
 This leaves the `Const` symbol undefined. If `Const` was never defined, this does nothing.
 
+[[When tested with the `Ifdef` directive, a constant is considered undefined only *after* the `Undef` directive, just as it is considered defined only *after* its original declaration. This is somewhat inconsistent with Inform's handling of constants in expressions (routine code), where they can freely be used before or after being declared.]]
+
+[[`Undef`'ing constants which are forward-declared leads to confusing behavior. It is best to consider `Undef` purely as an adjunct to `Ifdef`.]]
+
 **Version**
 
 This is mentioned in the DM4 as being obsolete (§Table5). Use the `-v3` command-line switch or `!% -v3` header comment instead.
