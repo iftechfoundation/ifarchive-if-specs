@@ -279,19 +279,11 @@ Design systems may integrate an IFID into the output HTML by adding a
 
 (If the game comprises several HTML files, apply this to the start file.)
 
-You may optionally include an RDFa `prefix` or XML `xmlns` for this meta
-tag, ensuring that your HTML will be valid RDFa. This is not required.
-Some examples of this (other arrangements are possible):
+You may optionally include an RDFa `prefix`, ensuring that your HTML will
+be valid RDFa. This is not required.
 
 	<meta prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/"
 		property="ifiction:ifid" content="448E73DF-2D2F-47E7-A494-A46B40D4CFB3">
-
-	<html xmlns:ifiction="http://babel.ifarchive.org/protocol/iFiction/">
-		<head>
-			<meta property="ifiction:ifid" content="448E73DF-2D2F-47E7-A494-A46B40D4CFB3">
-		</head>
-	</html>
-
 
 #### IFIDs for legacy projects
 
