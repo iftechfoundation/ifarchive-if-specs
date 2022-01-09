@@ -268,7 +268,6 @@ project so that this will not occur.)
 
 #### The IFID for an HTML story file
 
-
 A number of design systems generate output in HTML format, including
 Twine, ChoiceScript, Adventuron, Ink, Texture, and others.
 
@@ -279,18 +278,26 @@ Design systems may integrate an IFID into the output HTML by adding a
 
 (If the game comprises several HTML files, apply this to the start file.)
 
-You may optionally include an RDFa `prefix` or XML `xmlns` for this meta
-tag, ensuring that your HTML will be valid RDFa. This is not required.
-Some examples of this (other arrangements are possible):
+You should include an RDFa `prefix` attribute with the standard iFiction
+URI, either on the `<meta>` tag or one of its parents. This ensures that
+your HTML will be valid RDFa. Some examples of this (other arrangements
+are possible):
 
-	<meta prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/"
-		property="ifiction:ifid" content="448E73DF-2D2F-47E7-A494-A46B40D4CFB3">
+	<head>
+		<meta prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/"
+			property="ifiction:ifid" content="448E73DF-2D2F-47E7-A494-A46B40D4CFB3">
+	</head>
 
-	<html xmlns:ifiction="http://babel.ifarchive.org/protocol/iFiction/">
-		<head>
-			<meta property="ifiction:ifid" content="448E73DF-2D2F-47E7-A494-A46B40D4CFB3">
-		</head>
-	</html>
+	<head prefix="ifiction: http://babel.ifarchive.org/protocol/iFiction/">
+		<meta property="ifiction:ifid" content="448E73DF-2D2F-47E7-A494-A46B40D4CFB3">
+	</head>
+
+(Note that the `babel` tool does not check for this prefix; it just looks
+for the `property="ifiction:ifid"` attribute. However, other web-based
+metadata tools require the prefix. Consider using [this validator][rdfavalid]
+to verify that your file validates without warnings.)
+
+[rdfavalid]: https://www.w3.org/2012/pyRdfa/Validator.html
 
 
 #### IFIDs for legacy projects
