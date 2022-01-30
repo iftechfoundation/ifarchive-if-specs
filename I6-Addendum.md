@@ -1,12 +1,12 @@
 # Inform 6 Reference Addendum {: .Title }
 
-Language and compiler changes: releases 6.30 to 6.36 (in development)
+Language and compiler changes: releases 6.30 to 6.36
 {: .VersionHeader }
 
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: January 2, 2022)
+(Last update: January 30, 2022)
 {: .DateHeader }
 
 Copyright 2020-21 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
