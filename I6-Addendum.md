@@ -325,6 +325,8 @@ The first form simply adds the word if it is not already in the dictionary. The 
 
 The values can be numeric literals or constants. They can be 0-255 for Z-code, or 0-65535 for Glulx.
 
+[[See also the `$ZCODE_LESS_DICT_DATA` setting above, which drops the `dict_par3` field from dictionary entries.]]
+
 [[`dict_par2` cannot be set by this directive. It is always the verb number, or zero for words that are not verbs.]]
 
 **Ifv3**
