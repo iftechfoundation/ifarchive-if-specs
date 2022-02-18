@@ -456,6 +456,66 @@ The capitalized `(A)` print token joins `(a)`, `(The)`, and `(the)` as of 6.30; 
 
 This calls the `CInDefArt()` veneer function.
 
+## Constants
+
+The compiler defines various constants describing the game file. The game (and library) may use these to examine compiled data.
+
+[[Some constants begin with `#`; others do not. This is a mostly internal distinction which is not important for authors. The difference is that regular constants must be defined at the start of compilation. `#` constants, such as `#dictionary_table`, may not be known until compilation is complete.]]
+
+Constants defined with no given value are typically meant to be checked with `#Ifdef`. They have the default value 0.
+
+**TARGET_ZCODE**, **TARGET_GLULX**
+
+Exactly one of these will be defined, depending on the game file format.
+
+**WORDSIZE**
+
+This is the byte size of a VM word or address: 2 in Z-code, 4 in Glulx.
+
+**MODULE_MODE**, **STRICT_MODE**, **DEBUG**, **USE_MODULES**, **INFIX**
+
+These are defined by the `-M`, `-S`, `-D`, `-U`, `-X` switches respectively.
+
+**DICT_WORD_SIZE**
+
+This is the byte size (not Z-character count!) of a dictionary word string. In Z-code, it will be 4 (v3) or 6 (v4+). In Glulx, it is controlled by the `$DICT_WORD_SIZE` setting.
+
+**DICT_ENTRY_BYTES**
+
+This is the byte size of a complete dictionary entry, including flags. In Z-code, it will be `DICT_WORD_SIZE+3`, or `DICT_WORD_SIZE+2` if `$ZCODE_LESS_DICT_DATA` is set. In Glulx, it is `DICT_WORD_SIZE+7`, or `4*DICT_WORD_SIZE+12` if `$DICT_CHAR_SIZE` is 4.
+
+**DICT_CHAR_SIZE**
+
+The byte size of one character in a dictionary word. This is controlled by the `$DICT_CHAR_SIZE` setting; it will be either 1 or 4. (Glulx-only.)
+
+**DICT_IS_UNICODE**
+
+This is defined as 1 if `$DICT_CHAR_SIZE` is 4. (Glulx-only.)
+
+**NUM_ATTR_BYTES**
+
+The number of bytes reserved in each object record for (boolean) attributes. (Each byte stores eight attributes.) In Z-code, this will be 6. In Glulx, it is controlled by the `$NUM_ATTR_BYTES` setting; it will always be a value of the form `4*i+3`.
+
+**INDIV_PROP_START**
+
+The property number of the first individual property. This is controlled by the `$INDIV_PROP_START` setting. (Glulx-only.) (In Z-code, this setting is always 64 so no constant is defined.)
+
+**GOBJFIELD_CHAIN**, **GOBJFIELD_NAME**, **GOBJFIELD_PROPTAB**, **GOBJFIELD_PARENT**, **GOBJFIELD_SIBLING**, **GOBJFIELD_CHILD**
+
+The offset in words (not bytes!) of the six address fields in a Glulx object record. For example, the address of the object's property table can be found at `obj-->GOBJFIELD_PROPTAB`. (Glulx-only.)
+
+**GOBJ_EXT_START**
+
+The offset of bytes of the extended object data in an object record. The length of this data is controlled by the `$GLULX_OBJECT_EXT_BYTES` setting. (Glulx-only.)
+
+**GOBJ_TOTAL_LENGTH**
+
+The byte size of a complete object record. This will be `1+NUM_ATTR_BYTES+6*WORDSIZE`, plus `$GLULX_OBJECT_EXT_BYTES` if that is set. (Glulx-only.)
+
+**FLOAT_INFINITY**, **FLOAT_NINFINITY**, **FLOAT_NAN**
+
+Positive and negative infinity and NaN for Glulx floating-point operations. (Glulx-only.)
+
 ## Operators
 
 ### Logical precedence
