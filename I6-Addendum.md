@@ -462,7 +462,37 @@ The compiler defines various constants describing the game file. The game (and l
 
 [[Some constants begin with `#`; others do not. This is a mostly internal distinction which is not important for authors. The difference is that regular constants must be defined at the start of compilation. `#` constants, such as `#dictionary_table`, may not be known until compilation is complete.]]
 
+[[Only a few of the compiler's `#` constants are documented here. The majority are intended to support Infix, and are available only in Z-code.]]
+
 Constants defined with no given value are typically meant to be checked with `#Ifdef`. They have the default value 0.
+
+**#version_number**
+
+The Z-code version number. (Z-code only.)
+
+**#readable_memory_offset**
+
+The address of the start of high memory (routine and string segments). This is also found in the header at address 4. (Z-code only.)
+
+**#dictionary_table**
+
+The address of the dictionary. In Z-code, this is also found in the header at address 8. (Glulx-only until 6.37.)
+
+**#grammar_table**
+
+The address of the grammar table. In Z-code, Inform places this at the start of static memory, so it can be found in the header at address 14. (Glulx-only until 6.37.)
+
+**#actions_table**
+
+The address of the actions table. This table maps an action number (e.g. `##Jump`) to its action routine (e.g. `JumpSub`).
+
+**#dict_par1**, **#dict_par2**, **#dict_par3**
+
+In Z-code, the byte offsets of the three flags within a dictionary word entry.
+
+In Glulx, these are the byte offsets of the *low byte* (second byte) of the three flags.
+
+If `$ZCODE_LESS_DICT_DATA` is set, `#dict_par3` is not available.
 
 **TARGET_ZCODE**, **TARGET_GLULX**
 
