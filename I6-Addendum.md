@@ -126,6 +126,8 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 [[Note that `-g2` and above will cause runtime errors in Glulx games, due to printing trace information when no output window is available.]]
 
+`-p`: As of 6.37, this displays the VM memory map (like `-z`) with added percentage information for each segment. (In previous versions, percentage information was displayed in a separate table, and was nonsensical in Glulx.)
+
 `-W`: Sets the number of words in the Z-code header extension table (Z-spec 1.0). The default is `-W3`. The `$ZCODE_HEADER_EXT_WORDS` setting does the same thing.
 
 `-V`: Display the compiler version and exit with no further action.
