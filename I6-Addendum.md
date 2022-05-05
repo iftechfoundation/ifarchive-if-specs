@@ -96,7 +96,7 @@ Note that this section of the file is parsed before the source encoding is set. 
 
 [[It would be better if command-line options took precedence over `!%` options. This would allow one-off changes while recompiling existing source code. This change may be considered in the future.]]
 
-## Switch options (dash)
+## Switch options (dash) { #switchopts }
 
 Classic options begin with a dash -- the traditional style of command-line tools. For example, the `-h` option (help) shows a page of output documenting how to run the compiler. `-h2` will show a page listing all options that begin with a dash (§Table3).
 
@@ -166,11 +166,14 @@ A setting that begins with a hash sign (`$#`) will define an arbitrary numeric c
 	
 [[Thus, passing the `$#DEBUG` argument is equivalent to the `-D` option. Remember that Inform symbols are not case-sensitive; `$#debug` or `$#Debug=0` does the same thing.]]
 
+A setting that begins with an exclamation mark (`$!`) is a trace option. These have a slightly different format; see [Trace options](#traceopts), below.
+
 On the command line (but not in ICL files or comments), compiler settings can also be specified in Unix style. (New in 6.35.) This avoids the need to escape dollar signs.
 
 	--list
 	--opt SETTING=number
 	--define SYMBOL=number
+	--trace TRACEOPT=number
 
 As of 6.36, the following internal memory settings are no longer needed and have no effect: `$ALLOC_CHUNK_SIZE`, `$MAX_OBJECTS`, `$MAX_CLASSES`, `$MAX_SYMBOLS`, `MAX_PROP_TABLE_SIZE`, `$MAX_INDIV_PROP_TABLE_SIZE`, `$MAX_OBJ_PROP_COUNT`, `$MAX_OBJ_PROP_TABLE_SIZE`, `$MAX_ARRAYS`, `$MAX_STATIC_DATA`, `$MAX_ADJECTIVES`, `$MAX_VERBS`, `$MAX_VERBSPACE`, `$MAX_LABELS`, `$MAX_EXPRESSION_NODES`, `$MAX_SOURCE_FILES`, `$MAX_INCLUSION_DEPTH`, `$MAX_ACTIONS`, `$MAX_LINESPACE`, `$MAX_ZCODE_SIZE`, `$MAX_LINK_DATA_SIZE`, `$MAX_TRANSCRIPT_SIZE`, `$MAX_DICT_ENTRIES`, `$MAX_NUM_STATIC_STRINGS`, `$MAX_UNICODE_CHARS`, `$MAX_STATIC_STRINGS`, `$MAX_LOW_STRINGS`, `$MAX_GLOBAL_VARIABLES`, `$MAX_LOCAL_VARIABLES`, `$MAX_QTEXT_SIZE`.
 
@@ -257,6 +260,24 @@ This is the value to store in the Flags 3 word of the header extension table. (S
 If this is set to 1, each dictionary entry will have two bytes of data instead of the usual three. (Added in 6.36. This is only meaningful in Z-code.)
 
 With this switch set, you may not refer to `#dict_par3`. You also may not use grammar version 1, as that format needs to use the third byte for the preposition number.
+
+## Trace options { #traceopts }
+
+These are special compiler settings which display extra information about the compilation process. Most of them are only useful for debugging the compiler itself. The ones most useful to authors have simpler switch options, documented [above](#switchopts).
+
+Trace options all have the form `$!TRACEOPT` or `$!TRACEOPT=number`. The option `$!` by itself will show a list of all supported trace options.
+
+On the command line (but not in ICL files or comments), trace options can be also specified in Unix style.
+
+	--trace TRACEOPT
+	--trace TRACEOPT=number
+	--helptrace
+
+All trace options are off (level 0) by default. The simple form `$!TRACEOPT` or `--trace TRACEOPT` sets the named option to level 1, which displays some amount of information during (or after) compilation. Some trace options support higher levels of verbosity to print more information.
+
+**$!MAP** (same as `-z`)
+
+Display a memory map of the virtual machine. `$!MAP=2` will also show the percentage of VM memory that each segment occupies.
 
 # Language changes
 
