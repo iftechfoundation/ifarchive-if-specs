@@ -263,7 +263,7 @@ With this switch set, you may not refer to `#dict_par3`. You also may not use gr
 
 ## Trace options { #traceopts }
 
-These are special compiler settings which display extra information about the compilation process. Most of them are only useful for debugging the compiler itself. The ones most useful to authors have simpler switch options, documented [above](#switchopts).
+These are special compiler settings which display extra information about the compilation process. Most of them are only useful for debugging the compiler itself. The ones most useful to authors have simple switch options, documented [above](#switchopts).
 
 Trace options all have the form `$!TRACEOPT` or `$!TRACEOPT=number`. The option `$!` by itself will show a list of all supported trace options.
 
@@ -273,7 +273,7 @@ On the command line (but not in ICL files or comments), trace options can be als
 	--trace TRACEOPT=number
 	--helptrace
 
-All trace options are off (level 0) by default. The simple form `$!TRACEOPT` or `--trace TRACEOPT` sets the named option to level 1, which displays some amount of information during (or after) compilation. Some trace options support higher levels of verbosity to print more information.
+All trace options are off (level 0) by default. The simple form `$!TRACEOPT` or `--trace TRACEOPT` sets the named option to level 1, which displays information during (or after) compilation. Some trace options support higher levels of verbosity to print more information.
 
 The trace option system is new as of 6.37. In prior versions, much of this information was available through command-line switches.
 
@@ -287,7 +287,33 @@ Show assembly-language encoding of functions as they are compiled. `$!ASM=2` wil
 
 The `$!ASM` trace level can be changed at any point in the code with the `Trace assembly` directive. 
 
-(Prior to 6.37, the `-t` switch set `$!ASM=2`.)
+(Prior to 6.37, the `-t` switch showed assembly plus opcode bytes, as `$!ASM=2` does now.)
+
+**$!BPATCH**
+
+Show backpatch markers as they are resolved. `$!BPATCH=2` will also show backpatch markers being created.
+
+(Prior to 6.37, this information was shown at higher `$!ASM` trace levels.)
+
+**$!DICT**
+
+Show the game dictionary when the game is complete. `$!DICT=2` will also show the byte encoding of each dictionary entry.
+
+The `Trace dictionary` directive will show this information at any point in the code.
+
+**$!EXPR**
+
+Show expression trees as they are compiled. `$!EXPR=2` and `$!EXPR=3` will show more verbose information.
+
+The `$!EXPR` trace level can be changed at any point in the code with the `Trace expressions` directive. 
+
+**$!FILES**
+
+Show source and include files being opened and closed.
+
+The `$!FILES` trace level can be changed at any point in the code with the `Trace lines` directive. 
+
+(Prior to 6.37, the `-l` switch showed this information.)
 
 **$!MAP** (same as `-z`)
 
