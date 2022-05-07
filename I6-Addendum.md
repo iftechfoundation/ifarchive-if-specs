@@ -275,9 +275,25 @@ On the command line (but not in ICL files or comments), trace options can be als
 
 All trace options are off (level 0) by default. The simple form `$!TRACEOPT` or `--trace TRACEOPT` sets the named option to level 1, which displays some amount of information during (or after) compilation. Some trace options support higher levels of verbosity to print more information.
 
+The trace option system is new as of 6.37. In prior versions, much of this information was available through command-line switches.
+
+**$!ACTIONS**
+
+Show actions and fake-actions as they are defined. (Prior to 6.37, this information was displayed by the `-n` switch.)
+
+**$!ASM** (same as `-a`)
+
+Show assembly-language encoding of functions as they are compiled. `$!ASM=2` will also show the byte encoding of the assembly opcodes. `$!ASM=3` will also show branch optimization info. `$!ASM=4` will show more verbose branch info.
+
+The `$!ASM` trace level can be changed at any point in the code with the `Trace assembly` directive. 
+
+(Prior to 6.37, the `-t` switch set `$!ASM=2`.)
+
 **$!MAP** (same as `-z`)
 
-Display a memory map of the virtual machine. `$!MAP=2` will also show the percentage of VM memory that each segment occupies.
+Display a memory map of the completed virtual machine. `$!MAP=2` will also show the percentage of VM memory that each segment occupies.
+
+(Prior to 6.37, the `-p` switch showed the segment percentages.)
 
 # Language changes
 
