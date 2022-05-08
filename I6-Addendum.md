@@ -313,8 +313,6 @@ The `$!EXPR` trace level can be changed at any point in the code with the `Trace
 
 Show source and include files being opened and closed.
 
-The `$!FILES` trace level can be changed at any point in the code with the `Trace lines` directive. 
-
 (Prior to 6.37, the `-l` switch showed this information.)
 
 **$!FINDABBREVS**
@@ -330,6 +328,8 @@ When using abbreviations (`-e`), show how efficient each abbreviation was.
 **$!LINKER**
 
 Show module linking information. `$!LINKER=2`, `$!LINKER=3`, `$!LINKER=4` will show more verbose information.
+
+The `$!LINKER` trace level can be changed at any point in the code with the `Trace linker` directive. 
 
 (Prior to 6.37, the `-y` switch showed this information.)
 
