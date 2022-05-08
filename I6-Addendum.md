@@ -279,7 +279,9 @@ The trace option system is new as of 6.37. In prior versions, much of this infor
 
 **$!ACTIONS**
 
-Show actions and fake-actions as they are defined. (Prior to 6.37, this information was displayed by the `-n` switch.)
+Show actions and fake-actions as they are defined.
+
+(Prior to 6.37, this information was displayed by the `-n` switch.)
 
 **$!ASM** (same as `-a`)
 
@@ -336,6 +338,32 @@ Show module linking information. `$!LINKER=2`, `$!LINKER=3`, `$!LINKER=4` will s
 Display a memory map of the completed virtual machine. `$!MAP=2` will also show the percentage of VM memory that each segment occupies.
 
 (Prior to 6.37, the `-p` switch showed the segment percentages.)
+
+**$!MEM**
+
+Show memory allocations and deallocations within the compiler.
+
+(Prior to 6.37, the `-m` switch showed this information.)
+
+**$!OBJECTS**
+
+Show the object table when the game is complete.
+
+The `Trace objects` directive will show this information at any point in the code.
+
+**$!PROPS**
+
+Show properties and attributes as they are defined.
+
+(Prior to 6.37, this information was displayed by the `-n` switch.)
+
+**$!RUNTIME** (same as `-g`)
+
+Compile function tracing into the game. Every game function called will print a trace message. `$!RUNTIME=2` will also trace library calls; `$!RUNTIME=3` will also trace veneer calls.
+
+[[This is the only trace option which affects the generated game file.]]
+
+In Glulx mode, `$!RUNTIME=2` and above will cause Glk errors due to rulebooks printing trace messages when no output stream is set.
 
 # Language changes
 
