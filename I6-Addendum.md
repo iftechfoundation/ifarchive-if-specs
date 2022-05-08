@@ -275,7 +275,7 @@ On the command line (but not in ICL files or comments), trace options can be als
 
 All trace options are off (level 0) by default. The simple form `$!TRACEOPT` or `--trace TRACEOPT` sets the named option to level 1, which displays information during (or after) compilation. Some trace options support higher levels of verbosity to print more information.
 
-The trace option system is new as of 6.37. In prior versions, much of this information was available through command-line switches.
+The trace option system is new as of 6.37. In prior versions, much of this information was available through command-line switches or the `Trace` directive.
 
 **$!ACTIONS**
 
@@ -559,6 +559,40 @@ The `Replace` directive has two forms, of which the second is new in 6.33:
 	Replace Func OriginalFunc;
 
 Multiple definitions of `Func()` may follow the `Replace` directive. `Func` will refer to the last-defined version, except that definitions in normal files are preferred over definitions in `System_file` files or the veneer. With the second form, `OriginalFunc` will refer to the *first*-defined version of the function.
+
+**Trace**
+
+The `Trace` directive allows you to adjust various trace settings and display information during compilation. As of 6.37, it is deprecated in favor of [trace options](#traceopts).
+
+Prior to 6.36, it was limited to a few kinds of trace information and its syntax was rather ad-hoc. As of 6.37, it is still limited, but its syntax is more consistent.
+
+The `Trace` directive has two flavors.
+
+	Trace dictionary
+	Trace objects
+	Trace symbols
+	Trace verbs
+
+Each of these prints the named data table *as of that point in the compilation*. The equivalent trace option (`$!DICT`, `$!OBJECTS`, `$!SYMBOLS`, `$!VERBS`) print the named table when compilation is complete.
+
+(For consistency with the trace option system, these four lines can take an optional number. This is only meaningful for `Trace symbols 2`, which, like `$!SYMBOLS=2`, prints more symbol info.)
+
+	Trace assembly [val]
+	Trace expressions [val]
+	Trace tokens [val]
+	Trace linker [val]
+
+Each of these adjusts the level of the equivalent named trace option (`$!ASM`, `$!EXPR`, `$!TOKENS`, `$!LINKER`). The optional value may be `off` (0), `on` (1), or any number. If no value is given, the option is set `on` (1).
+
+	Trace [val]
+
+Equivalent to `Trace assembly [val]`.
+
+	Trace lines [val]
+
+This was intended to support a line-tracing feature which was never implemented. It does nothing.
+
+[[Trace options cannot print tables or change trace levels partway through compilation; that ability is only available through the `Trace` directive. The directive will therefore be retained. However, this ability is not very useful, so it seems reasonable to consider it deprecated.]]
 
 **Undef**
 
