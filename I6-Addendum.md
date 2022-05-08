@@ -315,6 +315,22 @@ The `$!FILES` trace level can be changed at any point in the code with the `Trac
 
 (Prior to 6.37, the `-l` switch showed this information.)
 
+**$!FINDABBREVS**
+
+When computing abbreviations (`-u`), show selection decisions. `$!FINDABBREVS=2` will also show three-letter-block scores.
+
+(Prior to 6.37, the `-u` switch always showed this information.)
+
+**$!FREQ** (same as `-f`)
+
+When using abbreviations (`-e`), show how efficient each abbreviation was.
+
+**$!LINKER**
+
+Show module linking information. `$!LINKER=2`, `$!LINKER=3`, `$!LINKER=4` will show more verbose information.
+
+(Prior to 6.37, the `-y` switch showed this information.)
+
 **$!MAP** (same as `-z`)
 
 Display a memory map of the completed virtual machine. `$!MAP=2` will also show the percentage of VM memory that each segment occupies.
