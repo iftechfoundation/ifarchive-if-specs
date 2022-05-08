@@ -313,7 +313,7 @@ The `$!EXPR` trace level can be changed at any point in the code with the `Trace
 
 Show source and include files being opened and closed.
 
-(Prior to 6.37, the `-l` switch showed this information.)
+(Prior to 6.37, the `-l` switch and `Trace lines` directive showed this information.)
 
 **$!FINDABBREVS**
 
