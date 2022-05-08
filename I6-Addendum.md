@@ -365,6 +365,32 @@ Compile function tracing into the game. Every game function called will print a 
 
 In Glulx mode, `$!RUNTIME=2` and above will cause Glk errors due to rulebooks printing trace messages when no output stream is set.
 
+**$!STATS** (same as `-s`)
+
+Print game statistics when compilation is complete.
+
+**$!SYMBOLS**
+
+Show the symbol table when the game is complete. `$!SYMBOLS=2` will also show compiler-defined symbols.
+
+The `Trace symbols` directive will show this information at any point in the code.
+
+**$!SYMDEF**
+
+Show symbols as they are encountered and defined.
+
+**$!TOKENS**
+
+Show tokens as they are lexed. `$!TOKENS=2` will also show token types; `$!TOKENS=3` will also show their lexical contexts.
+
+The `$!TOKENS` trace level can be changed at any point in the code with the `Trace tokens` directive. 
+
+**$!VERBS**
+
+Show the verb grammar table when the game is complete.
+
+The `Trace verbs` directive will show this information at any point in the code.
+
 # Language changes
 
 A few elements of the Inform language itself have been updated or extended.
