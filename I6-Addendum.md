@@ -102,6 +102,8 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 *New since the DM4:*
 
+`-a2`: As of 6.37, this displays assembly encoding of functions (like `-a`) plus byte encoding of the assembly opcodes. (Prior to 6.37, this was the `-t` option.)
+
 `-B`: In Z-code versions 6 and 7 (only), use different offset values for the packed addresses of routines and strings. In this mode, strings are distinguished by having odd (packed) addresses, whereas routines are even. This allows the game file to contain more executable code. (The default is `-~B`, where the routine and string segments use the same offset value, so string and routine values have different ranges.)
 
 `-Cu`: Treat the source files as being in UTF-8 (Unicode) encoding.
@@ -126,11 +128,23 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 [[Note that `-g2` and above will cause runtime errors in Glulx games, due to printing trace information when no output window is available.]]
 
-`-p`: As of 6.37, this displays the VM memory map (like `-z`) with added percentage information for each segment. (In previous versions, percentage information was displayed in a separate table, and was nonsensical in Glulx.)
-
 `-W`: Sets the number of words in the Z-code header extension table (Z-spec 1.0). The default is `-W3`. The `$ZCODE_HEADER_EXT_WORDS` setting does the same thing.
 
 `-V`: Display the compiler version and exit with no further action.
+
+*Removed since the DM4:*
+
+The following switch options existed prior to 6.37, but have been removed in favor of [trace options](#traceopts).
+
+- `-b`: Has done nothing since Inform 5.
+- `-j`: Replaced by the `$!OBJECTS` option.
+- `-l`: Never fully implemented; what functionality existed has been replaced by the `$!FILES` option.
+- `-m`: Replaced by the `$!MEM` option.
+- `-n`: Replaced by the `$!PROPS` and `$!ACTIONS` options.
+- `-o`: Replaced by the `$!MAP` option.
+- `-p`: Replaced by the `$!MAP=2` option.
+- `-t`: Replaced by the `$!ASM=2` option or the `-a2` switch.
+- `-y`: Replaced by the `$!LINKER` option.
 
 ## Path options (plus)
 
@@ -289,7 +303,7 @@ Show assembly-language encoding of functions as they are compiled. `$!ASM=2` wil
 
 The `$!ASM` trace level can be changed at any point in the code with the `Trace assembly` directive. 
 
-(Prior to 6.37, the `-t` switch showed assembly plus opcode bytes, as `$!ASM=2` does now.)
+(Prior to 6.37, the `-t` switch showed assembly plus opcode bytes, as `$!ASM=2` or `-a2` does now.)
 
 **$!BPATCH**
 
@@ -350,6 +364,8 @@ Show memory allocations and deallocations within the compiler.
 Show the object table when the game is complete.
 
 The `Trace objects` directive will show this information at any point in the code.
+
+(Prior to 6.37, the `-j` switch showed this information.)
 
 **$!PROPS**
 
