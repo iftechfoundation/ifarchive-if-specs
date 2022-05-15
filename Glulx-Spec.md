@@ -531,7 +531,7 @@ Types 01 to 7F are available for use by the compiler, the library, or the progra
 
 ### Floating-Point Numbers { #floats }
 
-Glulx values are 32-bit integers, big-endian when stored in memory. To handle floating-point math, we must be able to encode float values as 32-bit values. Unsurprisingly, Glulx uses the big-endian, single-precision IEEE-754 encoding. (See [http://www.psc.edu/general/software/packages/ieee/ieee.php](http://www.psc.edu/general/software/packages/ieee/ieee.php).) This allows floats to be stored in memory, on the stack, in local variables, and in any other place that a 32-bit value appears.
+Glulx values are 32-bit integers, big-endian when stored in memory. To handle floating-point math, we must be able to encode float values as 32-bit values. Unsurprisingly, Glulx uses the big-endian, single-precision [IEEE-754 encoding](https://en.wikipedia.org/wiki/IEEE_754). This allows floats to be stored in memory, on the stack, in local variables, and in any other place that a 32-bit value appears.
 
 However, float values and integer values are *not* interchangable. You cannot pass floats to the normal arithmetic opcodes, or vice versa, and expect to get meaningful answers. Always pass floats to the float opcodes and integers to the int opcodes, with the appropriate conversion opcodes to convert back and forth. (See [*](#opcodes_float).)
 
@@ -588,6 +588,27 @@ To give you an idea of the behavior of the special values:
 NaN is sticky; almost *any* mathematical operation involving a NaN produces NaN. (There are a few exceptions.)
 
 However, Glulx does not guarantee *which* NaN value you will get from such operations. The underlying platform may try to encode information about what operation failed in the mantissa field of the NaN. Or, contrariwise, it may return the same value for every NaN. The sign bit, similarly, is never guaranteed. (The sign may be preserved if that's meaningful for the failed operation, but it may not be.) You should not test for NaN by comparing to a fixed encoded value; instead, use the jisnan opcode.
+
+#### Double-Precision Floating-Point Numbers { #doubles }
+
+Glulx also supports double-precision (64-bit) values. To accomodate this, a double must be stored as *two* Glulx values. This may be a pair of variables, two words in memory, or two values on the stack. The high 32 bits will be earlier in memory or closer to the top of the stack.
+
+(In this document, these pairs will be written `HI:LO`.)
+
+    +-----------------+
+    | Sign Bit (S)    |  (1 bit)
+    | Exponent (E)    |  (11 bits)
+    | Mantissa (Mhi)  |  (20 bits)
+    +-----------------+
+    | Mantissa (Mlo)  |  (32 bits)
+    +-----------------+
+
+The interpretation is similar to floats, except:
+
+- For infinite and Nan values, E is 7FF.
+- +Inf is 7FF00000:00000000; -Inf is FFF00000:00000000.
+- Denormalized numbers are plus or minus 2^(-1074)*M.
+- Normalized numbers are plus or minus 2^(E-1075)*(10000000000000+M)
 
 ### The Save-Game Format { #saveformat }
 
@@ -2063,6 +2084,7 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 - AccelFunc (10): Returns 1 if the terp implements the accelerated function given in L2.
 - Float (11): Returns 1 if the interpreter supports the floating-point arithmetic opcodes.
 - ExtUndo (12): Returns 1 if the interpreter supports the hasundo and discardundo opcodes. (This must true for any terp supporting Glulx 3.1.3. On a terp which does not support undo functionality, these opcodes will be callable but will fail.)
+- Double (13): Returns 1 if the interpreter supports the double-precision floating-point arithmetic opcodes.
 
 Selectors 0x1000 to 0x10FF are reserved for use by FyreVM. Selectors 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Selectors 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. Selectors 0x1400 to 0x14FF are reserved for iOS extension features by ZZO38. These are not documented here. See [*](#otherif).
 
