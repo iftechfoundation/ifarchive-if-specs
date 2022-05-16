@@ -1541,6 +1541,16 @@ Again with the special cases:
 - atan2(±Inf, −Inf) returns ±3*pi/4.
 - atan2(±Inf, +Inf) returns ±pi/4.
 
+### Double-Precision Math { #opcodes_double }
+
+Recall that each double-precision value is encoded as *two* 32-bit Glulx words (see [*](#doubles)). Every opcode in this section has two operands for every double-precision argument.
+
+By convention, read operands always read the high word first. Write operands always write the *low* word first.
+
+[[This is extremely confusing but it allows us to read and write double pairs to and from the stack consistently.]]
+
+These opcodes were added in Glulx version 3.1.3. However, not all interpreters may support them. You can test for their availability with the Double gestalt selector.
+
 ### Floating-Point Comparisons { #opcodes_floatbranch }
 
 All these branch opcodes specify their destinations with an offset value. See [*](#opcodes_branch).
