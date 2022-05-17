@@ -896,7 +896,7 @@ whereas for Glulx they are specified by frame offset:
 	  <frame-offset>4</frame-offset>
 	</local-variable>
 
-If a local variable identifier is only in scope for part of a routine, it's scope will be encoded as a beginning instruction address (inclusive) and an ending instruction address (exclusive):
+If a local variable identifier is only in scope for part of a routine, its scope will be encoded as a beginning instruction address (inclusive) and an ending instruction address (exclusive):
 
 	<local-variable>
 	  <identifier>rulebook</identifier>
