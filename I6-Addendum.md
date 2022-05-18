@@ -698,7 +698,9 @@ In general, Inform 6 is able to compile older source code to V3 if the source *a
 
 # Debug file format { #debugformat }
 
-The `-k` switch generates a `gameinfo.dbg` file which describes the compiled game. The Inform Technical Manual (§12.5) documents a binary format ("Version 0") for this file. However, that format is no longer used. As of Inform 6.33, a more verbose XML format ("Version 1") is generated; this section describes it.
+The `-k` switch generates a `gameinfo.dbg` file which describes the compiled game. The [Inform Technical Manual][techman] (§12.5) documents a binary format ("Version 0") for this file. However, that format is no longer used. As of Inform 6.33, a more verbose XML format ("Version 1") is generated; this section describes it.
+
+[techman]: https://inform-fiction.org/source/tm/
 
 ## Overview
 
