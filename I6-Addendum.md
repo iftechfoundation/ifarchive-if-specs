@@ -708,7 +708,7 @@ Debugging information files are written in XML and encoded in UTF-8. They theref
 
 Beyond the usual requirements for well-formed XML, the file adheres to the conventions that all numbers are written in decimal, all strings are case-sensitive, and all excerpts from binary files are Base64-encoded.
 
-## The Top Level
+## The top level
 
 The root element is given by the tag `<inform-story-file>` with three attributes: the version of the debug file format being used, the name of the program that produced the file, and that program's version. For instance,
 
@@ -719,7 +719,7 @@ The root element is given by the tag `<inform-story-file>` with three attributes
 
 The elements from Sections ###3--8 may appear in the ellipses.
 
-## Story File Prefix
+## Story file prefix
 
 The story file prefix contains a Base64 encoding of the story file's first bytes so that a debugging tool can easily check whether the story and the debug information file are mismatched. For example, the prefix for a Glulx story might appear as
 
@@ -730,7 +730,7 @@ The story file prefix contains a Base64 encoding of the story file's first bytes
 
 The story file prefix is mandatory, but its length is unspecified. The current version of the Inform compiler records 64 bytes, which seems sufficient.
 
-## Story File Sections
+## Story file sections
 
 Story file sections partition the story file according to how the data will be used. For the Inform 6 compiler, this partitioning is the same as the memory map printed by the `-z` switch.
 
@@ -784,7 +784,7 @@ A compiler that does not wish to subdivide the story file should emit one sectio
 
 	story
 
-## Source Files
+## Source files
 
 Source files are encoded as in the example below. Each file has a unique index, which is used by other elements when referring to source code locations; these indices count from zero. The file's path is recorded in two forms, first as it was given to the compiler via a command-line argument or include directive but without any path abbreviations like `>` (the form suitable for presentation to a human) and second after resolution to an absolute path (the form suitable for loading the file contents). All paths are written according to the conventions of the host OS. The language is, at present, either "Inform 6" or "Inform 7". More languages may added in the future.
 
@@ -803,7 +803,7 @@ If the source file is known to appear in the story's Blorb, its chunk number wil
 	  <blorb-chunk-number>18</blorb-chunk-number>
 	</source>
 
-## Table Entries; Grammar Lines
+## Table entries; grammar lines
 
 Table entries are data defined by particular parts of the source code, but without any corresponding identifiers. The `<table-entry>` element notes the entry's type, the address where it begins (inclusive), the address where it ends (exclusive), and the defining source code location(s), if any:
 
@@ -816,7 +816,7 @@ Table entries are data defined by particular parts of the source code, but witho
 
 The current version of the Inform compiler only emits `<table-entry>` tags for grammar lines; these data are all located in the grammar table section.
 
-## Named Values
+## Named values
 
 Records for named values store their identifier, their value, and the source code location(s) of their definition, if any. For instance,
 
@@ -870,7 +870,7 @@ to indicate that the compiler is providing a sensible name of its own, which cou
 
 Artificial identifiers may contain characters, like the full stop in `lantern.time_left`, that would not be legal in the source language.
 
-## Global Variables
+## Global variables
 
 Globals are similar to named values, except that they are not interpreted as a fixed value, but rather have an address where their value can be found. Their records therefore contain an `<address>` tag in place of the `<value>` tag, as in:
 
@@ -880,7 +880,7 @@ Globals are similar to named values, except that they are not interpreted as a f
 	  <source-code-location>...</source-code-location>
 	</global-variable>
 
-## Local Variables
+## Local variables
 
 The format for local variables mimics the format for global variables, except that a source code location is never included, and their memory locations are not given by address. For Z-code, locals are specified by index:
 
@@ -907,7 +907,7 @@ If a local variable identifier is only in scope for part of a routine, its scope
 
 Identifiers with noncontiguous scopes are recorded as one `<local-variable>` element per contiguous region. It is possible for the same identifier to map to different variables, so long as the corresponding scopes are disjoint.
 
-## Sequence Points
+## Sequence points
 
 Sequence points are stored as an instruction address and the corresponding single location in the source code:
 
@@ -933,7 +933,7 @@ rather than like this:
 	<*> say__p = 1; <*> ParaContent(); <*> .L_Say59; .LSayX59;
 	t_0 = 0;
 
-## Source Code Locations
+## Source code locations
 
 Most source code locations take the following format, which describes their file, the line and character number where they begin (inclusive), the line and character number where they end (exclusive), and the file positions (in bytes) corresponding to those endpoints:
 
