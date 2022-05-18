@@ -698,7 +698,7 @@ In general, Inform 6 is able to compile older source code to V3 if the source *a
 
 # Debug file format { #debugformat }
 
-The `-k` switch generates a `gameinfo.dbg` file which describes the compiled game. The I6 Technical Manual (§12.5) documents a binary format ("version 0") for this file. However, that format is no longer used. As of Inform 6.33, a more verbose XML format ("version 1") is generated; this section describes it.
+The `-k` switch generates a `gameinfo.dbg` file which describes the compiled game. The I6 Technical Manual (§12.5) documents a binary format ("Version 0") for this file. However, that format is no longer used. As of Inform 6.33, a more verbose XML format ("Version 1") is generated; this section describes it.
 
 ## Overview
 
@@ -828,7 +828,7 @@ Records for named values store their identifier, their value, and the source cod
 
 would represent a named constant.
 
-Attributes, properties, actions, fake actions, objects, arrays, and routines are also names for numbers, and differ only in their use; they are represented in the same format under the tags `<attribute>`, `<property>`, `<action>`, `<fake-action>`, `<object>`, `<array>`, and `<routine>`. (Moreover, unlike Version 0 of the debug information format, fake actions are not recorded as both fake actions and actions.)
+Attributes, properties, actions, fake actions, objects, arrays, and routines are also names for numbers, and differ only in their use; they are represented in the same format under the tags `<attribute>`, `<property>`, `<action>`, `<fake-action>`, `<object>`, `<array>`, and `<routine>`. (Moreover, unlike in Version 0, fake actions are not recorded as both fake actions and actions.)
 
 The records for constants include some extra entries for the system constants tabulated in Section 12.2 of the Inform Technical Manual, even though these are not created by Constant directives. Entries for `#undef`ed constants are also included, but necessarily without values.
 
@@ -918,7 +918,7 @@ Sequence points are stored as an instruction address and the corresponding singl
 
 The source code location will always be exactly one position with overlapping endpoints.
 
-Sequence points are defined as in Section 12.4 of the Inform Technical Manual, but with the further stipulation that labels do not influence their source code locations, as they did in Version 0 of the debug information format. For instance, in code like
+Sequence points are defined as in Section 12.4 of the Inform Technical Manual, but with the further stipulation that labels do not influence their source code locations, as they did in Version 0. For instance, in code like
 
 	say__p = 1; ParaContent(); .L_Say59; .LSayX59;
 	t_0 = 0;
@@ -983,7 +983,7 @@ At the other extreme, sometimes definitions span several source files or appear 
 	  <end-file-position>59</end-file-position>
 	</source-code-location>
 
-The latter case is also handled with multiple elements. Note that indexing is only used to indicated order among locations in the same language.
+The latter case is also handled with multiple elements. Note that indexing is only used to indicate order among locations in the same language.
 
 	<!-- Inform 7 Definition -->
 	<source-code-location>
