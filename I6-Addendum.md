@@ -717,7 +717,7 @@ The root element is given by the tag `<inform-story-file>` with three attributes
 	  ...
 	</inform-story-file>
 
-The elements from Sections ###3--8 may appear in the ellipses.
+Any of the elements described below (except `<local-variable>`, `<sequence-point>`, `<source-code-location>`) may appear in the ellipses.
 
 ## Story file prefix
 
@@ -852,7 +852,7 @@ Records for arrays also have extra children, which record their size, their elem
 	  <source-code-location>...</source-code-location>
 	</array>
 
-And finally, `<routine>` records contain an `<address>` and a `<byte-count>` element, along with any number of the `<local-variable>` and `<sequence-point>` elements, which are described in ###Sections 9 and 10. The address is provided because the identifier's value may be packed.
+And finally, `<routine>` records contain an `<address>` and a `<byte-count>` element, along with any number of the `<local-variable>` and `<sequence-point>` elements, which are described [below](#debug_localvars). The address is provided because the identifier's value may be packed.
 
 Sometimes what would otherwise be a named value is in fact anonymous; unnamed objects, embedded routines, some replaced routines, veneer properties, and the Infix attribute are all examples. In such a case, the `<identifier>` subelement will carry the XML attribute
 
@@ -880,7 +880,7 @@ Globals are similar to named values, except that they are not interpreted as a f
 	  <source-code-location>...</source-code-location>
 	</global-variable>
 
-## Local variables
+## Local variables { #debug_localvars }
 
 The format for local variables mimics the format for global variables, except that a source code location is never included, and their memory locations are not given by address. For Z-code, locals are specified by index:
 
