@@ -702,6 +702,8 @@ The `-k` switch generates a `gameinfo.dbg` file which describes the compiled gam
 
 [techman]: https://inform-fiction.org/source/tm/
 
+[[By "verbose", we mean that the debug info for Advent.inf approaches 2 megabytes of XML. The debug info for a one-line Inform 7 game reaches 11 megabytes. The greatest bulk of the data is `<source-code-location>` and `<sequence-point>` tags.]]
+
 ## Overview
 
 Debugging information files are written in XML and encoded in UTF-8. They therefore begin with the following declaration:
