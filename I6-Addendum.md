@@ -6,7 +6,7 @@ Language and compiler changes: releases 6.30 to 6.37 (in development)
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: March 25, 2022)
+(Last update: May 17, 2022)
 {: .DateHeader }
 
 Copyright 2020-22 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
@@ -96,11 +96,13 @@ Note that this section of the file is parsed before the source encoding is set. 
 
 [[It would be better if command-line options took precedence over `!%` options. This would allow one-off changes while recompiling existing source code. This change may be considered in the future.]]
 
-## Switch options (dash)
+## Switch options (dash) { #switchopts }
 
 Classic options begin with a dash -- the traditional style of command-line tools. For example, the `-h` option (help) shows a page of output documenting how to run the compiler. `-h2` will show a page listing all options that begin with a dash (§Table3).
 
 *New since the DM4:*
+
+`-a2`: As of 6.37, this displays assembly encoding of functions (like `-a`) plus byte encoding of the assembly opcodes. (Prior to 6.37, this was the `-t` option.)
 
 `-B`: In Z-code versions 6 and 7 (only), use different offset values for the packed addresses of routines and strings. In this mode, strings are distinguished by having odd (packed) addresses, whereas routines are even. This allows the game file to contain more executable code. (The default is `-~B`, where the routine and string segments use the same offset value, so string and routine values have different ranges.)
 
@@ -120,17 +122,29 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 `-H`: In Glulx format, use Huffman encoding to compress strings. This is the default; to use uncompressed text, use `-~H`.
 
-`-k`: Output debugging information to a file `gameinfo.dbg`. This switch is documented in the DM4 (§7), but the output format has changed. As of 6.33, it is an extremely verbose XML format which describes every facet of the compiled game file. Also, as of 6.35, the `-k` switch no longer automatically sets `-D`.
+`-k`: Output debugging information to a file `gameinfo.dbg`. This switch is documented in the DM4 (§7), but the output format has changed. As of 6.33, it is an extremely verbose XML format; see [below](#debugformat). Also, as of 6.35, the `-k` switch no longer automatically sets `-D`.
 
 `-g3`: Trace calls to all functions. The DM4 documents `-g2` as doing this, but as of 6.21, `-g2` does not trace veneer functions. As of 6.35, `-g3` traces everything.
 
 [[Note that `-g2` and above will cause runtime errors in Glulx games, due to printing trace information when no output window is available.]]
 
-`-p`: As of 6.37, this displays the VM memory map (like `-z`) with added percentage information for each segment. (In previous versions, percentage information was displayed in a separate table, and was nonsensical in Glulx.)
-
 `-W`: Sets the number of words in the Z-code header extension table (Z-spec 1.0). The default is `-W3`. The `$ZCODE_HEADER_EXT_WORDS` setting does the same thing.
 
 `-V`: Display the compiler version and exit with no further action.
+
+*Removed since the DM4:*
+
+The following switch options existed prior to 6.37, but have been removed in favor of [trace options](#traceopts).
+
+- `-b`: Has done nothing since Inform 5.
+- `-j`: Replaced by the `$!OBJECTS` option.
+- `-l`: Never fully implemented; what functionality existed has been replaced by the `$!FILES` option.
+- `-m`: Replaced by the `$!MEM` option.
+- `-n`: Replaced by the `$!PROPS` and `$!ACTIONS` options.
+- `-o`: Replaced by the `$!MAP` option.
+- `-p`: Replaced by the `$!MAP=2` option.
+- `-t`: Replaced by the `$!ASM=2` option or the `-a2` switch.
+- `-y`: Replaced by the `$!LINKER` option.
 
 ## Path options (plus)
 
@@ -166,11 +180,14 @@ A setting that begins with a hash sign (`$#`) will define an arbitrary numeric c
 	
 [[Thus, passing the `$#DEBUG` argument is equivalent to the `-D` option. Remember that Inform symbols are not case-sensitive; `$#debug` or `$#Debug=0` does the same thing.]]
 
+A setting that begins with an exclamation mark (`$!`) is a trace option. These have a slightly different format; see [Trace options](#traceopts), below.
+
 On the command line (but not in ICL files or comments), compiler settings can also be specified in Unix style. (New in 6.35.) This avoids the need to escape dollar signs.
 
 	--list
 	--opt SETTING=number
 	--define SYMBOL=number
+	--trace TRACEOPT=number
 
 As of 6.36, the following internal memory settings are no longer needed and have no effect: `$ALLOC_CHUNK_SIZE`, `$MAX_OBJECTS`, `$MAX_CLASSES`, `$MAX_SYMBOLS`, `MAX_PROP_TABLE_SIZE`, `$MAX_INDIV_PROP_TABLE_SIZE`, `$MAX_OBJ_PROP_COUNT`, `$MAX_OBJ_PROP_TABLE_SIZE`, `$MAX_ARRAYS`, `$MAX_STATIC_DATA`, `$MAX_ADJECTIVES`, `$MAX_VERBS`, `$MAX_VERBSPACE`, `$MAX_LABELS`, `$MAX_EXPRESSION_NODES`, `$MAX_SOURCE_FILES`, `$MAX_INCLUSION_DEPTH`, `$MAX_ACTIONS`, `$MAX_LINESPACE`, `$MAX_ZCODE_SIZE`, `$MAX_LINK_DATA_SIZE`, `$MAX_TRANSCRIPT_SIZE`, `$MAX_DICT_ENTRIES`, `$MAX_NUM_STATIC_STRINGS`, `$MAX_UNICODE_CHARS`, `$MAX_STATIC_STRINGS`, `$MAX_LOW_STRINGS`, `$MAX_GLOBAL_VARIABLES`, `$MAX_LOCAL_VARIABLES`, `$MAX_QTEXT_SIZE`.
 
@@ -257,6 +274,138 @@ This is the value to store in the Flags 3 word of the header extension table. (S
 If this is set to 1, each dictionary entry will have two bytes of data instead of the usual three. (Added in 6.36. This is only meaningful in Z-code.)
 
 With this switch set, you may not refer to `#dict_par3`. You also may not use grammar version 1, as that format needs to use the third byte for the preposition number.
+
+## Trace options { #traceopts }
+
+These are special compiler settings which display extra information about the compilation process. Most of them are only useful for debugging the compiler itself. The ones most useful to authors have simple switch options, documented [above](#switchopts).
+
+Trace options all have the form `$!TRACEOPT` or `$!TRACEOPT=number`. The option `$!` by itself will show a list of all supported trace options.
+
+On the command line (but not in ICL files or comments), trace options can be also specified in Unix style.
+
+	--trace TRACEOPT
+	--trace TRACEOPT=number
+	--helptrace
+
+All trace options are off (level 0) by default. The simple form `$!TRACEOPT` or `--trace TRACEOPT` sets the named option to level 1, which displays information during (or after) compilation. Some trace options support higher levels of verbosity to print more information.
+
+The trace option system is new as of 6.37. In prior versions, much of this information was available through command-line switches or the `Trace` directive.
+
+**$!ACTIONS**
+
+Show actions and fake-actions as they are defined.
+
+(Prior to 6.37, this information was displayed by the `-n` switch.)
+
+**$!ASM** (same as `-a`)
+
+Show assembly-language encoding of functions as they are compiled. `$!ASM=2` will also show the byte encoding of the assembly opcodes. `$!ASM=3` will also show branch optimization info. `$!ASM=4` will show more verbose branch info.
+
+The `$!ASM` trace level can be changed at any point in the code with the `Trace assembly` directive. 
+
+(Prior to 6.37, the `-t` switch showed assembly plus opcode bytes, as `$!ASM=2` or `-a2` does now.)
+
+**$!BPATCH**
+
+Show backpatch markers as they are resolved. `$!BPATCH=2` will also show backpatch markers being created.
+
+(Prior to 6.37, this information was shown at higher `$!ASM` trace levels.)
+
+**$!DICT**
+
+Show the game dictionary when the game is complete. `$!DICT=2` will also show the byte encoding of each dictionary entry.
+
+The `Trace dictionary` directive will show this information at any point in the code.
+
+**$!EXPR**
+
+Show expression trees as they are compiled. `$!EXPR=2` and `$!EXPR=3` will show more verbose information.
+
+The `$!EXPR` trace level can be changed at any point in the code with the `Trace expressions` directive. 
+
+**$!FILES**
+
+Show source and include files being opened and closed.
+
+(Prior to 6.37, the `-l` switch and `Trace lines` directive showed this information.)
+
+**$!FINDABBREVS**
+
+When computing abbreviations (`-u`), show selection decisions. `$!FINDABBREVS=2` will also show three-letter-block scores.
+
+(Prior to 6.37, the `-u` switch always showed this information.)
+
+**$!FREQ** (same as `-f`)
+
+When using abbreviations (`-e`), show how efficient each abbreviation was.
+
+**$!LINKER**
+
+Show module linking information. `$!LINKER=2`, `$!LINKER=3`, `$!LINKER=4` will show more verbose information.
+
+The `$!LINKER` trace level can be changed at any point in the code with the `Trace linker` directive. 
+
+(Prior to 6.37, the `-y` switch showed this information.)
+
+**$!MAP** (same as `-z`)
+
+Display a memory map of the completed virtual machine. `$!MAP=2` will also show the percentage of VM memory that each segment occupies.
+
+(Prior to 6.37, the `-p` switch showed the segment percentages.)
+
+**$!MEM**
+
+Show memory allocations and deallocations within the compiler.
+
+(Prior to 6.37, the `-m` switch showed this information.)
+
+**$!OBJECTS**
+
+Show the object table when the game is complete.
+
+The `Trace objects` directive will show this information at any point in the code.
+
+(Prior to 6.37, the `-j` switch showed this information.)
+
+**$!PROPS**
+
+Show properties and attributes as they are defined.
+
+(Prior to 6.37, this information was displayed by the `-n` switch.)
+
+**$!RUNTIME** (same as `-g`)
+
+Compile function tracing into the game. Every game function called will print a trace message. `$!RUNTIME=2` will also trace library calls; `$!RUNTIME=3` will also trace veneer calls.
+
+[[This is the only trace option which affects the generated game file.]]
+
+In Glulx mode, `$!RUNTIME=2` and above will cause Glk errors due to rulebooks printing trace messages when no output stream is set.
+
+**$!STATS** (same as `-s`)
+
+Print game statistics when compilation is complete.
+
+**$!SYMBOLS**
+
+Show the symbol table when the game is complete. `$!SYMBOLS=2` will also show compiler-defined symbols.
+
+The `Trace symbols` directive will show this information at any point in the code.
+
+**$!SYMDEF**
+
+Show symbols as they are encountered and defined.
+
+**$!TOKENS**
+
+Show tokens as they are lexed. `$!TOKENS=2` will also show token types; `$!TOKENS=3` will also show their lexical contexts.
+
+The `$!TOKENS` trace level can be changed at any point in the code with the `Trace tokens` directive. 
+
+**$!VERBS**
+
+Show the verb grammar table when the game is complete.
+
+The `Trace verbs` directive will show this information at any point in the code.
 
 # Language changes
 
@@ -426,6 +575,40 @@ The `Replace` directive has two forms, of which the second is new in 6.33:
 	Replace Func OriginalFunc;
 
 Multiple definitions of `Func()` may follow the `Replace` directive. `Func` will refer to the last-defined version, except that definitions in normal files are preferred over definitions in `System_file` files or the veneer. With the second form, `OriginalFunc` will refer to the *first*-defined version of the function.
+
+**Trace**
+
+The `Trace` directive allows you to adjust various trace settings and display information during compilation. As of 6.37, it is deprecated in favor of [trace options](#traceopts).
+
+Prior to 6.36, it was limited to a few kinds of trace information and its syntax was rather ad-hoc. As of 6.37, it is still limited, but its syntax is more consistent.
+
+The `Trace` directive has two flavors.
+
+	Trace dictionary
+	Trace objects
+	Trace symbols
+	Trace verbs
+
+Each of these prints the named data table *as of that point in the compilation*. The equivalent trace option (`$!DICT`, `$!OBJECTS`, `$!SYMBOLS`, `$!VERBS`) print the named table when compilation is complete.
+
+(For consistency with the trace option system, these four lines can take an optional number. This is only meaningful for `Trace symbols 2`, which, like `$!SYMBOLS=2`, prints more symbol info.)
+
+	Trace assembly [val]
+	Trace expressions [val]
+	Trace tokens [val]
+	Trace linker [val]
+
+Each of these adjusts the level of the equivalent named trace option (`$!ASM`, `$!EXPR`, `$!TOKENS`, `$!LINKER`). The optional value may be `off` (0), `on` (1), or any number. If no value is given, the option is set `on` (1).
+
+	Trace [val]
+
+Equivalent to `Trace assembly [val]`.
+
+	Trace lines [val]
+
+This was intended to support a line-tracing feature which was never implemented. It does nothing.
+
+[[Trace options cannot print tables or change trace levels partway through compilation; that ability is only available through the `Trace` directive. The directive will therefore be retained. However, this ability is not very useful, so it seems reasonable to consider it deprecated.]]
 
 **Undef**
 
@@ -705,6 +888,322 @@ You can work around the lack of `obj.prop()` by writing:
 In general, Inform 6 is able to compile older source code to V3 if the source *and the library* avoids the `obj.prop()` syntax. This means you cannot use the Inform 6 library. You must use the [Inform 5 library][i5lib], or one of the alternative libraries designed for V3, such as [metro84][] or [PunyInform][].
 
 [[It is possible to re-implement a limited version of `obj.prop()` for V3 by replacing the `CA__Pr` and `Cl__Ms` veneer routines. Some alternative libraries do this.]]
+
+# Debug file format { #debugformat }
+
+The `-k` switch generates a `gameinfo.dbg` file which describes the compiled game. The [Inform Technical Manual][techman] (§12.5) documents a binary format ("Version 0") for this file. However, that format is no longer used. As of Inform 6.33, a more verbose XML format ("Version 1") is generated; this section describes it.
+
+[techman]: https://inform-fiction.org/source/tm/
+
+[[By "verbose", we mean that the debug info for Advent.inf approaches 2 megabytes of XML. The debug info for a one-line Inform 7 game reaches 11 megabytes. The greatest bulk of the data is `<source-code-location>` and `<sequence-point>` tags.]]
+
+## Overview
+
+Debugging information files are written in XML and encoded in UTF-8. They therefore begin with the following declaration:
+
+	<?xml version="1.0" encoding="UTF-8"?>
+
+Beyond the usual requirements for well-formed XML, the file adheres to the conventions that all numbers are written in decimal, all strings are case-sensitive, and all excerpts from binary files are Base64-encoded.
+
+## The top level
+
+The root element is given by the tag `<inform-story-file>` with three attributes: the version of the debug file format being used, the name of the program that produced the file, and that program's version. For instance,
+
+	<inform-story-file version="1.0" content-creator="Inform"
+			   content-creator-version="6.33">
+	  ...
+	</inform-story-file>
+
+Any of the elements described below (except `<local-variable>`, `<sequence-point>`, `<source-code-location>`) may appear in the ellipses.
+
+## Story file prefix
+
+The story file prefix contains a Base64 encoding of the story file's first bytes so that a debugging tool can easily check whether the story and the debug information file are mismatched. For example, the prefix for a Glulx story might appear as
+
+	<story-file-prefix>
+	  R2x1bAADAQEACqEAAAwsAAAMLAAAAQAAAAAAPAAIo2Jc
+	  6B2XSW5mbwABAAA2LjMyMC4zOAABMTIxMDE1wQAAMA==
+	</story-file-prefix>
+
+The story file prefix is mandatory, but its length is unspecified. The current version of the Inform compiler records 64 bytes, which seems sufficient.
+
+## Story file sections
+
+Story file sections partition the story file according to how the data will be used. For the Inform 6 compiler, this partitioning is the same as the memory map printed by the `-z` switch.
+
+A record for a story file section gives a name for that section, its beginning address (inclusive), and its end address (exclusive):
+
+	<story-file-section>
+	  <type>abbreviations table</type>
+	  <address>64</address>
+	  <end-address>128</end-address>
+	</story-file-section>
+
+The names currently in use include those from the Inform Technical Manual (§12.5):
+
+	abbreviations table
+	header extension (Z-code only)
+	alphabets table (Z-code only)
+	Unicode table (Z-code only)
+	property defaults
+	object tree
+	common properties
+	class numbers
+	individual properties (Z-code only)
+	global variables
+	array space
+	grammar table
+	actions table
+	parsing routines (Z-code only)
+	adjectives table (Z-code only)
+	dictionary
+	code area
+	strings area
+
+plus one addition for Z-code:
+
+	abbreviations
+
+two additions for Glulx:
+
+	memory layout id
+	string decoding table
+
+and three additions for both targets:
+
+	header
+	identifier names
+	zero padding
+
+Names may repeat; Glulx story files, for example, sometimes have two zero padding sections.
+
+A compiler that does not wish to subdivide the story file should emit one section for the entirety and give it the name
+
+	story
+
+## Source files
+
+Source files are encoded as in the example below. Each file has a unique index, which is used by other elements when referring to source code locations; these indices count from zero. The file's path is recorded in two forms, first as it was given to the compiler via a command-line argument or include directive but without any path abbreviations like `>` (the form suitable for presentation to a human) and second after resolution to an absolute path (the form suitable for loading the file contents). All paths are written according to the conventions of the host OS. The language is, at present, either "Inform 6" or "Inform 7". More languages may added in the future.
+
+	<source index="0">
+	  <given-path>example.inf</given-path>
+	  <resolved-path>/home/user/directory/example.inf</resolved-path>
+	  <language>Inform 6</language>
+	</source>
+
+If the source file is known to appear in the story's Blorb, its chunk number will also be recorded:
+
+	<source index="0">
+	  <given-path>example.inf</given-path>
+	  <resolved-path>/home/user/directory/example.inf</resolved-path>
+	  <language>Inform 6</language>
+	  <blorb-chunk-number>18</blorb-chunk-number>
+	</source>
+
+## Table entries; grammar lines
+
+Table entries are data defined by particular parts of the source code, but without any corresponding identifiers. The `<table-entry>` element notes the entry's type, the address where it begins (inclusive), the address where it ends (exclusive), and the defining source code location(s), if any:
+
+	<table-entry>
+	  <type>grammar line</type>
+	  <address>1004</address>
+	  <end-address>1030</end-address>
+	  <source-code-location>...</source-code-location>
+	</table-entry>
+
+The current version of the Inform compiler only emits `<table-entry>` tags for grammar lines; these data are all located in the grammar table section.
+
+## Named values
+
+Records for named values store their identifier, their value, and the source code location(s) of their definition, if any. For instance,
+
+	<constant>
+	  <identifier>MAX_SCORE</identifier>
+	  <value>40</value>
+	  <source-code-location>...</source-code-location>
+	</constant>
+
+would represent a named constant.
+
+Attributes, properties, actions, fake actions, objects, arrays, and routines are also names for numbers, and differ only in their use; they are represented in the same format under the tags `<attribute>`, `<property>`, `<action>`, `<fake-action>`, `<object>`, `<array>`, and `<routine>`. (Moreover, unlike in Version 0, fake actions are not recorded as both fake actions and actions.)
+
+The records for constants include some extra entries for the system constants tabulated in the Inform Technical Manual (§12.2), even though these are not created by Constant directives. Entries for `#undef`ed constants are also included, but necessarily without values.
+
+Some records for objects will represent class objects. In that case, they will be given with the tag `<class>` rather than `<object>` and include an additional child to indicate their class number:
+
+	<class>
+	  <identifier>lamp</identifier>
+	  <class-number>5</class-number>
+	  <value>1560</value>
+	  <source-code-location>...</source-code-location>
+	</class>
+
+Records for arrays also have extra children, which record their size, their element size, and the intended semantics for their zeroth element:
+
+	<array>
+	  <identifier>route</identifier>
+	  <value>1500</value>
+	  <byte-count>20</byte-count>
+	  <bytes-per-element>4</bytes-per-element>
+	  <zeroth-element-holds-length>true</zeroth-element-holds-length>
+	  <source-code-location>...</source-code-location>
+	</array>
+
+And finally, `<routine>` records contain an `<address>` and a `<byte-count>` element, along with any number of the `<local-variable>` and `<sequence-point>` elements, which are described [below](#debug_localvars). The address is provided because the identifier's value may be packed.
+
+Sometimes what would otherwise be a named value is in fact anonymous; unnamed objects, embedded routines, some replaced routines, veneer properties, and the Infix attribute are all examples. In such a case, the `<identifier>` subelement will carry the XML attribute
+
+	artificial
+
+to indicate that the compiler is providing a sensible name of its own, which could be presented to a human, but is not actually an identifier. For instance:
+
+	<routine>
+	  <identifier artificial="true">lantern.time_left</identifier>
+	  <value>1820</value>
+	  <byte-count>80</byte-count>
+	  <source-code-location>...</source-code-location>
+	  ...
+	</routine>
+
+Artificial identifiers may contain characters, like the full stop in `lantern.time_left`, that would not be legal in the source language.
+
+## Global variables
+
+Globals are similar to named values, except that they are not interpreted as a fixed value, but rather have an address where their value can be found. Their records therefore contain an `<address>` tag in place of the `<value>` tag, as in:
+
+	<global-variable>
+	  <identifier>darkness_witnessed</identifier>
+	  <address>1520</address>
+	  <source-code-location>...</source-code-location>
+	</global-variable>
+
+## Local variables { #debug_localvars }
+
+The format for local variables mimics the format for global variables, except that a source code location is never included, and their memory locations are not given by address. For Z-code, locals are specified by index:
+
+	<local-variable>
+	  <identifier>parameter</identifier>
+	  <index>1</index>
+	</local-variable>
+
+whereas for Glulx they are specified by frame offset:
+
+	<local-variable>
+	  <identifier>parameter</identifier>
+	  <frame-offset>4</frame-offset>
+	</local-variable>
+
+If a local variable identifier is only in scope for part of a routine, its scope will be encoded as a beginning instruction address (inclusive) and an ending instruction address (exclusive):
+
+	<local-variable>
+	  <identifier>rulebook</identifier>
+	  <index>0</index>
+	  <scope-address>1628</scope-address>
+	  <end-scope-address>1678</end-scope-address>
+	</local-variable>
+
+Identifiers with noncontiguous scopes are recorded as one `<local-variable>` element per contiguous region. It is possible for the same identifier to map to different variables, so long as the corresponding scopes are disjoint.
+
+## Sequence points
+
+Sequence points are stored as an instruction address and the corresponding single location in the source code:
+
+	<sequence-point>
+	  <address>1628</address>
+	  <source-code-location>...</source-code-location>
+	</sequence-point>
+
+The source code location will always be exactly one position with overlapping endpoints.
+
+Sequence points are defined as in the Inform Technical Manual (§12.4), but with the further stipulation that labels do not influence their source code locations, as they did in Version 0. For instance, in code like
+
+	say__p = 1; ParaContent(); .L_Say59; .LSayX59;
+	t_0 = 0;
+
+the sequence points are to be placed like this:
+
+	<*> say__p = 1; <*> ParaContent(); .L_Say59; .LSayX59;
+	<*> t_0 = 0;
+
+rather than like this:
+
+	<*> say__p = 1; <*> ParaContent(); <*> .L_Say59; .LSayX59;
+	t_0 = 0;
+
+## Source code locations
+
+Most source code locations take the following format, which describes their file, the line and character number where they begin (inclusive), the line and character number where they end (exclusive), and the file positions (in bytes) corresponding to those endpoints:
+
+	<source-code-location>
+	  <file-index>0</file-index>
+	  <line>1024</line>
+	  <character>4</character>
+	  <file-position>44153</file-position>
+	  <end-line>1025</end-line>
+	  <end-character>1</end-character>
+	  <end-file-position>44186</end-file-position>
+	</source-code-location>
+
+Line numbers and character numbers begin at one, but file positions count from zero.
+
+In the special case where the endpoints coincide, as happens with sequence points, the end elements may be elided:
+
+	<source-code-location>
+	  <file-index>0</file-index>
+	  <line>1024</line>
+	  <character>4</character>
+	  <file-position>44153</file-position>
+	</source-code-location>
+
+At the other extreme, sometimes definitions span several source files or appear in two different languages. The former case is dealt with by including multiple code location elements and indexing them to indicate order:
+
+	<!-- First Part of Inform 6 Definition -->
+	<source-code-location index="0">
+	  <!-- Assuming file 0 was given with the language "Inform 6" -->
+	  <file-index>0</file-index>
+	  <line>1024</line>
+	  <character>4</character>
+	  <file-position>44153</file-position>
+	  <end-line>1025</end-line>
+	  <end-character>1</end-character>
+	  <end-file-position>44186</end-file-position>
+	</source-code-location>
+	<!-- Second Part of Inform 6 Definition -->
+	<source-code-location index="1">
+	  <!-- Assuming file 1 was given with the language "Inform 6" -->
+	  <file-index>1</file-index>
+	  <line>1</line>
+	  <character>0</character>
+	  <file-position>0</file-position>
+	  <end-line>3</end-line>
+	  <end-character>1</end-character>
+	  <end-file-position>59</end-file-position>
+	</source-code-location>
+
+The latter case is also handled with multiple elements. Note that indexing is only used to indicate order among locations in the same language.
+
+	<!-- Inform 7 Definition -->
+	<source-code-location>
+	  <!-- Assuming file 2 was given with the language "Inform 7" -->
+	  <file-index>2</file-index>
+	  <line>12</line>
+	  <character>0</character>
+	  <file-position>308</file-position>
+	  <end-line>12</end-line>
+	  <end-character>112</end-character>
+	  <end-file-position>420</end-file-position>
+	</source-code-location>
+	<!-- Inform 6 Definition -->
+	<source-code-location>
+	  <!-- Assuming file 0 was given with the language "Inform 6" -->
+	  <file-index>0</file-index>
+	  <line>1024</line>
+	  <character>4</character>
+	  <file-position>44153</file-position>
+	  <end-line>1025</end-line>
+	  <end-character>1</end-character>
+	  <end-file-position>44186</end-file-position>
+	</source-code-location>
 
 # Bugs
 
