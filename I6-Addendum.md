@@ -221,9 +221,9 @@ In Glulx, `$MAX_ABBREVS` is not needed and has no effect, except with the `-u` s
 
 The number of string variables (`"@00"`, etc) allowed in the game. In Z-code, this may be any value from 0 to 96. Setting this in Z-code automatically sets `$MAX_ABBREVS` to `(96 - $MAX_DYNAMIC_STRINGS)`, as the two features draw from the same pool of 96 Z-machine abbreviations. Similarly, setting `$MAX_ABBREVS` sets `$MAX_DYNAMIC_STRINGS` to `(96 - $MAX_ABBREVS)`.
 
-In Glulx, the two settings are not connected; `$MAX_DYNAMIC_STRINGS` may be as high as 100. (Dynamic string references have two digits, so they cannot go beyond the range `"@00"` to `"@99"`.)
+In Glulx, the two settings are not connected. You may use any number of dynamic strings. If you use more than 100, you must set `$MAX_DYNAMIC_STRINGS` to a higher value.
 
-(Added in 6.35. In earlier versions, 32 string variables and 64 abbreviations were available in Z-code; 64 string variables were available in Glulx. As of 6.36, `$MAX_DYNAMIC_STRINGS` defaults to 100 in Glulx, which is the maximum.)
+(Added in 6.35. In earlier versions, 32 string variables and 64 abbreviations were available in Z-code; 64 string variables were available in Glulx. As of 6.36, `$MAX_DYNAMIC_STRINGS` defaults to 100 in Glulx, which was the maximum. As of 6.40, `$MAX_DYNAMIC_STRINGS` is not limited in Glulx, but still defaults to 100.)
 
 **$MAX_STACK_SIZE**
 
