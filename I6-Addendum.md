@@ -651,7 +651,7 @@ This calls the `CInDefArt()` veneer function.
 
 ## Dynamic strings
 
-The DM4 (§1.11) describes "printing-variables", also called dynamic strings. By embedding a code `@01` in a string, you can interpolate another literal string value. You set the interpolated value with a statement like
+The DM4 (§1.11) describes "printing-variables", also called dynamic strings. By embedding a code like `@01` in a string, you can interpolate another literal string value. You set the interpolated value with a statement like
 
 	string 1 "text";
 	print "This is the @01.^";
@@ -665,7 +665,7 @@ As of 6.40, dynamic string interpolations may look like `@(1)`, with any nonnega
 	string TEXTVAL "text";
 	print "This is the @(1), or equivalently @(TEXTVAL).^";
 
-The old format `@01` is still supported, but only accepts two-digit numbers.
+The old format `@01` is still supported, but only supports numbers of exactly two digits.
 
 [[The `string` statement has always supported numbers and numeric constants, so it has not changed.]]
 
