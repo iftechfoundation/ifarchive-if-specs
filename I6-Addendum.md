@@ -1,6 +1,6 @@
 # Inform 6 Reference Addendum {: .Title }
 
-Language and compiler changes: releases 6.30 to 6.37 (in development)
+Language and compiler changes: releases 6.30 to 6.40 (in development)
 {: .VersionHeader }
 
 Maintained by IFTF: `<specs@ifarchive.org>`
@@ -102,7 +102,7 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 *New since the DM4:*
 
-`-a2`: As of 6.37, this displays assembly encoding of functions (like `-a`) plus byte encoding of the assembly opcodes. (Prior to 6.37, this was the `-t` option.)
+`-a2`: As of 6.40, this displays assembly encoding of functions (like `-a`) plus byte encoding of the assembly opcodes. (Prior to 6.40, this was the `-t` option.)
 
 `-B`: In Z-code versions 6 and 7 (only), use different offset values for the packed addresses of routines and strings. In this mode, strings are distinguished by having odd (packed) addresses, whereas routines are even. This allows the game file to contain more executable code. (The default is `-~B`, where the routine and string segments use the same offset value, so string and routine values have different ranges.)
 
@@ -134,7 +134,7 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 *Removed since the DM4:*
 
-The following switch options existed prior to 6.37, but have been removed in favor of [trace options](#traceopts).
+The following switch options existed prior to 6.40, but have been removed in favor of [trace options](#traceopts).
 
 - `-b`: Has done nothing since Inform 5.
 - `-j`: Replaced by the `$!OBJECTS` option.
@@ -251,7 +251,7 @@ If set to 1 (the default), unreachable labels will be eliminated as part of bran
 
 If set to 0, any label can be `jump`ed to, at the cost of less optimized code.
 
-(Added in 6.37. In earlier versions, any label could be `jump`ed to.)
+(Added in 6.40. In earlier versions, any label could be `jump`ed to.)
 
 **$TRANSCRIPT_FORMAT**
 
@@ -289,13 +289,13 @@ On the command line (but not in ICL files or comments), trace options can be als
 
 All trace options are off (level 0) by default. The simple form `$!TRACEOPT` or `--trace TRACEOPT` sets the named option to level 1, which displays information during (or after) compilation. Some trace options support higher levels of verbosity to print more information.
 
-The trace option system is new as of 6.37. In prior versions, much of this information was available through command-line switches or the `Trace` directive.
+The trace option system is new as of 6.40. In prior versions, much of this information was available through command-line switches or the `Trace` directive.
 
 **$!ACTIONS**
 
 Show actions and fake-actions as they are defined.
 
-(Prior to 6.37, this information was displayed by the `-n` switch.)
+(Prior to 6.40, this information was displayed by the `-n` switch.)
 
 **$!ASM** (same as `-a`)
 
@@ -303,13 +303,13 @@ Show assembly-language encoding of functions as they are compiled. `$!ASM=2` wil
 
 The `$!ASM` trace level can be changed at any point in the code with the `Trace assembly` directive. 
 
-(Prior to 6.37, the `-t` switch showed assembly plus opcode bytes, as `$!ASM=2` or `-a2` does now.)
+(Prior to 6.40, the `-t` switch showed assembly plus opcode bytes, as `$!ASM=2` or `-a2` does now.)
 
 **$!BPATCH**
 
 Show backpatch markers as they are resolved. `$!BPATCH=2` will also show backpatch markers being created.
 
-(Prior to 6.37, this information was shown at higher `$!ASM` trace levels.)
+(Prior to 6.40, this information was shown at higher `$!ASM` trace levels.)
 
 **$!DICT**
 
@@ -327,13 +327,13 @@ The `$!EXPR` trace level can be changed at any point in the code with the `Trace
 
 Show source and include files being opened and closed.
 
-(Prior to 6.37, the `-l` switch and `Trace lines` directive showed this information.)
+(Prior to 6.40, the `-l` switch and `Trace lines` directive showed this information.)
 
 **$!FINDABBREVS**
 
 When computing abbreviations (`-u`), show selection decisions. `$!FINDABBREVS=2` will also show three-letter-block scores.
 
-(Prior to 6.37, the `-u` switch always showed this information.)
+(Prior to 6.40, the `-u` switch always showed this information.)
 
 **$!FREQ** (same as `-f`)
 
@@ -345,19 +345,19 @@ Show module linking information. `$!LINKER=2`, `$!LINKER=3`, `$!LINKER=4` will s
 
 The `$!LINKER` trace level can be changed at any point in the code with the `Trace linker` directive. 
 
-(Prior to 6.37, the `-y` switch showed this information.)
+(Prior to 6.40, the `-y` switch showed this information.)
 
 **$!MAP** (same as `-z`)
 
 Display a memory map of the completed virtual machine. `$!MAP=2` will also show the percentage of VM memory that each segment occupies.
 
-(Prior to 6.37, the `-p` switch showed the segment percentages.)
+(Prior to 6.40, the `-p` switch showed the segment percentages.)
 
 **$!MEM**
 
 Show memory allocations and deallocations within the compiler.
 
-(Prior to 6.37, the `-m` switch showed this information.)
+(Prior to 6.40, the `-m` switch showed this information.)
 
 **$!OBJECTS**
 
@@ -365,13 +365,13 @@ Show the object table when the game is complete.
 
 The `Trace objects` directive will show this information at any point in the code.
 
-(Prior to 6.37, the `-j` switch showed this information.)
+(Prior to 6.40, the `-j` switch showed this information.)
 
 **$!PROPS**
 
 Show properties and attributes as they are defined.
 
-(Prior to 6.37, this information was displayed by the `-n` switch.)
+(Prior to 6.40, this information was displayed by the `-n` switch.)
 
 **$!RUNTIME** (same as `-g`)
 
@@ -578,9 +578,9 @@ Multiple definitions of `Func()` may follow the `Replace` directive. `Func` will
 
 **Trace**
 
-The `Trace` directive allows you to adjust various trace settings and display information during compilation. As of 6.37, it is deprecated in favor of [trace options](#traceopts).
+The `Trace` directive allows you to adjust various trace settings and display information during compilation. As of 6.40, it is deprecated in favor of [trace options](#traceopts).
 
-Prior to 6.36, it was limited to a few kinds of trace information and its syntax was rather ad-hoc. As of 6.37, it is still limited, but its syntax is more consistent.
+Prior to 6.36, it was limited to a few kinds of trace information and its syntax was rather ad-hoc. As of 6.40, it is still limited, but its syntax is more consistent.
 
 The `Trace` directive has two flavors.
 
@@ -669,11 +669,11 @@ The address of the start of high memory (routine and string segments). This is a
 
 **#dictionary_table**
 
-The address of the dictionary. In Z-code, this is also found in the header at address 8. (Glulx-only until 6.37.)
+The address of the dictionary. In Z-code, this is also found in the header at address 8. (Glulx-only until 6.40.)
 
 **#grammar_table**
 
-The address of the grammar table. In Z-code, Inform places this at the start of static memory, so it can be found in the header at address 14. (Glulx-only until 6.37.)
+The address of the grammar table. In Z-code, Inform places this at the start of static memory, so it can be found in the header at address 14. (Glulx-only until 6.40.)
 
 **#actions_table**
 
