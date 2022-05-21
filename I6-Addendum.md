@@ -854,7 +854,9 @@ As noted above, code under the `Ifv5` directive is also compiled for Glulx.
 
 If the first argument to a function is named `_vararg_count`, arguments will be passed on the VM stack, with `_vararg_count` set to the number of arguments.
 
-Literals beginning with `$+` and `$-` are compiled as floating-point constants. For example: `$+1.0`, `$-1e3`, `$+2.5e-3`. The constants `FLOAT_INFINITY`, `FLOAT_NINFINITY`, `FLOAT_NAN` are also defined.
+Literals beginning with `$+` and `$-` are compiled as floating-point constants. For example: `$+1.0`, `$-1e3`, `$+2.5e-3`. Double-precision floating-point is also supported; these values require 64 bits, or two Glulx words each, and are thus written `$>+1.0` (the high word) and `$<+1.0` (the low word).
+
+The constants `FLOAT_INFINITY`, `FLOAT_NINFINITY`, `FLOAT_NAN`, `DOUBLE_HI_INFINITY`, `DOUBLE_LO_INFINITY`, `DOUBLE_HI_NINFINITY`, `DOUBLE_LO_NINFINITY`, `DOUBLE_HI_NAN`, `DOUBLE_LO_NAN` are also defined.
 
 [[Note that the standard Inform arithmetic operators (`+`, `-`, etc) do not work with floating-point values. You must use Glulx opcodes (`@fadd`, `@fsub`, etc).]]
 
