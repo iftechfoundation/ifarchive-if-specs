@@ -6,7 +6,7 @@ Language and compiler changes: releases 6.30 to 6.40 (in development)
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: May 17, 2022)
+(Last update: May 21, 2022)
 {: .DateHeader }
 
 Copyright 2020-22 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
@@ -161,7 +161,7 @@ On the command line (but not in ICL files or comments), path options can be also
 	--path PATH=dir
 	--addpath PATH=dir
 
-## Compiler settings (dollar)
+## Compiler settings (dollar) { #memsettings }
 
 These were referred to as "memory settings" in the DM4 (§39). However, they now encompass a wide range of compiler behavior.
 
@@ -221,9 +221,9 @@ In Glulx, `$MAX_ABBREVS` is not needed and has no effect, except with the `-u` s
 
 The number of string variables (`"@00"`, etc) allowed in the game. In Z-code, this may be any value from 0 to 96. Setting this in Z-code automatically sets `$MAX_ABBREVS` to `(96 - $MAX_DYNAMIC_STRINGS)`, as the two features draw from the same pool of 96 Z-machine abbreviations. Similarly, setting `$MAX_ABBREVS` sets `$MAX_DYNAMIC_STRINGS` to `(96 - $MAX_ABBREVS)`.
 
-In Glulx, the two settings are not connected; `$MAX_DYNAMIC_STRINGS` may be as high as 100. (Dynamic string references have two digits, so they cannot go beyond the range `"@00"` to `"@99"`.)
+In Glulx, the two settings are not connected. You may use any number of dynamic strings. If you use more than 100, you must set `$MAX_DYNAMIC_STRINGS` to a higher value.
 
-(Added in 6.35. In earlier versions, 32 string variables and 64 abbreviations were available in Z-code; 64 string variables were available in Glulx. As of 6.36, `$MAX_DYNAMIC_STRINGS` defaults to 100 in Glulx, which is the maximum.)
+(Added in 6.35. In earlier versions, 32 string variables and 64 abbreviations were available in Z-code; 64 string variables were available in Glulx. As of 6.36, `$MAX_DYNAMIC_STRINGS` defaulted to 100 in Glulx, which was the maximum. As of 6.40, `$MAX_DYNAMIC_STRINGS` is not limited in Glulx, but still defaults to 100.)
 
 **$MAX_STACK_SIZE**
 
@@ -648,6 +648,28 @@ The capitalized `(A)` print token joins `(a)`, `(The)`, and `(the)` as of 6.30; 
 	print (A) lamp;
 
 This calls the `CInDefArt()` veneer function.
+
+## Dynamic strings
+
+The DM4 (§1.11) describes "printing-variables", also called dynamic strings. By embedding a code like `@01` in a string, you can interpolate another literal string value. You set the interpolated value with a statement like
+
+	string 1 "text";
+	print "This is the @01.^";
+
+As of 6.40, dynamic string interpolations may look like `@(1)`, with any nonnegative number inside the parens. You may also write `@(N)`, where `N` is a defined numeric constant.
+
+	Constant TEXTVAL 1;
+
+...and then...
+
+	string TEXTVAL "text";
+	print "This is the @(1), or equivalently @(TEXTVAL).^";
+
+The old format `@01` is still supported, but only supports numbers of exactly two digits.
+
+[[The `string` statement has always supported numbers and numeric constants, so it has not changed.]]
+
+The number of dynamic strings is limited, but the limit may be increased with the `$MAX_DYNAMIC_STRINGS` setting. See [Compiler settings](#memsettings).
 
 ## Constants
 
