@@ -1546,11 +1546,47 @@ Again with the special cases:
 
 Recall that each double-precision value is encoded as *two* 32-bit Glulx words (see [*](#doubles)). Every opcode in this section has two operands for every double-precision argument.
 
-By convention, read operands always read the high word first. Write operands always write the *low* word first.
+By convention, read operands always read the high word first. Write operands always write the *low* word first. So, for example, the addition opcode `dadd` is used like this:
 
-[[This is extremely confusing but it allows us to read and write double pairs to and from the stack consistently.]]
+	dadd Xhi Xlo Yhi Ylo RESlo REShi;
+
+This adds the values `Xhi:Xlo + Yhi:Ylo`, storing the result in `REShi:RESlo`. Note that the result operands are reversed.
+
+[[This is extremely confusing but it allows us to read and write double-pairs to and from the stack consistently. If you perform `dadd Xhi Xlo Yhi Ylo sp sp;`  then the result value is ordered on the stack for the next operation.]]
+
+[[The assembly macros `@dload` and `@dstore` make it easier to load/store a double-pair to and from memory. See [*](#assembly-language).]]
 
 These opcodes were added in Glulx version 3.1.3. However, not all interpreters may support them. You can test for their availability with the Double gestalt selector.
+
+```
+numtod L1 S1 S2
+```
+
+Convert an integer value to the closest equivalent double. Integer zero is converted to (positive) double zero.
+
+```
+dtonumz L1 L2 S1
+```
+
+Convert a double value to an integer, rounding towards zero (i.e., truncating the fractional part). If the value is outside the 32-bit integer range, or is NaN or infinity, the result will be 7FFFFFFF (for positive values) or 80000000 (for negative values).
+
+```
+dtonumn L1 L2 S1
+```
+
+Convert a double value to an integer, rounding towards the nearest integer. Again, overflows become 7FFFFFFF or 80000000.
+
+```
+ftod L1 S1 S2
+```
+
+Convert a float value (one word) to a double value (a pair of words).
+
+```
+dtof L1 L2 S1
+```
+
+Convert a double value (a pair of words) to a float value (one word).
 
 ### Floating-Point Comparisons { #opcodes_floatbranch }
 
