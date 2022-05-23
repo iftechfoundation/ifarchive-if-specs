@@ -605,6 +605,7 @@ Glulx also supports double-precision (64-bit) values. To accomodate this, a doub
 
 The interpretation is similar to floats, except:
 
+- The mantissa is 52 bits, split across the two values.
 - For infinite and Nan values, E is 7FF.
 - +Inf is 7FF00000:00000000; -Inf is FFF00000:00000000.
 - Denormalized numbers are plus or minus 2^(-1074)*M.
