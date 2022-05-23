@@ -1544,7 +1544,9 @@ Again with the special cases:
 
 ### Double-Precision Math { #opcodes_double }
 
-Recall that each double-precision value is encoded as *two* 32-bit Glulx words (see [*](#doubles)). Every opcode in this section has two operands for every double-precision argument.
+Most of these opcodes exactly parallel the floating-point opcodes described in [*](#opcodes_float).
+
+However, recall that each double-precision value is encoded as *two* 32-bit Glulx words (see [*](#doubles)). Every opcode in this section has two operands for every double-precision argument.
 
 By convention, read operands always read the high word first. Write operands always write the *low* word first. So, for example, the addition opcode `dadd` is used like this:
 
@@ -1643,6 +1645,45 @@ jfge L1 L2 L3
 Branch to L3 if L1 is less than (less than or equal to, greater than, greater than or equal to) L2.
 
 +0 and −0 behave identically in comparisons. In particular, +0 is considered equal to −0, not greater than −0.
+
+### Double-Precision Comparisons { #opcodes_doublebranch }
+
+These opcodes are parallel to those in [*](#opcodes_floatbranch), except that each double value is a pair of operands.
+
+These opcodes were added in Glulx version 3.1.3. However, not all interpreters may support them. You can test for their availability with the Double gestalt selector.
+
+```
+jdisnan L1 L2 L3
+```
+
+Branch to L3 if the double value L1:L2 is a NaN value.
+
+```
+jdisinf L1 L2 L3
+```
+
+Branch to L3 if the double value L1:L2 is an infinity.
+
+```
+jdeq L1 L2 L3 L4 L5 L6 L7
+```
+
+Branch to L7 if the difference between L1:L2 and L3:L4 is less than or equal to (plus or minus) L5:L6. The sign of L5:L6 is ignored.
+
+```
+jdne L1 L2 L3 L4 L5 L6 L7
+```
+
+The reverse of jdeq.
+
+```
+jdlt L1 L2 L3 L4 L5
+jdle L1 L2 L3 L4 L5
+jdgt L1 L2 L3 L4 L5
+jdge L1 L2 L3 L4 L5
+```
+
+Branch to L5 if L1:L2 is less than (less than or equal to, greater than, greater than or equal to) L3:L4.
 
 ### Random Number Generator { #opcodes_rand }
 
