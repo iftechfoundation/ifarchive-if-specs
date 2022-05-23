@@ -1562,31 +1562,40 @@ These opcodes were added in Glulx version 3.1.3. However, not all interpreters m
 numtod L1 S1 S2
 ```
 
-Convert an integer value to the closest equivalent double. Integer zero is converted to (positive) double zero.
+Convert an integer value to the closest equivalent double. Integer zero is converted to (positive) double zero. The result is stored as S2:S1.
 
 ```
 dtonumz L1 L2 S1
 ```
 
-Convert a double value to an integer, rounding towards zero (i.e., truncating the fractional part). If the value is outside the 32-bit integer range, or is NaN or infinity, the result will be 7FFFFFFF (for positive values) or 80000000 (for negative values).
+Convert a double value L1:L2 to an integer, rounding towards zero (i.e., truncating the fractional part). If the value is outside the 32-bit integer range, or is NaN or infinity, the result will be 7FFFFFFF (for positive values) or 80000000 (for negative values).
 
 ```
 dtonumn L1 L2 S1
 ```
 
-Convert a double value to an integer, rounding towards the nearest integer. Again, overflows become 7FFFFFFF or 80000000.
+Convert a double value L1:L2 to an integer, rounding towards the nearest integer. Again, overflows become 7FFFFFFF or 80000000.
 
 ```
 ftod L1 S1 S2
 ```
 
-Convert a float value (one word) to a double value (a pair of words).
+Convert a float value L1 to a double value, stored as S2:S1.
 
 ```
 dtof L1 L2 S1
 ```
 
-Convert a double value (a pair of words) to a float value (one word).
+Convert a double value L1:L2 to a float value, stored as S1.
+
+```
+dadd L1 L2 L3 L4 S1 S2
+dsub L1 L2 L3 L4 S1 S2
+dmul L1 L2 L3 L4 S1 S2
+ddiv L1 L2 L3 L4 S1 S2
+```
+
+Perform arithmetic on doubles. The arguments are L1:L2 and L3:L4; the result is stored as S2:S1. 
 
 ### Floating-Point Comparisons { #opcodes_floatbranch }
 
