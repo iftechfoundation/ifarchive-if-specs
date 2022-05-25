@@ -2180,7 +2180,7 @@ The list of L1 selectors is as follows. Note that if a selector does not mention
 - Acceleration (9): Returns 1 if the interpreter supports the accelfunc and accelparam opcodes. (This must true for any terp supporting Glulx 3.1.1.)
 - AccelFunc (10): Returns 1 if the terp implements the accelerated function given in L2.
 - Float (11): Returns 1 if the interpreter supports the floating-point arithmetic opcodes.
-- ExtUndo (12): Returns 1 if the interpreter supports the hasundo and discardundo opcodes. (This must true for any terp supporting Glulx 3.1.3. On a terp which does not support undo functionality, these opcodes will be callable but will fail.)
+- ExtUndo (12): Returns 1 if the interpreter supports the hasundo and discardundo opcodes.
 - Double (13): Returns 1 if the interpreter supports the double-precision floating-point arithmetic opcodes.
 
 Selectors 0x1000 to 0x10FF are reserved for use by FyreVM. Selectors 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Selectors 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. Selectors 0x1400 to 0x14FF are reserved for iOS extension features by ZZO38. These are not documented here. See [*](#otherif).
