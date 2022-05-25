@@ -2223,7 +2223,7 @@ All stack input references (-1 addresses) are popped after the Glk argument list
 
 ### Assembly Language
 
-The format used by Inform is acceptable for now:
+Glulx uses the same assembly format which Inform offers for the Z-machine:
 
     @opcode [ op op op ... ] ;
 
