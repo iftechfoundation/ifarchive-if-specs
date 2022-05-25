@@ -2231,7 +2231,11 @@ Where each "op" is a constant, the name of a local variable, the name of a globa
 
 [[It would be convenient to have a one-line form for the opcodes that pass arguments on the stack (call and glk).]]
 
-To make life a little easier for cross-platform I6 code, Inform accepts the macro "@push val" for "@copy val sp", and "@pull val" for "@copy sp val". Supporting these forms is recommended.
+To make life a little easier for cross-platform I6 code, Inform accepts the macro "@push val" for "@copy val sp", and "@pull val" for "@copy sp val". (These parallel "@push" and "@pull" opcodes which are native to the Z-machine.)
+
+Two more macros support [double-precision math](#opcodes_double) operations. "@dload addr xlo xhi" reads a double from an array in memory and stores it into two variables or stack pushes. (The high word comes from `addr-->0`; the low word from `addr-->1`.) "@dstore addr xhi xlo" does the reverse; it takes two variables or stack pulls and stores the double in `addr-->0` (high) and `addr-->1` (low). The operand order is consistent with the double opcodes.
+
+Supporting these macro forms is recommended for any Glulx Inform assembler.
 
 You can synthesize opcodes that the compiler does not know about:
 
