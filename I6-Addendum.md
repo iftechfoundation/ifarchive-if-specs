@@ -761,6 +761,10 @@ The byte size of a complete object record. This will be `1+NUM_ATTR_BYTES+6*WORD
 
 Positive and negative infinity and NaN for Glulx floating-point operations. (Glulx-only.)
 
+**DOUBLE_HI_INFINITY**, **DOUBLE_LO_INFINITY**, **DOUBLE_HI_NINFINITY**, **DOUBLE_LO_NINFINITY**, **DOUBLE_HI_NAN**, **DOUBLE_LO_NAN**
+
+Positive and negative infinity and NaN for Glulx double-precision operations. (Glulx-only.)
+
 ## Operators
 
 ### Logical precedence
