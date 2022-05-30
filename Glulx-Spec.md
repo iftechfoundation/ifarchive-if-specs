@@ -1812,6 +1812,8 @@ The behavior of an accelerated function is somewhat limited. The state of the VM
 
 Errors encountered during an accelerated function will be displayed to the user by some convenient means. For example, an interpreter may send the error message to the current Glk output stream. However, the terp may have no recourse but to invoke a *fatal* error. (For example, if there is no current Glk output stream.) Therefore, accelerated functions are defined with no error conditions that must be recoverable.
 
+[[In practice it is safer to silently discard errors if the current I/O system is not 2 (Glk).]]
+
 These opcodes were added in Glulx version 3.1.1. Since a 3.1.1 game file ought to run in a 3.1.0 interpreter, you *may not* use these opcodes without first testing the Acceleration gestalt selector. If it returns zero, your game is running on a 3.1.0 terp (or earlier), and it is your responsibility to avoid executing these opcodes. [[Of course, the way the opcodes are defined should ensure that skipping them does not affect the behavior of your game.]]
 
 ```
