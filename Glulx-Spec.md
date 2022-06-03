@@ -1599,6 +1599,11 @@ ddiv L1 L2 L3 L4 S1 S2
 
 Perform arithmetic on doubles. The arguments are L1:L2 and L3:L4; the result is stored as S2:S1. 
 
+##### dceil, dfloor
+##### dmodr, dmodq
+##### dsqrt, dexp, dlog, dpow
+##### dsin, dcos, dtan, dasin, dacos, datan, datan2
+
 ### Floating-Point Comparisons { #opcodes_floatbranch }
 
 All these branch opcodes specify their destinations with an offset value. See [*](#opcodes_branch).
