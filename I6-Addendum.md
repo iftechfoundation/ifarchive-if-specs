@@ -168,7 +168,7 @@ On the command line (but not in ICL files or comments), path options can be also
 
 *Removed since the DM4:*
 
-The `+module_path` and `+temporary_path` options no longer exist.
+The `+module_path` and `+temporary_path` options no longer exist as of 6.40.
 
 ## Compiler settings (dollar) { #memsettings }
 
@@ -511,6 +511,14 @@ This is mentioned in the DM4 as being for compiler maintenance only (§Table5). 
 
 This misnamed directive is also used by the library (§Table5). It conditionally compiles code when building Z-code V4 and later *or* Glulx. Thus it is the converse of `Ifv3`. (The misleading name is left over from much earlier versions of Inform.)
 
+**Import**
+
+The `Import` directive no longer exists as of 6.40. (This, like `Link`, was used for the obsolete module-linking feature.)
+
+**Link**
+
+The `Link` directive no longer exists as of 6.40.
+
 **Lowstring**
 
 The `Lowstring` directive has been supported since (at least) Inform 5, but it is not needed in Inform 6. It is therefore deprecated and undocumented in the DM4. We will describe it here for information's sake.
@@ -726,9 +734,11 @@ Exactly one of these will be defined, depending on the game file format.
 
 This is the byte size of a VM word or address: 2 in Z-code, 4 in Glulx.
 
-**MODULE_MODE**, **STRICT_MODE**, **DEBUG**, **USE_MODULES**, **INFIX**
+**STRICT_MODE**, **DEBUG**, **INFIX**
 
-These are defined by the `-M`, `-S`, `-D`, `-U`, `-X` switches respectively.
+These are defined by the `-S`, `-D`, `-X` switches respectively.
+
+[[Prior to 6.40, `MODULE_MODE` and `USE_MODULES` were defined by the `-M` and `-U` switches respectively. These no longer exist.]]
 
 **DICT_WORD_SIZE**
 
