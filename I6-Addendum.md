@@ -134,6 +134,11 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 *Removed since the DM4:*
 
+The following switch options existed prior to 6.40, but are now gone.
+
+- `-F0`, `-F1`: The ability to use temporary files (rather than memory) for compilation data has been removed.
+- `-M`, `-U`: The ability to create and import linker modules has been removed.
+
 The following switch options existed prior to 6.40, but have been removed in favor of [trace options](#traceopts).
 
 - `-b`: Has done nothing since Inform 5.
@@ -160,6 +165,10 @@ On the command line (but not in ICL files or comments), path options can be also
 
 	--path PATH=dir
 	--addpath PATH=dir
+
+*Removed since the DM4:*
+
+The `+module_path` and `+temporary_path` options no longer exist.
 
 ## Compiler settings (dollar) { #memsettings }
 
