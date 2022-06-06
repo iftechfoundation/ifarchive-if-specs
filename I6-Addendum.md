@@ -136,8 +136,8 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 The following switch options existed prior to 6.40, but are now gone.
 
-- `-F0`, `-F1`: The ability to use temporary files (rather than memory) for compilation data has been removed.
-- `-M`, `-U`: The ability to create and import linker modules has been removed.
+- `-F`: The ability to use temporary files (rather than memory) for compilation data has been removed.
+- `-M`, `-U`, `-y`: The ability to create and import linker modules has been removed.
 
 The following switch options existed prior to 6.40, but have been removed in favor of [trace options](#traceopts).
 
@@ -149,7 +149,6 @@ The following switch options existed prior to 6.40, but have been removed in fav
 - `-o`: Replaced by the `$!MAP` option.
 - `-p`: Replaced by the `$!MAP=2` option.
 - `-t`: Replaced by the `$!ASM=2` option or the `-a2` switch.
-- `-y`: Replaced by the `$!LINKER` option.
 
 ## Path options (plus)
 
@@ -347,14 +346,6 @@ When computing abbreviations (`-u`), show selection decisions. `$!FINDABBREVS=2`
 **$!FREQ** (same as `-f`)
 
 When using abbreviations (`-e`), show how efficient each abbreviation was.
-
-**$!LINKER**
-
-Show module linking information. `$!LINKER=2`, `$!LINKER=3`, `$!LINKER=4` will show more verbose information.
-
-The `$!LINKER` trace level can be changed at any point in the code with the `Trace linker` directive. 
-
-(Prior to 6.40, the `-y` switch showed this information.)
 
 **$!MAP** (same as `-z`)
 
@@ -903,7 +894,7 @@ The `print_to_array()` method (§3.12) requires two arguments, rather than one (
 
 ### Language features not supported in Glulx
 
-Module compilation (the `-M` option, §38) and Infix (the `-X` option, §7) are not available.
+Infix (the `-X` option, §7) is not available.
 
 The `Zcharacter` directive (§36) is not available, since Glulx does not use the ZSCII character set.
 
