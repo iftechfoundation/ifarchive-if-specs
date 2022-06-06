@@ -604,17 +604,17 @@ Each of these prints the named data table *as of that point in the compilation*.
 	Trace assembly [val]
 	Trace expressions [val]
 	Trace tokens [val]
-	Trace linker [val]
 
-Each of these adjusts the level of the equivalent named trace option (`$!ASM`, `$!EXPR`, `$!TOKENS`, `$!LINKER`). The optional value may be `off` (0), `on` (1), or any number. If no value is given, the option is set `on` (1).
+Each of these adjusts the level of the equivalent named trace option (`$!ASM`, `$!EXPR`, `$!TOKENS`). The optional value may be `off` (0), `on` (1), or any number. If no value is given, the option is set `on` (1).
 
 	Trace [val]
 
 Equivalent to `Trace assembly [val]`.
 
 	Trace lines [val]
+	Trace linker [val]
 
-This was intended to support a line-tracing feature which was never implemented. It does nothing.
+`Trace lines` was intended to support a line-tracing feature which was never implemented. `Trace linker` supported the module-linking feature, which no longer exists. These options now do nothing.
 
 [[Trace options cannot print tables or change trace levels partway through compilation; that ability is only available through the `Trace` directive. The directive will therefore be retained. However, this ability is not very useful, so it seems reasonable to consider it deprecated.]]
 
