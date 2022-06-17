@@ -1631,8 +1631,22 @@ dpow L1 L2 L3 L4 S1 S2
 
 Compute L1:L2 raised to the L3:L4 power. The result is stored as S2:S1.
 
-##### dmodr, dmodq
-##### dsin, dcos, dtan, dasin, dacos, datan, datan2
+```
+dsin L1 L2 S1 S2
+dcos L1 L2 S1 S2
+dtan L1 L2 S1 S2
+dacos L1 L2 S1 S2
+dasin L1 L2 S1 S2
+datan L1 L2 S1 S2
+```
+
+Compute the standard trigonometric functions.
+
+```
+datan2 L1 L2 L3 L4 S1 S2
+```
+
+Computes the arctangent of L1:L2/L3:L4, using the signs of both arguments to determine the quadrant of the return value. (Note that the Y argument is first and the X argument is second.) The result is stored as S2:S1.
 
 ### Floating-Point Comparisons { #opcodes_floatbranch }
 
