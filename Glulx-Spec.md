@@ -1599,9 +1599,39 @@ ddiv L1 L2 L3 L4 S1 S2
 
 Perform arithmetic on doubles. The arguments are L1:L2 and L3:L4; the result is stored as S2:S1. 
 
-##### dceil, dfloor
+```
+dmodr L1 L2 L3 L4 S1 S2
+dmodq L1 L2 L3 L4 S1 S2
+```
+
+Perform a floating-point modulo operation. dmodr gives the remainder (or modulus) of L1:L2 and L3:L4; dmodq gives the quotient. The result is stored as S2:S1.
+
+Unlike fmod, there are separate opcodes to compute the remainder and modulus.
+
+[[The I6 compiler is not set up to support an opcode with four store operands. It was easier to split up dmodr and dmodq than to change this.]]
+
+```
+dceil L1 L2 S1 S2
+dfloor L1 L2 S1 S2
+```
+
+Round L1:L2 up (towards +Inf) or down (towards −Inf) to the nearest integral value. (The result is still in double format, however.) The result is stored as S2:S1. These opcodes are idempotent.
+
+```
+dsqrt L1 L2 S1 S2
+dexp L1 L2 S1 S2
+dlog L1 L2 S1 S2
+```
+
+Compute the square root of L1:L2, e^L1:L2, and log of L1:L2 (base e).
+
+```
+dpow L1 L2 L3 L4 S1 S2
+```
+
+Compute L1:L2 raised to the L3:L4 power. The result is stored as S2:S1.
+
 ##### dmodr, dmodq
-##### dsqrt, dexp, dlog, dpow
 ##### dsin, dcos, dtan, dasin, dacos, datan, datan2
 
 ### Floating-Point Comparisons { #opcodes_floatbranch }
