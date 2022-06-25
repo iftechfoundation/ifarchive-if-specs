@@ -6,6 +6,7 @@ Glulx -- specification change log
     and a gestalt selector for them.)
     Added the @hasundo and @discardundo opcodes, along with a gestalt
     selector.
+    Updated license to CC BY-NC-SA 4.0.
 
 3.1.2: (Aug 17, 2010)
     Added support for floating-point. (29 float opcodes, and a gestalt
