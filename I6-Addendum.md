@@ -188,7 +188,7 @@ A setting that begins with a hash sign (`$#`) will define an arbitrary numeric c
 	
 [[Thus, passing the `$#DEBUG` argument is equivalent to the `-D` option. Remember that Inform symbols are not case-sensitive; `$#debug` or `$#Debug=0` does the same thing.]]
 
-A setting that begins with an exclamation mark (`$!`) is a trace option. These have a slightly different format; see [Trace options](#traceopts), below.
+A setting that begins with an exclamation mark (`$!`) is a trace option. (New in 6.40.) These have a slightly different format; see [Trace options](#traceopts), below.
 
 On the command line (but not in ICL files or comments), compiler settings can also be specified in Unix style. (New in 6.35.) This avoids the need to escape dollar signs.
 
