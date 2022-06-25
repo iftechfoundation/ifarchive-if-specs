@@ -46,7 +46,7 @@ However, if a system wants to use a simple runtime format with 32-bit data, Glul
 
 Note that this is entirely separate from question of the I/O layer. Glulx uses the Glk I/O API, for the sake of simplicity and portability. Any IF system can do the same. One can use Glk I/O without using the Glulx game-file format.
 
-On the obverse, one could also extend the Glulx VM to use a different I/O system instead of Glk. One such extension is FyreVM, a commercial IF system developed by Textfyre. FyreVM is described at [http://textfyre.com/fyrevm/](http://textfyre.com/fyrevm/).
+On the obverse, one could also extend the Glulx VM to use a different I/O system instead of Glk. One such extension is FyreVM, a commercial IF system developed by Textfyre. FyreVM is described at [https://www.ifwiki.org/FyreVM](https://www.ifwiki.org/FyreVM).
 
 Other extension projects, not yet solidified, are being developed by Dannii Willis. See [http://curiousdannii.github.com/if/](http://curiousdannii.github.com/if/).
 
