@@ -6,10 +6,10 @@ VM specification version 3.1.3
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-Copyright 2020-2022 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: [http://creativecommons.org/licenses/by-nc-sa/3.0][by-nc-sa]
+Copyright 2020-2022 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][by-nc-sa]
 
 [iftf]: https://iftechfoundation.org/
-[by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/3.0
+[by-nc-sa]: https://creativecommons.org/licenses/by-nc-sa/4.0
 
 The virtual machine *described* by this document is an idea, not an expression of an idea, and is therefore not copyrightable. Anyone is free to write programs that run on the Glulx VM or make use of it, including compilers, interpreters, debuggers, and so on.
 
