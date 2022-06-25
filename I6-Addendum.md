@@ -894,7 +894,7 @@ Literals beginning with `$+` and `$-` are compiled as floating-point constants. 
 
 The constants `FLOAT_INFINITY`, `FLOAT_NINFINITY`, `FLOAT_NAN`, `DOUBLE_HI_INFINITY`, `DOUBLE_LO_INFINITY`, `DOUBLE_HI_NINFINITY`, `DOUBLE_LO_NINFINITY`, `DOUBLE_HI_NAN`, `DOUBLE_LO_NAN` are also defined.
 
-[[Note that the standard Inform arithmetic operators (`+`, `-`, etc) do not work with floating-point values. You must use Glulx opcodes (`@fadd`, `@fsub`, etc).]]
+[[Note that the standard Inform arithmetic operators (`+`, `-`, etc) do not work with floating-point values. You must use Glulx opcodes. (`@fadd`, `@fsub`, etc for single-precision; `@dadd`, `@dsub`, etc for double-precision.)]]
 
 The `print_to_array()` method (§3.12) requires two arguments, rather than one (as in Z-code).
 
