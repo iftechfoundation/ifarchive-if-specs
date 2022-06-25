@@ -6,7 +6,7 @@ VM specification version 3.1.3
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-Copyright 2020-2022 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][by-nc-sa]
+Copyright 2020-2022 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][by-nc-sa].
 
 [iftf]: https://iftechfoundation.org/
 [by-nc-sa]: https://creativecommons.org/licenses/by-nc-sa/4.0
