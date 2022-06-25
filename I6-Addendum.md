@@ -6,7 +6,7 @@ Language and compiler changes: releases 6.30 to 6.40 (in development)
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: May 21, 2022)
+(Last update: June 6, 2022)
 {: .DateHeader }
 
 Copyright 2020-22 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
@@ -134,6 +134,11 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 *Removed since the DM4:*
 
+The following switch options existed prior to 6.40, but are now gone.
+
+- `-F`: The ability to use temporary files (rather than memory) for compilation data has been removed.
+- `-M`, `-U`, `-y`: The ability to create and import linker modules has been removed.
+
 The following switch options existed prior to 6.40, but have been removed in favor of [trace options](#traceopts).
 
 - `-b`: Has done nothing since Inform 5.
@@ -144,7 +149,6 @@ The following switch options existed prior to 6.40, but have been removed in fav
 - `-o`: Replaced by the `$!MAP` option.
 - `-p`: Replaced by the `$!MAP=2` option.
 - `-t`: Replaced by the `$!ASM=2` option or the `-a2` switch.
-- `-y`: Replaced by the `$!LINKER` option.
 
 ## Path options (plus)
 
@@ -160,6 +164,10 @@ On the command line (but not in ICL files or comments), path options can be also
 
 	--path PATH=dir
 	--addpath PATH=dir
+
+*Removed since the DM4:*
+
+The `+module_path` and `+temporary_path` options no longer exist as of 6.40.
 
 ## Compiler settings (dollar) { #memsettings }
 
@@ -339,14 +347,6 @@ When computing abbreviations (`-u`), show selection decisions. `$!FINDABBREVS=2`
 
 When using abbreviations (`-e`), show how efficient each abbreviation was.
 
-**$!LINKER**
-
-Show module linking information. `$!LINKER=2`, `$!LINKER=3`, `$!LINKER=4` will show more verbose information.
-
-The `$!LINKER` trace level can be changed at any point in the code with the `Trace linker` directive. 
-
-(Prior to 6.40, the `-y` switch showed this information.)
-
 **$!MAP** (same as `-z`)
 
 Display a memory map of the completed virtual machine. `$!MAP=2` will also show the percentage of VM memory that each segment occupies.
@@ -502,6 +502,14 @@ This is mentioned in the DM4 as being for compiler maintenance only (§Table5). 
 
 This misnamed directive is also used by the library (§Table5). It conditionally compiles code when building Z-code V4 and later *or* Glulx. Thus it is the converse of `Ifv3`. (The misleading name is left over from much earlier versions of Inform.)
 
+**Import**
+
+The `Import` directive no longer exists as of 6.40. (This, like `Link`, was used for the obsolete module-linking feature.)
+
+**Link**
+
+The `Link` directive no longer exists as of 6.40.
+
 **Lowstring**
 
 The `Lowstring` directive has been supported since (at least) Inform 5, but it is not needed in Inform 6. It is therefore deprecated and undocumented in the DM4. We will describe it here for information's sake.
@@ -596,17 +604,17 @@ Each of these prints the named data table *as of that point in the compilation*.
 	Trace assembly [val]
 	Trace expressions [val]
 	Trace tokens [val]
-	Trace linker [val]
 
-Each of these adjusts the level of the equivalent named trace option (`$!ASM`, `$!EXPR`, `$!TOKENS`, `$!LINKER`). The optional value may be `off` (0), `on` (1), or any number. If no value is given, the option is set `on` (1).
+Each of these adjusts the level of the equivalent named trace option (`$!ASM`, `$!EXPR`, `$!TOKENS`). The optional value may be `off` (0), `on` (1), or any number. If no value is given, the option is set `on` (1).
 
 	Trace [val]
 
 Equivalent to `Trace assembly [val]`.
 
 	Trace lines [val]
+	Trace linker [val]
 
-This was intended to support a line-tracing feature which was never implemented. It does nothing.
+`Trace lines` was intended to support a line-tracing feature which was never implemented. `Trace linker` supported the module-linking feature, which no longer exists. These options now do nothing.
 
 [[Trace options cannot print tables or change trace levels partway through compilation; that ability is only available through the `Trace` directive. The directive will therefore be retained. However, this ability is not very useful, so it seems reasonable to consider it deprecated.]]
 
@@ -717,9 +725,11 @@ Exactly one of these will be defined, depending on the game file format.
 
 This is the byte size of a VM word or address: 2 in Z-code, 4 in Glulx.
 
-**MODULE_MODE**, **STRICT_MODE**, **DEBUG**, **USE_MODULES**, **INFIX**
+**STRICT_MODE**, **DEBUG**, **INFIX**
 
-These are defined by the `-M`, `-S`, `-D`, `-U`, `-X` switches respectively.
+These are defined by the `-S`, `-D`, `-X` switches respectively.
+
+[[Prior to 6.40, `MODULE_MODE` and `USE_MODULES` were defined by the `-M` and `-U` switches respectively. These no longer exist.]]
 
 **DICT_WORD_SIZE**
 
@@ -890,7 +900,7 @@ The `print_to_array()` method (§3.12) requires two arguments, rather than one (
 
 ### Language features not supported in Glulx
 
-Module compilation (the `-M` option, §38) and Infix (the `-X` option, §7) are not available.
+Infix (the `-X` option, §7) is not available.
 
 The `Zcharacter` directive (§36) is not available, since Glulx does not use the ZSCII character set.
 
