@@ -590,7 +590,9 @@ Multiple definitions of `Func()` may follow the `Replace` directive. `Func` will
 
 **Switches**
 
-As of 6.40, this is obsolete and generates a deprecation warning. Use `!%` header comments instead.
+As of 6.40, the `Switches` directive is obsolete and generates a deprecation warning. Use `!%` header comments instead.
+
+This has always been documented to be used "at the very beginning of your source code" (§39). However, this was only weakly enforced; the compiler only checked that it was used before the first constant was defined. As of 6.40, it may only be used before the first constant or routine is defined.
 
 **Trace**
 
@@ -640,7 +642,7 @@ This leaves the `Const` symbol undefined. If `Const` was never defined, this doe
 
 **Version**
 
-This is mentioned in the DM4 as being obsolete (§Table5). As of 6.40, it generates a deprecation warning. Use the `-v3` command-line switch or `!% -v3` header comment instead.
+The `Version` directive is mentioned in the DM4 as being obsolete (§Table5). As of 6.40, it generates a deprecation warning. Use the `-v3` command-line switch or `!% -v3` header comment instead.
 
 As of 6.36, this directive may only be used before the first routine is defined. (This limitation reduces, but does not eliminate, various code generation bugs.)
 
