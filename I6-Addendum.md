@@ -439,6 +439,10 @@ When one of these directives appears within a routine or object definition, the 
 
 [[As of 6.35, the compiler will report errors for non-"if" directives appearing within a definition. In earlier versions, this error was not always checked.]]
 
+**Abbreviate**
+
+As of 6.40, the `Abbreviate` directive only creates an abbreviation when in economy (`-e`) mode. If the `-e` switch is not used, the directive is skipped and no space is consumed in the game's abbreviations table.
+
 **Array**
 
 The `Array` directive (§2.4) supports four ways to specify values:
@@ -584,6 +588,10 @@ The `Replace` directive has two forms, of which the second is new in 6.33:
 
 Multiple definitions of `Func()` may follow the `Replace` directive. `Func` will refer to the last-defined version, except that definitions in normal files are preferred over definitions in `System_file` files or the veneer. With the second form, `OriginalFunc` will refer to the *first*-defined version of the function.
 
+**Switches**
+
+As of 6.40, this is obsolete and generates a deprecation warning. Use `!%` header comments instead.
+
 **Trace**
 
 The `Trace` directive allows you to adjust various trace settings and display information during compilation. As of 6.40, it is deprecated in favor of [trace options](#traceopts).
@@ -632,7 +640,7 @@ This leaves the `Const` symbol undefined. If `Const` was never defined, this doe
 
 **Version**
 
-This is mentioned in the DM4 as being obsolete (§Table5). Use the `-v3` command-line switch or `!% -v3` header comment instead.
+This is mentioned in the DM4 as being obsolete (§Table5). As of 6.40, it generates a deprecation warning. Use the `-v3` command-line switch or `!% -v3` header comment instead.
 
 As of 6.36, this directive may only be used before the first routine is defined. (This limitation reduces, but does not eliminate, various code generation bugs.)
 
