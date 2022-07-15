@@ -492,6 +492,21 @@ The values can be numeric literals or constants. They can be 0-255 for Z-code, o
 
 [[`dict_par2` cannot be set by this directive. It is always the verb number, or zero for words that are not verbs.]]
 
+**Global**
+
+As of 6.40, the `=` sign is optional when defining a global variable's initial value. These declarations are equivalent:
+
+	Global foo = 12;
+	Global foo 12;
+
+[[This brings `Global` into harmony with `Constant`, for which the `=` sign has always been optional.]]
+
+In early versions of Inform, the `Global` directive could also be used to define arrays. This usage has been deprecated since at least Inform 6.0, but the compiler still recognized declarations like:
+
+	Global array --> 8;
+
+...as well as the even older forms `Global data`, `Global initial`, and `Global inistr`. As of 6.40, all of these obsolete forms have been removed. Use `Global` for global variables and `Array` for arrays.
+
 **Ifv3**
 
 This is mentioned in the DM4 as being for compiler maintenance only (§Table5). In fact it is used by the library, so it's worth documenting. This is a conditional compilation directive, like `Iftrue`, which compiles code when building Z-code V3 (only). It is equivalent to:
