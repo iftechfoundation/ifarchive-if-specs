@@ -259,7 +259,7 @@ If set to 1 (the default), unreachable labels will be eliminated as part of bran
 
 If set to 0, any label can be `jump`ed to, at the cost of less optimized code.
 
-(Added in 6.40. In earlier versions, any label could be `jump`ed to. As of 6.41, *forward* jumps to labels are always permitted; only backward jumps can cause compile-time errors.)
+(Added in 6.40. In earlier versions, any label could be `jump`ed to. As of 6.41, *forward* `jump`s to labels are always permitted. Only backward `jump`s to unreachable labels can cause errors.)
 
 **$TRANSCRIPT_FORMAT**
 
