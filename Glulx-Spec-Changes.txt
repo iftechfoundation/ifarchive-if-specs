@@ -1,12 +1,13 @@
 Glulx -- specification change log
 
 3.1.3: (Jun 25, 2022)
-
     Added support for double-precision floating point. (32 double opcodes,
     and a gestalt selector for them.)
     Added the @hasundo and @discardundo opcodes, along with a gestalt
     selector.
     Updated license to CC BY-NC-SA 4.0.
+    ADDITION (Oct 2022): Added double-precision opcodes to the selector
+    table. (Thanks Teh-Bobo.)
 
 3.1.2: (Aug 17, 2010)
     Added support for floating-point. (29 float opcodes, and a gestalt
