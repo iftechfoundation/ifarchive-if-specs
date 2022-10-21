@@ -794,6 +794,38 @@ The table of opcodes:
 - 0x1C5: jfge
 - 0x1C8: jisnan
 - 0x1C9: jisinf
+- 0x200: numtod
+- 0x201: dtonumz
+- 0x202: dtonumn
+- 0x203: ftod
+- 0x204: dtof
+- 0x208: dceil
+- 0x209: dfloor
+- 0x210: dadd
+- 0x211: dsub
+- 0x212: dmul
+- 0x213: ddiv
+- 0x214: dmodr
+- 0x215: dmodq
+- 0x218: dsqrt
+- 0x219: dexp
+- 0x21A: dlog
+- 0x21B: dpow
+- 0x220: dsin
+- 0x221: dcos
+- 0x222: dtan
+- 0x223: dasin
+- 0x224: dacos
+- 0x225: datan
+- 0x226: datan2
+- 0x230: jdeq
+- 0x231: jdne
+- 0x232: jdlt
+- 0x233: jdle
+- 0x234: jdgt
+- 0x235: jdge
+- 0x238: jdisnan
+- 0x239: jdisinf
 
 Opcodes 0x1000 to 0x10FF are reserved for use by FyreVM. Opcodes 0x1100 to 0x11FF are reserved for extension projects by Dannii Willis. Opcodes 0x1200 to 0x12FF are reserved for iOS extension features by Andrew Plotkin. Opcodes 0x1400 to 0x14FF are reserved for iOS extension features by ZZO38. These are not documented here. Opcodes 0x7900 to 0x79FF are (apparently) reserved for experimental features in the Git interpreter. See [*](#otherif).
 
