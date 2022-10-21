@@ -10,7 +10,7 @@ dist/%.html : %.md
 	python3 tools/makehtml.py $< tools/template.html $@
 
 dist/%.pdf : dist/%.html
-	wkhtmltopdf -q -s Letter $< $@
+	wkhtmltopdf -q -s Letter --allow dist $< $@
 
 clean:
 	-rm -f $(HTMLTARGETS) $(PDFTARGETS)
