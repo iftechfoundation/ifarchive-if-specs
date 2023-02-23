@@ -917,10 +917,14 @@ Returns `NO_REPLY_RV`.
 CLAIM_STORY_FILE_SEL
 ```
 
-Returns `NO_REPLY_RV` if this appears to be a story file produced
-by this design system; or `INVALID_STORY_FILE_RV` if not.
+Returns `VALID_STORY_FILE_RV` if this design system is certain it
+produced the story file, `INVALID_STORY_FILE_RV` if it is certain it
+did not, or `NO_REPLY_RV` if it is possible but not sure.
 
-(Only the most casual, superficial check is needed. For instance,
+(The design systems usually check the file header to see if it would
+be valid, and only to the extent necessary for one story file format
+to be distinguished from the others. They do not check that the entire
+file is valid. For instance,
 the first twelve bytes of a blorb always match `FORM????IFRS` for
 some `????`, and this is unlikely to be true of a randomly found file
 which is not a blorb. So checking those twelve bytes is sufficient
