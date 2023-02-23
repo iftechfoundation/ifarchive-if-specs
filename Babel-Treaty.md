@@ -473,9 +473,26 @@ a to f written in upper case, A to F.
 
 ##### The IFID for a legacy Hugo story file
 
-The IFID for a legacy ".hex" Hugo story file is the prefix "HUGO-"
-followed by its MD5 hash, with hexadecimal characters a to f written
-in upper case, A to F.
+Some Hugo story files contain an embedded UUID IFID, however the text is
+obfuscated by 20 being added to the value of each byte. The IFID can be
+located by looking for hyphens in the right pattern, though note that the
+hyphens are themselves obfuscated (and become 'A's).
+
+The IFID for a legacy Hugo story file is derived from the file header and
+has the following form:
+
+    HUGO-##-XX-XX-SERIALNO
+
+The numbers are:
+
+1. The first byte of the story file (the Hugo version number) as a decimal number.
+2. The second and third bytes of the story file as 2 digit hexadecimal numbers.
+3. The following 8 bytes (the serial number) with any non-alphanumerical characters
+   converted to hyphens.
+
+Example:
+
+    HUGO-25-6A-61-09-30-05
 
 
 ##### The IFID for a legacy Adrift story file
