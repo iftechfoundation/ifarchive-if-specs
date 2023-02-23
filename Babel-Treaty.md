@@ -466,7 +466,7 @@ The algorithm for calculating the IFID of a Glulx file is as follows:
 
 ##### The IFID for a legacy TADS2 or TADS3 story file
 
-The IFID for a legacy ".gam" TADS story file is the prefix "TADS2-",
+The IFID for a legacy ".gam"/".t3" TADS story file is the prefix "TADS2-",
 or "TADS3-", followed by its MD5 hash, with hexadecimal characters
 a to f written in upper case, A to F.
 
@@ -476,6 +476,29 @@ a to f written in upper case, A to F.
 The IFID for a legacy ".hex" Hugo story file is the prefix "HUGO-"
 followed by its MD5 hash, with hexadecimal characters a to f written
 in upper case, A to F.
+
+
+##### The IFID for a legacy Adrift story file
+
+Adrift 5 story files contain an embedded iFiction record which specify the
+IFID of the story file. Note that this IFID is not a valid UUID.
+
+The IFID for a legacy ".taf" Adrift story file is the prefix "ADRIFT-",
+followed by the version number as decoded from the story file, followed
+by a hyphen and then its MD5 hash.
+
+Adrift files begin with an encoded text that when decoded says
+"Version #.##". To decode the version number you need only xor the bytes
+with the constant bytes `0xA7 0x6B 0x0E 0x51`:
+
+    Byte  Value   Key    Result
+	0x08  0x94  ^ 0xA7 = '3'
+	0x09  0x45  ^ 0x6B = '.'
+	0x0A  0x36  ^ 0x0E = '8'
+	0x0B  0x61  ^ 0x51 = '0'
+
+The IFID skips the period, so the prefix for an Adrift 3.8 story file is
+"ADRIFT-380-" followed by the MD5 hash.
 
 
 ##### The IFID for a legacy Magnetic Scrolls story file
