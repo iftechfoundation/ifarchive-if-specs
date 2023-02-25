@@ -466,16 +466,56 @@ The algorithm for calculating the IFID of a Glulx file is as follows:
 
 ##### The IFID for a legacy TADS2 or TADS3 story file
 
-The IFID for a legacy ".gam" TADS story file is the prefix "TADS2-",
+The IFID for a legacy ".gam"/".t3" TADS story file is the prefix "TADS2-",
 or "TADS3-", followed by its MD5 hash, with hexadecimal characters
 a to f written in upper case, A to F.
 
 
 ##### The IFID for a legacy Hugo story file
 
-The IFID for a legacy ".hex" Hugo story file is the prefix "HUGO-"
-followed by its MD5 hash, with hexadecimal characters a to f written
-in upper case, A to F.
+Some Hugo story files contain an embedded UUID IFID, however the text is
+obfuscated by 20 being added to the value of each byte. The IFID can be
+located by looking for hyphens in the right pattern, though note that the
+hyphens are themselves obfuscated (and become 'A's).
+
+The IFID for a legacy Hugo story file is derived from the file header and
+has the following form:
+
+    HUGO-##-XX-XX-SERIALNO
+
+The numbers are:
+
+1. The first byte of the story file (the Hugo version number) as a decimal number.
+2. The second and third bytes of the story file as 2 digit hexadecimal numbers.
+3. The following 8 bytes (the serial number) with any non-alphanumerical characters
+   converted to hyphens.
+
+Example:
+
+    HUGO-25-6A-61-09-30-05
+
+
+##### The IFID for a legacy Adrift story file
+
+Adrift 5 story files contain an embedded iFiction record which specify the
+IFID of the story file. Note that this IFID is not a valid UUID.
+
+The IFID for a legacy ".taf" Adrift story file is the prefix "ADRIFT-",
+followed by the version number as decoded from the story file, followed
+by a hyphen and then its MD5 hash.
+
+Adrift files begin with an encoded text that when decoded says
+"Version #.##". To decode the version number you need only xor the bytes
+with the constant bytes `0xA7 0x6B 0x0E 0x51`:
+
+    Byte  Value   Key    Result
+	0x08  0x94  ^ 0xA7 = '3'
+	0x09  0x45  ^ 0x6B = '.'
+	0x0A  0x36  ^ 0x0E = '8'
+	0x0B  0x61  ^ 0x51 = '0'
+
+The IFID skips the period, so the prefix for an Adrift 3.8 story file is
+"ADRIFT-380-" followed by the MD5 hash.
 
 
 ##### The IFID for a legacy Magnetic Scrolls story file
@@ -917,10 +957,14 @@ Returns `NO_REPLY_RV`.
 CLAIM_STORY_FILE_SEL
 ```
 
-Returns `NO_REPLY_RV` if this appears to be a story file produced
-by this design system; or `INVALID_STORY_FILE_RV` if not.
+Returns `VALID_STORY_FILE_RV` if this design system is certain it
+produced the story file, `INVALID_STORY_FILE_RV` if it is certain it
+did not, or `NO_REPLY_RV` if it is possible but not sure.
 
-(Only the most casual, superficial check is needed. For instance,
+(The design systems usually check the file header to see if it would
+be valid, and only to the extent necessary for one story file format
+to be distinguished from the others. They do not check that the entire
+file is valid. For instance,
 the first twelve bytes of a blorb always match `FORM????IFRS` for
 some `????`, and this is unlikely to be true of a randomly found file
 which is not a blorb. So checking those twelve bytes is sufficient
