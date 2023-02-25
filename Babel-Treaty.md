@@ -481,7 +481,7 @@ hyphens are themselves obfuscated (and become 'A's).
 The IFID for a legacy Hugo story file is derived from the file header and
 has the following form:
 
-    HUGO-##-XX-XX-SERIALNO
+	HUGO-##-XX-XX-SERIALNO
 
 The numbers are:
 
@@ -492,7 +492,7 @@ The numbers are:
 
 Example:
 
-    HUGO-25-6A-61-09-30-05
+	HUGO-25-6A-61-09-30-05
 
 
 ##### The IFID for a legacy Adrift story file
@@ -508,7 +508,7 @@ Adrift files begin with an encoded text that when decoded says
 "Version #.##". To decode the version number you need only xor the bytes
 with the constant bytes `0xA7 0x6B 0x0E 0x51`:
 
-    Byte  Value   Key    Result
+	Byte  Value   Key    Result
 	0x08  0x94  ^ 0xA7 = '3'
 	0x09  0x45  ^ 0x6B = '.'
 	0x0A  0x36  ^ 0x0E = '8'
