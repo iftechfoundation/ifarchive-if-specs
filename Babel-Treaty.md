@@ -466,8 +466,8 @@ The algorithm for calculating the IFID of a Glulx file is as follows:
 
 ##### The IFID for a legacy TADS2 or TADS3 story file
 
-The IFID for a legacy ".gam"/".t3" TADS story file is the prefix "TADS2-",
-or "TADS3-", followed by its MD5 hash, with hexadecimal characters
+The IFID for a legacy ".gam" or ".t3" TADS story file is the prefix
+"TADS2-" or "TADS3-", followed by its MD5 hash, with hexadecimal characters
 a to f written in upper case, A to F.
 
 
