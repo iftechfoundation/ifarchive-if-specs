@@ -476,7 +476,7 @@ a to f written in upper case, A to F.
 Some Hugo story files contain an embedded UUID IFID, however the text is
 obfuscated by 20 being added to the value of each byte. The IFID can be
 located by looking for hyphens in the right pattern, though note that the
-hyphens are themselves obfuscated (and become 'A's).
+hyphens are themselves obfuscated (and become "A"s).
 
 The IFID for a legacy Hugo story file is derived from the file header and
 has the following form:
@@ -487,8 +487,8 @@ The numbers are:
 
 1. The first byte of the story file (the Hugo version number) as a decimal number.
 2. The second and third bytes of the story file as 2 digit hexadecimal numbers.
-3. The following 8 bytes (the serial number) with any non-alphanumerical characters
-   converted to hyphens.
+3. The following 8 bytes (the serial number) with any non-alphanumerical
+   characters converted to hyphens.
 
 Example:
 
@@ -505,7 +505,7 @@ followed by the version number as decoded from the story file, followed
 by a hyphen and then its MD5 hash.
 
 Adrift files begin with an encoded text that when decoded says
-"Version #.##". To decode the version number you need only xor the bytes
+"Version #.##". To decode the version number you need only XOR the bytes
 with the constant bytes `0xA7 0x6B 0x0E 0x51`:
 
 	Byte  Value   Key    Result
