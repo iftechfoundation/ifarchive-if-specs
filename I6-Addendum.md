@@ -663,6 +663,8 @@ As of 6.36, this directive may only be used before the first routine is defined.
 
 ## Statements
 
+**`<`Action`>`**
+
 The action statements `<Action>` and `<<Action>>` (§6) now support up to four arguments. The four-argument form is new as of 6.33.
 
 	<Action>
@@ -670,17 +672,60 @@ The action statements `<Action>` and `<<Action>>` (§6) now support up to four a
 	<Action Noun Second>
 	<Action Noun Second, Actor>
 
-All provided arguments are passed to the `R_Process()` veneer function.
+All provided arguments are passed to the `R_Process()` function.
 
-[[As in previous versions of Inform, the Action argument can either be a bare action name or a parenthesized expression which produces an action value. Thus, `<Take lamp>` and `<(##Take) lamp>` are equivalent.]]
+[[`R_Process()` is typically implemented by the Inform library. If there is no library implementation, the veneer fallback simply prints the arguments. Note that support for the four-argument form was introduced in library 6/12; earlier libraries ignore the `Actor` argument.]]
 
-[[This statement does not follow the traditional IF command syntax, which would put the actor first: "ACTOR, ACTION NOUN". Inform's lexer is not able to handle that ordering consistently, so the statement has to put the actor last.]]
+[[As in previous versions of Inform, the `Action` argument can either be a bare action name or a parenthesized expression which produces an action value. Thus, `<Take lamp>` and `<(##Take) lamp>` are equivalent.]]
+
+[[The fourth form directs the action as a command to an NPC: "ACTOR, ACTION NOUN SECOND". Note that the statement ordering does not match how the player would usually type an NPC command. Inform's lexer is not able to handle that ordering consistently, so the statement has to take `Actor` last.]]
+
+**Print**
 
 The capitalized `(A)` print token joins `(a)`, `(The)`, and `(the)` as of 6.30; see §26.
 
 	print (A) lamp;
 
 This calls the `CInDefArt()` veneer function.
+
+**Switch**
+
+As of 6.42, switch case values can be parenthesized expressions, as long as the expressions are compile-time constants. In previous versions, they had to be literals or constant symbols, possibly preceded by a minus sign.
+
+	Constant CONST = 5;
+
+	! These have always worked.
+	switch (x) {
+		0: return 0;
+		1: return 1;
+		-2: return -2;
+		CONST: return 5;
+		-CONST: return -5;
+	}
+	
+	! These also work as of 6.42.
+	switch (x) {
+		(0): return 0;
+		(-(1)): return -1;
+		(CONST): return 5;
+		(CONST+1): return 6;
+		(CONST | 3): return 7;
+	}
+
+If the case does not begin with an open-paren, it follows the old rules: it must be a literal or a constant symbol with an optional minus sign.
+
+A case may also have several values or several expressions. Expression parsing applies as long as the *first* value is wrapped in parens. Wrapping the entire list in parens also works, because of the way Inform parses comma expressions.
+
+	switch (x) {
+		1, 2, 3: return 0;                   ! old style
+		(4), (CONST), (CONST+1): return 1;   ! new style
+		(10), CONST+6, CONST+7: return 2;    ! this also works
+		(20, CONST+16, CONST+17): return 3;  ! as does this
+	}
+
+Range cases using `to` (such as `3 to 7`) *cannot* use parenthesized expressions.
+
+Action cases which are not inside a `switch` statement cannot use parenthesized expressions. (These are the cases usually found in `before` and `after` properties, etc.) These top-level cases must be bare action names, as described in §4.
 
 ## Dynamic strings
 
