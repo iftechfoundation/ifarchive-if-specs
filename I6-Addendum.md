@@ -831,7 +831,7 @@ This is defined as 1 if `$DICT_CHAR_SIZE` is 4. (Glulx-only.)
 
 **OMIT_SYMBOL_TABLE**
 
-This is defined as 1 if the `$OMIT_SYMBOL_TABLE` setting is used.
+This is defined if the `$OMIT_SYMBOL_TABLE` setting is used.
 
 **NUM_ATTR_BYTES**
 
