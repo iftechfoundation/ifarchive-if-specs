@@ -793,6 +793,12 @@ In Glulx, these are the byte offsets of the *low byte* (second byte) of the thre
 
 If `$ZCODE_LESS_DICT_DATA` is set, `#dict_par3` is not available.
 
+**#identifiers_table**
+
+The address of a set of tables containing property names, attribute names, and other code elements. These are typically used only by debug commands, runtime error messages, and Infix.
+
+If `$OMIT_SYMBOL_TABLE` is set, this constant (and other related constants) are not available. Trying to use them will be reported as a compile error.
+
 **TARGET_ZCODE**, **TARGET_GLULX**
 
 Exactly one of these will be defined, depending on the game file format.
