@@ -694,6 +694,8 @@ The capitalized `(A)` print token joins `(a)`, `(The)`, and `(the)` as of 6.30; 
 
 This calls the `CInDefArt()` veneer function.
 
+As noted above, the `(property)` token will print property numbers (rather than names) when the `$OMIT_SYMBOL_TABLE` option is used.
+
 **Switch**
 
 As of 6.42, switch case values can be parenthesized expressions, as long as the expressions are compile-time constants. In previous versions, they had to be literals or constant symbols, possibly preceded by a minus sign.
