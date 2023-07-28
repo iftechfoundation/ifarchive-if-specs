@@ -6,7 +6,7 @@ Language and compiler changes: releases 6.30 to 6.42 (in development)
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: May 4, 2023)
+(Last update: July 27, 2023)
 {: .DateHeader }
 
 Copyright 2020-22 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
@@ -248,6 +248,12 @@ The number of bytes used for attribute flags in each object. The maximum number 
 **$OMIT_UNUSED_ROUTINES**
 
 If this is set to 1, the compiler will omit the compiled code of unused routines from the game file. (See `$WARN_UNUSED_ROUTINES`.)
+
+**$OMIT_SYMBOL_TABLE**
+
+If this is set to 1, the compiler will not compile the names of properties, arrays, and other code elements into the game file. This means that the `print (property) p` statement will print a property number instead of a name. Runtime errors will also omit symbol names.
+
+System constants referring to symbol names are not available when `$OMIT_SYMBOL_TABLE` is set. See "[Constants](#constants)".
 
 **$SERIAL**
 
