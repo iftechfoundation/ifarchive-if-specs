@@ -829,6 +829,10 @@ The byte size of one character in a dictionary word. This is controlled by the `
 
 This is defined as 1 if `$DICT_CHAR_SIZE` is 4. (Glulx-only.)
 
+**OMIT_SYMBOL_TABLE**
+
+This is defined as 1 if `$OMIT_SYMBOL_TABLE` is set.
+
 **NUM_ATTR_BYTES**
 
 The number of bytes reserved in each object record for (boolean) attributes. (Each byte stores eight attributes.) In Z-code, this will be 6. In Glulx, it is controlled by the `$NUM_ATTR_BYTES` setting; it will always be a value of the form `4*i+3`.
