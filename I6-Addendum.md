@@ -245,15 +245,15 @@ The number of extra zero bytes to add to the end of the compiled game file. This
 
 The number of bytes used for attribute flags in each object. The maximum number of attributes is `8 * NUM_ATTR_BYTES`. (In Glulx, this must be a multiple of 4 plus 3. In Z-code this is always 6 and cannot be changed.)
 
-**$OMIT_UNUSED_ROUTINES**
-
-If this is set to 1, the compiler will omit the compiled code of unused routines from the game file. (See `$WARN_UNUSED_ROUTINES`.)
-
 **$OMIT_SYMBOL_TABLE**
 
 If this is set to 1, the compiler will not compile the names of properties, arrays, and other code elements into the game file. This means that the `print (property) p` statement will print a property number instead of a name. Runtime errors will also omit symbol names.
 
 System constants referring to symbol names are not available when `$OMIT_SYMBOL_TABLE` is set. See "[Constants](#constants)".
+
+**$OMIT_UNUSED_ROUTINES**
+
+If this is set to 1, the compiler will omit the compiled code of unused routines from the game file. (See `$WARN_UNUSED_ROUTINES`.)
 
 **$SERIAL**
 
