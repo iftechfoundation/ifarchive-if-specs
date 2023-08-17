@@ -6,7 +6,7 @@ Language and compiler changes: releases 6.30 to 6.42 (in development)
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: August 14, 2023)
+(Last update: August 17, 2023)
 {: .DateHeader }
 
 Copyright 2020-22 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
@@ -983,6 +983,8 @@ Literals beginning with `$+` and `$-` are compiled as floating-point constants. 
 The constants `FLOAT_INFINITY`, `FLOAT_NINFINITY`, `FLOAT_NAN`, `DOUBLE_HI_INFINITY`, `DOUBLE_LO_INFINITY`, `DOUBLE_HI_NINFINITY`, `DOUBLE_LO_NINFINITY`, `DOUBLE_HI_NAN`, `DOUBLE_LO_NAN` are also defined.
 
 [[Note that the standard Inform arithmetic operators (`+`, `-`, etc) do not work with floating-point values. You must use Glulx opcodes. (`@fadd`, `@fsub`, etc for single-precision; `@dadd`, `@dsub`, etc for double-precision.)]]
+
+[[Double-precision literals are not guaranteed to compile to exactly the same word values on all platforms. The last digit of the low word may vary. This is because the Inform compiler relies on platform floating-point math, which is inherently imprecise.]]
 
 The `print_to_array()` method (§3.12) requires two arguments, rather than one (as in Z-code).
 
