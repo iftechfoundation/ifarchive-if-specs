@@ -671,20 +671,22 @@ As of 6.36, this directive may only be used before the first routine is defined.
 
 **`<`Action`>`**
 
-The action statements `<Action>` and `<<Action>>` (§6) now support up to four arguments. The four-argument form is new as of 6.33.
+The action statements `<Action>` and `<<Action>>` (§6) now support up to four arguments. The `Actor` forms are new as of 6.33.
 
 	<Action>
 	<Action Noun>
 	<Action Noun Second>
+	<Action, Actor>
+	<Action Noun, Actor>
 	<Action Noun Second, Actor>
 
-All provided arguments are passed to the `R_Process()` function.
+All provided arguments are passed to the `R_Process()` function. The `Actor` value (after the comma) will be the fourth argument if provided. Thus, `<Action, Actor>` will invoke `R_Process(Action, 0, 0, Actor)`.
 
 [[`R_Process()` is typically implemented by the Inform library. If there is no library implementation, the veneer fallback simply prints the arguments. Note that support for the four-argument form was introduced in library 6/12; earlier libraries ignore the `Actor` argument.]]
 
 [[As in previous versions of Inform, the `Action` argument can either be a bare action name or a parenthesized expression which produces an action value. Thus, `<Take lamp>` and `<(##Take) lamp>` are equivalent.]]
 
-[[The fourth form directs the action as a command to an NPC: "ACTOR, ACTION NOUN SECOND". Note that the statement ordering does not match how the player would usually type an NPC command. Inform's lexer is not able to handle that ordering consistently, so the statement has to take `Actor` last.]]
+[[The `Actor` forms direct the action as a command to an NPC: "ACTOR, ACTION NOUN SECOND". Note that the statement ordering does not match how the player would usually type an NPC command. Inform's lexer is not able to handle that ordering consistently, so the statement has to take `Actor` last.]]
 
 **Print**
 
