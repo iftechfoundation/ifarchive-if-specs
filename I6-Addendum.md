@@ -9,7 +9,7 @@ Maintained by IFTF: `<specs@ifarchive.org>`
 (Last update: September 1, 2023)
 {: .DateHeader }
 
-Copyright 2020-22 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
+Copyright 2020-23 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
 
 Graham Nelson's [Inform 6][i6] is a system for creating adventure games, and _[The Inform Designer's Manual][dm4]_ is the book to read about it.
 
