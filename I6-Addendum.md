@@ -289,6 +289,14 @@ If this is set to 1, each dictionary entry will have two bytes of data instead o
 
 With this switch set, you may not refer to `#dict_par3`. You also may not use grammar version 1, as that format needs to use the third byte for the preposition number.
 
+**$ZCODE_MAX_INLINE_STRING**
+
+This is the length beyond which string literals cannot be inlined in assembly opcodes. The default value is 32 characters. (Added in 6.42. This is only meaningful in Z-code.)
+
+If you increase this, Inform will be more aggressive about inlining literal strings in `print` statements. This will save some space in the compiled game file. However, it may also lead to excessively long functions, which may cause "Branch out of range" compilation errors. Use with care.
+
+[[Note that the limit is measured in *source code* characters, without regard for escapes or abbreviations. The string literal `"abc@{64}e"` is measured as 9 characters, even though it's compiled as 5 Z-characters in 4 bytes. Since the aim is an optimization policy, the imprecision is not worth worrying about.]]
+
 ## Trace options { #traceopts }
 
 These are special compiler settings which display extra information about the compilation process. Most of them are only useful for debugging the compiler itself. The ones most useful to authors have simple switch options, documented [above](#switchopts).
