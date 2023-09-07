@@ -295,7 +295,7 @@ This is the length beyond which string literals cannot be inlined in assembly op
 
 If you increase this, Inform will be more aggressive about inlining literal strings in `print` statements. This will save some space in the compiled game file. However, it may also lead to excessively long functions, which may cause "Branch out of range" compilation errors. Use with care.
 
-[[Note that the limit is measured in *source code* characters, without regard for escapes or abbreviations. The string literal `"abc@{64}e"` is measured as 9 characters, even though it's compiled as 5 Z-characters in 4 bytes. Since the aim is an optimization policy, the imprecision is not worth worrying about.]]
+[[Note that the limit is measured in *source code* characters, without regard for escapes or abbreviations. The string literal `"abc@{64}e"` is measured as 9 characters, even though it's compiled as 5 Z-characters (`"abcde"`) in 4 bytes. Since the aim is an optimization policy, the imprecision is not worth worrying about.]]
 
 ## Trace options { #traceopts }
 
