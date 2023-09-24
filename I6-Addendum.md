@@ -698,7 +698,7 @@ All provided arguments are passed to the `R_Process()` function. The `Actor` val
 
 **`@`Assembly**
 
-Assembly language (§41) now allows you to specify bytes directly:
+As of 6.42, assembly language (§41) allows you to specify bytes directly:
 
 ```
 @ -> $8B $04 $D2;
