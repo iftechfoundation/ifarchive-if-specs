@@ -696,6 +696,28 @@ All provided arguments are passed to the `R_Process()` function. The `Actor` val
 
 [[The `Actor` forms direct the action as a command to an NPC: "ACTOR, ACTION NOUN SECOND". Note that the statement ordering does not match how the player would usually type an NPC command. Inform's lexer is not able to handle that ordering consistently, so the statement has to take `Actor` last.]]
 
+**`@`Assembly**
+
+Assembly language (§41) now allows you to specify bytes directly:
+
+```
+@ -> $8B $04 $D2;
+```
+
+This writes the given bytes into the current location of the function being compiled. Byte values must be numbers or defined numeric constants. It is up to the author to ensure that the bytes form valid instructions.
+
+[[These three bytes form the Z-code opcode for `@ret 1234`. So this line is equivalent to the statement `return 1234`. In Glulx, you would need different bytes to achieve the same effect.]]
+
+You can also specify values as words:
+
+```
+@ --> $00 $FFEE;
+```
+
+In this form, each entry is written as a two-byte (Z) or four-byte (G) sequence. The `@ -->` statement accepts general constant values such as object, string, or function addresses.
+
+[[This feature is intended for testing new or experimental interpreter features, or exploring the behavior of interpreters in unexpected conditions. Most authors will never need it.]]
+
 **Print**
 
 The capitalized `(A)` print token joins `(a)`, `(The)`, and `(the)` as of 6.30; see §26.
