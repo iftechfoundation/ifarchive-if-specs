@@ -1386,7 +1386,7 @@ The latter case is also handled with multiple elements. Note that indexing is on
 A great number of bugs have been fixed since Inform 6.21. The list is not included here. See the [Release Notes][i6release] for details (older notes [here][i6relold]).
 
 [i6release]: https://ifarchive.org/if-archive/infocom/compilers/inform6/ReleaseNotes.html
-[i6relold]: https://github.com/DavidKinder/Inform6/blob/v6.36/ReleaseNotes.html
+[i6relold]: https://inform-fiction.org/manual/ReleaseNotes-6.3x.html
 
 However, it is worth noting that Z-code V3 code generation had been neglected since 6.15 and a number of bugs had crept in. 6.34 and 6.35 have addressed these; V3 should once again be usable.
 
