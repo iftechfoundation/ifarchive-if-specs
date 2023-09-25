@@ -42,7 +42,7 @@ This is a high-level view of I6 releases and their most important features. For 
 - **6.31** (Feb 2006): Bug fixes.
 - **6.32** (Nov 2010): `@push`, `@pull` assembly macros; all Glulx opcodes supported; Glulx floating-point constants.
 - **6.33** (May 2014): UTF-8 source files; `$OMIT_UNUSED_ROUTINES`; `<Take pie, orc>`; `Undef` directive; `Dictionary` directive for setting word flags.
-- **6.34** (May 2020): `OrigSource` directive; improved `Replace` directive.
+- **6.34** (May 2020): Revitalized v3 support; `OrigSource` directive; improved `Replace` directive.
 - **6.35** (May 2021): Unix-style command-line options; command-line option to define a numeric constant.
 - **6.36** (Jan 2022): Most memory limits are gone; some compile-time type checking.
 - **6.40** (Jul 2022): Command-line arguments streamlined; modules and temp-file compilation removed; dead-code stripping.
