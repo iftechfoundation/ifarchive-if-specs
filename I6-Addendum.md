@@ -35,7 +35,7 @@ As a result, the DM4 is now a bit out of date. This document is meant to fill in
 
 ## I6 version history
 
-This is a high-level view of I6 releases over time, and their most important features. For a complete description of each release, see the [I6 Release Notes][i6release].
+This is a high-level view of I6 releases and their most important features. For a complete description of each release, see the [I6 Release Notes][i6release].
 
 - **6.21** (Apr 1999): DM4 version.
 - **6.30** (Feb 2004): Glulx support; `!%` header comments; capital `(A)` print token.
