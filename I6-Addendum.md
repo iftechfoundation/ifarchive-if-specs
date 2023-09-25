@@ -35,7 +35,7 @@ As a result, the DM4 is now a bit out of date. This document is meant to fill in
 
 ## I6 version history
 
-This is a high-level view of I6 releases and their most important features. For a complete description of each release, see the [I6 Release Notes][i6release].
+This is a high-level view of I6 releases and their most important features. For a complete description of each release, see the [I6 Release Notes][i6release] (older notes [here][i6relold]).
 
 - **6.21** (Apr 1999): DM4 version.
 - **6.30** (Feb 2004): Glulx support; `!%` header comments; capital `(A)` print token.
@@ -1383,9 +1383,10 @@ The latter case is also handled with multiple elements. Note that indexing is on
 
 # Bugs
 
-A great number of bugs have been fixed since Inform 6.21. The list is not included here. See the [Release Notes][i6release] for details.
+A great number of bugs have been fixed since Inform 6.21. The list is not included here. See the [Release Notes][i6release] for details (older notes [here][i6relold]).
 
 [i6release]: https://ifarchive.org/if-archive/infocom/compilers/inform6/ReleaseNotes.html
+[i6relold]: https://github.com/DavidKinder/Inform6/blob/v6.36/ReleaseNotes.html
 
 However, it is worth noting that Z-code V3 code generation had been neglected since 6.15 and a number of bugs had crept in. 6.34 and 6.35 have addressed these; V3 should once again be usable.
 
