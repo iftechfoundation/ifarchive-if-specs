@@ -33,6 +33,22 @@ As a result, the DM4 is now a bit out of date. This document is meant to fill in
 
 ---
 
+## I6 version history
+
+This is a high-level view of I6 releases over time, and their most important features. For a complete description of each release, see the [I6 Release Notes][i6release].
+
+- **6.21** (Apr 1999): DM4 version.
+- **6.30** (Feb 2004): Glulx support; `!%` header comments; capital `(A)` print token.
+- **6.31** (Feb 2006): Bug fixes.
+- **6.32** (Nov 2010): `@push`, `@pull` assembly macros; all Glulx opcodes supported; Glulx floating-point constants.
+- **6.33** (May 2014): UTF-8 source files; `$OMIT_UNUSED_ROUTINES`; `<Take pie, orc>`; `Undef` directive; `Dictionary` directive for setting word flags.
+- **6.34** (May 2020): `OrigSource` directive; improved `Replace` directive.
+- **6.35** (May 2021): Unix-style command-line options; command-line option to define a numeric constant.
+- **6.36** (Jan 2022): Most memory limits are gone; some compile-time type checking.
+- **6.40** (Jul 2022): Command-line arguments streamlined; modules and temp-file compilation removed; dead-code stripping.
+- **6.41** (Jul 2022): Bug fixes.
+- **6.42** (dev): Unlimited identifier length; inline bytes assembly.
+
 ## Language versus library
 
 This addendum covers updates to the Inform 6 language and compiler. A few errata are also included.
