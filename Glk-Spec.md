@@ -249,7 +249,7 @@ The critical point is that if the Glk library has never heard of the selector se
 
 (If a selector does not use the second argument, you should always pass 0; do not assume that the second argument is simply ignored. This is because the selector may be extended in the future. You will continue to get the current behavior if you pass 0 as the second argument, but other values may produce other behavior.)
 
-Gestalt selectors numbered 0x1400 to 0x14FF are reserved for extension projects by ZZO38. These are not documented here.
+Gestalt selectors numbered 0x1400 to 0x14FF are reserved for extension projects by ZZO38. Gestalt selectors 0x1500 to 0x150F are reserved for extension projects by Brian Rushton. These are not documented here.
 
 ### The Version Number { #version }
 
@@ -2940,7 +2940,7 @@ Note that glk_main() does not have a selector, because it's provided by your pro
 
 There is no way to use these selectors directly in the Glk API. [[An earlier version of Glk had gestalt selectors gestalt_FunctionNameToID and gestalt_FunctionIDToName, but these have been withdrawn.]] They are defined and used only by the dispatch layer.
 
-Call selectors 0x1100 to 0x11FF (and the same range of gestalt selectors) are reserved for extension projects by Dannii Willis. Call selectors 0x1200 to 0x12FF (and gestalt selector 0x1200) are reserved for extension projects by Carlos Sanchez. Call selectors 0x2200 to 0x22FF (and the same range of gestalt selectors) are reserved for iOS extension features by Andrew Plotkin. Call selectors 0x1400 to 0x14FF (and the same range of gestalt selectors) are reserved for extension projects by ZZO38. These are not documented here.
+Call selectors 0x1100 to 0x11FF (and the same range of gestalt selectors) are reserved for extension projects by Dannii Willis. Call selectors 0x1200 to 0x12FF (and gestalt selector 0x1200) are reserved for extension projects by Carlos Sanchez. Call selectors 0x2200 to 0x22FF (and the same range of gestalt selectors) are reserved for iOS extension features by Andrew Plotkin. Call selectors 0x1400 to 0x14FF (and the same range of gestalt selectors) are reserved for extension projects by ZZO38. Call selectors 0x1500 to 0x150F (and the same range of gestalt selectors) are reserved for extension projects by Brian Rushton. These are not documented here.
 
 ### The Blorb Layer { #blorblayer }
 
