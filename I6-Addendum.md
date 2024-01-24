@@ -807,6 +807,19 @@ The old format `@01` is still supported, but only supports numbers of exactly tw
 
 The number of dynamic strings is limited, but the limit may be increased with the `$MAX_DYNAMIC_STRINGS` setting. See [Compiler settings](#memsettings).
 
+## Dictionary words
+
+As of 6.42, a dictionary word literal may have a suffix indicating flags to set in `dict_par1`. The suffix consists of `//` followed by any number of flags:
+
+- `p`: Set the plural flag (bit 2)
+- `n`: Set the noun flag (bit 7)
+- `~p`: Do not set the plural flag this time
+- `~n`: Do not set the noun flag this time
+
+In earlier versions, only the `//p` suffix (§29) and the flagless `//` suffix (§1.4) were supported. (`'x//'` indicates that the constant is a dict word without any particular flags. This is useful to distinguish single-letter dict words from character constants.)
+
+[[See also the `Dictionary` directive, which allows you to set any bits in `dict_par1` or `dict_par3`.]]
+
 ## Constants
 
 The compiler defines various constants describing the game file. The game (and library) may use these to examine compiled data.
