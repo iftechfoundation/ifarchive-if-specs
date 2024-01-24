@@ -818,7 +818,7 @@ As of 6.42, a dictionary word literal may have a suffix indicating flags to set 
 
 In earlier versions, only the `//p` suffix (§29) and the flagless `//` suffix (§1.4) were supported. (The flagless form `'x//'` just indicates that the constant is a dict word. This is useful to distinguish single-letter dict words from character constants.)
 
-Inform assumes that all words mentioned in the source are nouns. The only exception is `Verb` directives, which contain verbs and prepositions. In effect, all words mentioned in properties, globals, arrays, or functions default to `//n`. You should explicitly mark words with `//~n` if you don't mean to give them the noun flag just by mentioning them.
+Inform assumes that all words mentioned in the source are nouns. The only exception is the `Verb` directive, which contains verbs and prepositions. In effect, all words mentioned in properties, globals, arrays, or functions default to `//n`. You should explicitly mark words with `//~n` if you don't mean to give them the noun flag just by mentioning them.
 
 [[For example, if you're writing a LanguageVerb() routine (§37), you might mark verb words as `'i//~n'`, `'inv//~n'`, `'inventory//~n'`.]]
 
