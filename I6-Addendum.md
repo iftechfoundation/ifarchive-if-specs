@@ -816,9 +816,17 @@ As of 6.42, a dictionary word literal may have a suffix indicating flags to set 
 - `~p`: Do not set the plural flag this time
 - `~n`: Do not set the noun flag this time
 
-In earlier versions, only the `//p` suffix (§29) and the flagless `//` suffix (§1.4) were supported. (`'x//'` indicates that the constant is a dict word without any particular flags. This is useful to distinguish single-letter dict words from character constants.)
+In earlier versions, only the `//p` suffix (§29) and the flagless `//` suffix (§1.4) were supported. (The flagless form `'x//'` just indicates that the constant is a dict word. This is useful to distinguish single-letter dict words from character constants.)
 
-[[See also the `Dictionary` directive, which allows you to set any bits in `dict_par1` or `dict_par3`.]]
+Inform assumes that all words mentioned in the source are nouns. The only exception is `Verb` directives, which contain verbs and prepositions. In effect, all words mentioned in properties, globals, arrays, or functions default to `//n`. You should explicitly mark words with `//~n` if you don't mean to give them the noun flag just by mentioning them.
+
+[[For example, if you're writing a LanguageVerb() routine (§37), you might mark verb words as `'i//~n'`, `'inv//~n'`, `'inventory//~n'`.]]
+
+Contrariwise, Inform never assumes that words are plural. Therefore, only the `//p` and `//~n` flags are useful. `//~p` and `//n` are supported only for the sake of consistency.
+
+Note that if a word is marked both `//p` and `//~p` in different places, its plural flag is set. Similarly, if it's marked `//n` anywhere, *even as a default*, its noun flag is set. The `~` forms do not erase a flag; they only prevent it from being set right then.
+
+[[See also the `Dictionary` directive, which allows you to set arbitrary bits in `dict_par1` or `dict_par3`.]]
 
 ## Constants
 
