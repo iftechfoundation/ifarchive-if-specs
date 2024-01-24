@@ -473,6 +473,8 @@ When one of these directives appears within a routine or object definition, the 
 
 As of 6.40, the `Abbreviate` directive only creates an abbreviation when in economy (`-e`) mode. If the `-e` switch is not used, the directive is skipped and no space is consumed in the game's abbreviations table.
 
+As of 6.42, abbreviations can be of any length. (In earlier versions, they were limited to 64 source-text characters.)
+
 **Array**
 
 The `Array` directive (§2.4) supports four ways to specify values:
