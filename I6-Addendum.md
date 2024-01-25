@@ -836,6 +836,8 @@ Contrariwise, Inform never assumes that words are plural. Therefore, only the `/
 
 Note that if a word is marked both `//p` and `//~p` in different places, its plural flag is set. Similarly, if it's marked `//n` anywhere, *even as a default*, its noun flag is set. The `~` forms do not erase a flag; they only prevent it from being set right then.
 
+[[Note that, by default, suffixes are ignored in long dict words. Use the `$LONG_DICT_FLAG_BUG=0` setting to change this.]]
+
 [[See also the `Dictionary` directive, which allows you to set arbitrary bits in `dict_par1` or `dict_par3`.]]
 
 ## Constants
