@@ -233,6 +233,16 @@ The number of extra zero bytes to add to each object table entry. This is writab
 
 The index number of the first individual property. This also determines the maximum number of common properties. (In Z-code this is 64 and cannot be changed.)
 
+**$LONG_DICT_FLAG_BUG**
+
+If this is set to 0, dictionary flag suffixes (see "[Dictionary words](#dictionary-words)") are recognized in words of any length.
+
+If this is 1, suffixes are ignored if they begin after the dictionary word length. (After the ninth character for V4+; the sixth for V3; the ninth or whatever `$DICT_WORD_SIZE` is set to in Glulx.) The default setting is 1.
+
+[[We retain the buggy behavior as the default to avoid disrupting old Inform 7 games. I7 always adds the words `'directions//p'`, `'supporters//p'`, `'containers//p'` to objects of those types. Due to the bug, the plural flag is not set on these words, which affects the parsing of commands like `GET DIRECTION` or `GET CONTAINER`. Future releases of I7 may set `$LONG_DICT_FLAG_BUG=0`, but it is better to avoid changing the behavior of existing releases.]]
+
+(Added in 6.42. In earlier versions, the bug was always present and could not be switched off.)
+
 **$MAX_ABBREVS**
 
 The number of abbreviations which may be used in economy (`-e`) mode. This setting is available in all versions of Inform, but in 6.35 the maximum for Z-code was raised from 64 to 96. However, this trades off against `$MAX_DYNAMIC_STRINGS`; see below.
