@@ -726,6 +726,10 @@ All provided arguments are passed to the `R_Process()` function. The `Actor` val
 
 **`@`Assembly**
 
+As of 6.40, the Glulx opcodes `@hasundo` and `@discardundo` (Glulx spec 3.1.3) are supported.
+
+As of 6.42, the Z-code opcodes `@set_true_colour` and `@buffer_screen` (Z-Spec 1.1) are supported.
+
 As of 6.42, assembly language (§41) allows you to specify bytes directly:
 
 ```
