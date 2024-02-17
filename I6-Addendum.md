@@ -1,6 +1,6 @@
 # Inform 6 Reference Addendum {: .Title }
 
-Language and compiler changes: releases 6.30 to 6.42
+Language and compiler changes: releases 6.30 to 6.43 (in development)
 {: .VersionHeader }
 
 Maintained by IFTF: `<specs@ifarchive.org>`
@@ -823,14 +823,18 @@ The number of dynamic strings is limited, but the limit may be increased with th
 
 ## Dictionary words
 
-As of 6.42, a dictionary word literal may have a suffix indicating flags to set in `dict_par1`. The suffix consists of `//` followed by any number of flags:
+As of 6.43, a dictionary word literal may have a suffix indicating flags to set in `dict_par1`. The suffix consists of `//` followed by any number of flags:
 
 - `p`: Set the plural flag (bit 2)
+- `s`: Set the singular flag (bit 4)
 - `n`: Set the noun flag (bit 7)
 - `~p`: Do not set the plural flag this time
+- `~s`: Do not set the singular flag this time
 - `~n`: Do not set the noun flag this time
 
-In earlier versions, only the `//p` suffix (§29) and the flagless `//` suffix (§1.4) were supported. (The flagless form `'x//'` just indicates that the constant is a dict word. This is useful to distinguish single-letter dict words from character constants.)
+6.42 supported the same suffixes with the exception of `s` and `~s`, which are new in 6.43.
+
+In 6.41 and earlier, only the `//p` suffix (§29) and the flagless `//` suffix (§1.4) were supported. (The flagless form `'x//'` just indicates that the constant is a dict word. This is useful to distinguish single-letter dict words from character constants.)
 
 Inform assumes that all words mentioned in the source are nouns. The only exception is the `Verb` directive, which contains verbs and prepositions. In effect, all words mentioned in properties, globals, arrays, or functions default to `//n`. You should explicitly mark words with `//~n` if you don't mean to give them the noun flag just by mentioning them.
 
@@ -839,6 +843,8 @@ Inform assumes that all words mentioned in the source are nouns. The only except
 Contrariwise, Inform never assumes that words are plural. Therefore, only the `//p` and `//~n` flags are useful. `//~p` and `//n` are supported only for the sake of consistency.
 
 Note that if a word is marked both `//p` and `//~p` in different places, its plural flag is set. Similarly, if it's marked `//n` anywhere, *even as a default*, its noun flag is set. The `~` forms do not erase a flag; they only prevent it from being set right then.
+
+The `$DICT_IMPLICIT_SINGULAR=1` option (new in 6.43) tells Inform to assume that non-plural nouns are singular. That is -- with this option set -- if a word is mentioned in the source (thus being `//n` by default), and does not have an explicit `//p`, then its `//s` flag is set. If a word is marked both `//p` and `//~p` in different places, then it will wind up with *both* the `//s` and `//p` flags.
 
 [[Note that, by default, suffixes are ignored in long dict words. Use the `$LONG_DICT_FLAG_BUG=0` setting to change this.]]
 
