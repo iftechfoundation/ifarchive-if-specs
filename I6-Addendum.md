@@ -176,7 +176,7 @@ You can also give a comma-separated list of paths: `+include_path=DIR1,DIR2,DIR3
 
 A double plus sign adds a new path or paths to an existing list. For example, `++include_path=DIRNAME` will add DIRNAME to the paths which are searched for include files. The newly-added paths will be searched first.
 
-On the command line (but not in ICL files or comments), path options can be also specified in Unix style. (This is new in 6.35.)
+On the command line (but not in ICL files or comments), path options can be also specified in Unix style. (This was added in 6.35.)
 
 	--path PATH=dir
 	--addpath PATH=dir
@@ -197,16 +197,16 @@ If you supply such a setting in a source file, using the `!%` format, you should
 
 *New since the DM4:*
 
-A setting that begins with a hash sign (`$#`) will define an arbitrary numeric constant in the game code. If no value is supplied, the constant is defined as zero. This is equivalent to (and consistent with) the `Constant` directive. (New in 6.35.)
+A setting that begins with a hash sign (`$#`) will define an arbitrary numeric constant in the game code. If no value is supplied, the constant is defined as zero. This is equivalent to (and consistent with) the `Constant` directive. (Added in 6.35.)
 
 	$#SYMBOL
 	$#SYMBOL=number
 	
 [[Thus, passing the `$#DEBUG` argument is equivalent to the `-D` option. Remember that Inform symbols are not case-sensitive; `$#debug` or `$#Debug=0` does the same thing.]]
 
-A setting that begins with an exclamation mark (`$!`) is a trace option. (New in 6.40.) These have a slightly different format; see [Trace options](#traceopts), below.
+A setting that begins with an exclamation mark (`$!`) is a trace option. (Added in 6.40.) These have a slightly different format; see [Trace options](#traceopts), below.
 
-On the command line (but not in ICL files or comments), compiler settings can also be specified in Unix style. (New in 6.35.) This avoids the need to escape dollar signs.
+On the command line (but not in ICL files or comments), compiler settings can also be specified in Unix style. (Added in 6.35.) This avoids the need to escape dollar signs.
 
 	--list
 	--opt SETTING=number
@@ -513,7 +513,7 @@ The `buffer` keyword defines `arrname` as a hybrid array, in which the first *wo
 
 [[This hybrid form is used by the `print_to_array` method (§3.12) and various library functions.]]
 
-All forms of the `Array` directive support the `static` keyword, which is new in 6.34:
+All forms of the `Array` directive support the `static` keyword, which was added in 6.34:
 
 	Array arrname static -> 1 2 3 4;
 	Array arrname static string "plugh";
@@ -597,7 +597,7 @@ The `Lowstring` directive is not supported in Glulx.
 
 **Origsource**
 
-The `Origsource` directive allows you to mark part of a source file as having been generated from another file. (E.g, an Inform 7 source file.) This directive is new in 6.34.
+The `Origsource` directive allows you to mark part of a source file as having been generated from another file. (E.g, an Inform 7 source file.) This directive was added in 6.34.
 
 	Origsource "Filename";
 	Origsource "Filename" 10;
@@ -642,7 +642,7 @@ The `Replace` directive (§25) allows you to redefine a function which has alrea
 
 [[The DM4 says that you can only replace functions in files marked with the `System_file` directive. This limitation has been removed.]]
 
-The `Replace` directive has two forms, of which the second is new in 6.33:
+The `Replace` directive has two forms, of which the second was added in 6.33:
 
 	Replace Func;
 	Replace Func OriginalFunc;
@@ -691,7 +691,7 @@ Equivalent to `Trace assembly [val]`.
 
 **Undef**
 
-The `Undef` directive allows you to remove a previously-defined constant. This directive is new in 6.33.
+The `Undef` directive allows you to remove a previously-defined constant. This directive was added in 6.33.
 
 	Undef Const;
 
@@ -836,7 +836,7 @@ As of 6.43, a dictionary word literal may have a suffix indicating flags to set 
 - `~s`: Do not set the singular flag this time
 - `~n`: Do not set the noun flag this time
 
-6.42 supported the same suffixes with the exception of `s` and `~s`, which are new in 6.43.
+6.42 supported the same suffixes with the exception of `s` and `~s`, which were added in 6.43.
 
 In 6.41 and earlier, only the `//p` suffix (§29) and the flagless `//` suffix (§1.4) were supported. (The flagless form `'x//'` just indicates that the constant is a dict word. This is useful to distinguish single-letter dict words from character constants.)
 
@@ -848,7 +848,7 @@ Contrariwise, Inform never assumes that words are plural. Therefore, only the `/
 
 Note that if a word is marked both `//p` and `//~p` in different places, its plural flag is set. Similarly, if it's marked `//n` anywhere, *even as a default*, its noun flag is set. The `~` forms do not erase a flag; they only prevent it from being set right then.
 
-The `$DICT_IMPLICIT_SINGULAR=1` option (new in 6.43) tells Inform to assume that non-plural nouns are singular. That is -- with this option set -- if a word is mentioned in the source (thus being `//n` by default), and does not have an explicit `//p`, then its `//s` flag is set. If a word is marked both `//p` and `//~p` in different places, then it will wind up with *both* the `//s` and `//p` flags.
+The `$DICT_IMPLICIT_SINGULAR=1` option (added in 6.43) tells Inform to assume that non-plural nouns are singular. That is -- with this option set -- if a word is mentioned in the source (thus being `//n` by default), and does not have an explicit `//p`, then its `//s` flag is set. If a word is marked both `//p` and `//~p` in different places, then it will wind up with *both* the `//s` and `//p` flags.
 
 [[Note that, by default, suffixes are ignored in long dict words. Use the `$LONG_DICT_FLAG_BUG=0` setting to change this.]]
 
