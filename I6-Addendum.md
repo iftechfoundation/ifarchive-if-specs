@@ -225,6 +225,10 @@ The byte size of one character in the dictionary. This is only meaningful in Glu
 
 The number of bytes in a dictionary word entry. (In Z-code this is 6, representing up to 9 Z-characters, and cannot be changed.)
 
+**$DICT_IMPLICIT_SINGULAR**
+
+If this is 1, Inform set the singular (`//s`) flag for any noun not explicitly marked plural (`//p`). (Added in 6.43.)
+
 **$GLULX_OBJECT_EXT_BYTES**
 
 The number of extra zero bytes to add to each object table entry. This is writable memory which the game can use freely. (This is only meaningful in Glulx, as the Z-code object format is fixed by the spec.)
