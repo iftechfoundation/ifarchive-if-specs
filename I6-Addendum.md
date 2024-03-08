@@ -48,7 +48,7 @@ This is a high-level view of I6 releases and their most important features. For 
 - **6.40** (Jul 2022): Command-line arguments streamlined; modules and temp-file compilation removed; dead-code stripping.
 - **6.41** (Jul 2022): Bug fixes.
 - **6.42** (Feb 2024): Unlimited identifier length; unlimited abbreviation length; inline bytes assembly.
-- **6.43** (unreleased): Singular (`//s`) dict flag and `$DICT_IMPLICIT_SINGULAR`.
+- **6.43** (unreleased): Singular (`//s`) dict flag and `$DICT_IMPLICIT_SINGULAR`; truncation dict flag and `$DICT_TRUNCATE_FLAG`.
 
 ## Language versus library
 
@@ -224,11 +224,17 @@ The byte size of one character in the dictionary. This is only meaningful in Glu
 
 **$DICT_WORD_SIZE**
 
-The number of bytes in a dictionary word entry. (In Z-code this is 6, representing up to 9 Z-characters, and cannot be changed.)
+The number of bytes in a dictionary word entry. (In Z-code this cannot be changed. It is always 4 in v3 and 6 in V4+, representing up to 6 or 9 Z-characters.)
 
 **$DICT_IMPLICIT_SINGULAR**
 
 If this is 1, Inform sets the singular (`//s`) flag for any noun not explicitly marked plural (`//p`). (Added in 6.43.)
+
+**$DICT_TRUNCATE_FLAG**
+
+If this is 1, Inform sets dict flag 6 for any dict word which is truncated; that is, if the source definition of the word does not fit in `$DICT_WORD_SIZE`. (Added in 6.43.)
+
+If this is 0, dict flag 6 is set for all verbs (equivalent to dict flag 1). This is legacy behavior dating back to early versions of Inform, but no current library code depends on it.
 
 **$GLULX_OBJECT_EXT_BYTES**
 
@@ -851,7 +857,9 @@ Note that if a word is marked both `//p` and `//~p` in different places, its plu
 
 The `$DICT_IMPLICIT_SINGULAR=1` option (added in 6.43) tells Inform to assume that non-plural nouns are singular. That is -- with this option set -- if a word is mentioned in the source (thus being `//n` by default), and does not have an explicit `//p`, then its `//s` flag is set. If a word is marked both `//p` and `//~p` in different places, then it will wind up with *both* the `//s` and `//p` flags.
 
-[[Note that, by default, suffixes are ignored in long dict words. Use the `$LONG_DICT_FLAG_BUG=0` setting to change this.]]
+The `$DICT_TRUNCATE_FLAG=1` option (added in 6.43) tells Inform to set bit 6 for words which exceed `$DICT_WORD_SIZE` and therefore get truncated. This includes Z-code words that ends with an incomplete Z-character sequence. There is no `//` suffix for this bit. As with the other flags, if a word is truncated in one place and not another (say, if both `'superhero'` and `'superheroine'` are used), then the flag is set.
+
+[[Note that, by default, suffixes are ignored in truncated dict words. Use the `$LONG_DICT_FLAG_BUG=0` setting to change this.]]
 
 [[See also the `Dictionary` directive, which allows you to set arbitrary bits in `dict_par1` or `dict_par3`.]]
 
