@@ -236,6 +236,10 @@ If this is 1, Inform sets dict flag 6 for any dict word which is truncated; that
 
 If this is 0, dict flag 6 is set for all verbs (equivalent to dict flag 1). This is legacy behavior dating back to early versions of Inform, but no current library code depends on it.
 
+**$GRAMMAR_VERSION**
+
+Sets the grammar table format to the given version. This is equivalent to setting the `Grammar__Version` constant at the beginning of your source. The default is 1 in Z-code, 2 in Glulx; but the standard library uses version 2 on both platforms. (Added in 6.43.)
+
 **$GLULX_OBJECT_EXT_BYTES**
 
 The number of extra zero bytes to add to each object table entry. This is writable memory which the game can use freely. (This is only meaningful in Glulx, as the Z-code object format is fixed by the spec.)
