@@ -240,6 +240,10 @@ If this is 0, dict flag 6 is set for all verbs (equivalent to dict flag 1). This
 
 Sets the grammar table format to the given version. This is equivalent to setting the `Grammar__Version` constant at the beginning of your source. The default is 1 in Z-code, 2 in Glulx; but the standard library uses version 2 on both platforms. (Added in 6.43.)
 
+As of 6.43, Z-code supports a new grammar version 3. (See "[Grammar table formats](#grammarformat)", below.) This is a more compact variation of version 2.
+
+[[GV1 is a historical relic from early Inform development. GV3 is most useful for saving a few bytes in Z-code v3 games. Glulx postdates the GV1 era, and is not meant for game-file shaving, so it only supports GV2.]]
+
 **$GLULX_OBJECT_EXT_BYTES**
 
 The number of extra zero bytes to add to each object table entry. This is writable memory which the game can use freely. (This is only meaningful in Glulx, as the Z-code object format is fixed by the spec.)
@@ -1131,9 +1135,9 @@ In general, Inform 6 is able to compile older source code to V3 if the source *a
 
 [[It is possible to re-implement a limited version of `obj.prop()` for V3 by replacing the `CA__Pr` and `Cl__Ms` veneer routines. Some alternative libraries do this.]]
 
-# Grammar table format { #grammarformat }
+# Grammar table formats { #grammarformat }
 
-The original grammar table formats are documented in the [Inform Technical Manual][techman] (§8.6), but they have been extended for Glulx and then for the new grammar version 3. It is convenient to compile a summary here.
+The original grammar table formats are documented in the [Inform Technical Manual][techman] (§8.6), but they have been extended for Glulx and then for grammar version 3 (which is new as of 6.43). It is convenient to compile a summary here.
 
 The grammar table is a `-->` array starting at address `#grammar_table`. In Z-code the array is 0-based, and is the first thing in static memory. In Glulx the array is 1-based; the first entry is the number of verbs. The array contains the addresses of individual grammar tables for each verb.
 
@@ -1189,7 +1193,7 @@ Notes:
 - In Z-code GV3, the `count+action+flags` word is encoded with the action number in the bottom 10 bits. Bit 10 is the `reverse` flag. The top 5 bits are the token count. (ENDIT is thus not needed.)
 - In Glulx, the flags and action number are separate fields. The `reverse` flag is bit 0 of `flags`.
 
-For the complete token format, see the [ITM][techman]. But note that in GV2 (Z/G), scope routine tokens contain routine addresses and preposition tokens contain dict addresses; the token data is therefore word-sized. In GV1/3, these token values are bytes; the addresses must be looked up in the (misnamed) "preaction" and "adjective" tables respectively.
+For the complete token format, see the [ITM][techman]. But note that in GV2 (Z/G), scope routine tokens contain routine addresses and preposition tokens contain dict addresses; the token data is therefore word-sized. In GV1/3, these token data values are bytes; the addresses must be looked up in the (misnamed) "preaction" and "adjective" tables respectively.
 
 # Debug file format { #debugformat }
 
