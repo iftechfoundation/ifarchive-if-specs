@@ -563,6 +563,16 @@ The values can be numeric literals or constants. They can be 0-255 for Z-code, o
 
 [[`dict_par2` cannot be set by this directive. It is always the verb number, or zero for words that are not verbs.]]
 
+**Extend**
+
+If `$GRAMMAR_META_FLAG=1`, the `Extend` directive supports marking actions as meta at the grammar line level:
+
+	Extend 'load'
+		* noun -> Push
+		* 'game' -> Restore meta;
+
+See `Verb`, below. (Added in 6.43.)
+
 **Global**
 
 As of 6.40, the `=` sign is optional when defining a global variable's initial value. These declarations are equivalent:
