@@ -586,7 +586,7 @@ In early versions of Inform, the `Global` directive could also be used to define
 
 	Global array --> 8;
 
-...as well as the even older forms `Global data`, `Global initial`, and `Global inistr`. As of 6.40, all of these obsolete forms have been removed. Use `Global` for global variables and `Array` for arrays.
+...as well as the even older forms `Global data`, `Global initial`, and `Global initstr`. As of 6.40, all of these obsolete forms have been removed. Use `Global` for global variables and `Array` for arrays.
 
 **Ifv3**
 
