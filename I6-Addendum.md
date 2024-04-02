@@ -1131,6 +1131,66 @@ In general, Inform 6 is able to compile older source code to V3 if the source *a
 
 [[It is possible to re-implement a limited version of `obj.prop()` for V3 by replacing the `CA__Pr` and `Cl__Ms` veneer routines. Some alternative libraries do this.]]
 
+# Grammar table format { #grammarformat }
+
+The original grammar table formats are documented in the [Inform Technical Manual][techman] (§8.6), but they have been extended for Glulx and then for the new grammar version 3. It is convenient to compile a summary here.
+
+The grammar table is a `-->` array starting at address `#grammar_table`. In Z-code the array is 0-based, and is the first thing in static memory. In Glulx the array is 1-based; the first entry is the number of verbs. The array contains the addresses of individual grammar tables for each verb.
+
+An individual grammar table looks like this:
+
+	[Z-code GV1]
+	byte: number of lines
+	...each grammar line: {
+		byte: param count
+        ...each token in the line: {
+            byte: token
+        }
+		byte: action number
+	}
+	
+	[Z-code GV2]
+	byte: number of lines
+	...each grammar line: {
+		short: action+flags
+        ...each token in the line: {
+            byte: token type
+            short: token data
+        }
+		byte: ENDIT (15)
+	}
+	
+	[Z-code GV3]
+	byte: number of lines
+	...each grammar line: {
+		short: count+action+flags
+        ...each token in the line: {
+            byte: token type
+            byte: token data
+        }
+	}
+	
+	[Glulx (always GV2)]
+	byte: number of lines
+	...each grammar line: {
+		short: action number
+		byte: flags
+		...each token in the line: {
+			byte: token type
+			long: token data
+		}
+		byte: ENDIT (15)
+	}
+
+Notes:
+
+- In Z-code GV1, there are exactly 6 tokens per line (so a grammar line is 8 bytes). Unused tokens are zeroes. The `param count` is the number of *non-preposition* tokens in the line.
+- In Z-code GV2, the `action+flags` word is encoded with the action number in the bottom 10 bits. Bit 10 is the `reverse` flag. The top 5 bits are unused.
+- In Z-code GV3, the `count+action+flags` word is encoded with the action number in the bottom 10 bits. Bit 10 is the `reverse` flag. The top 5 bits are the token count. (ENDIT is thus not needed.)
+- In Glulx, the flags and action number are separate fields. The `reverse` flag is bit 0 of `flags`.
+
+For the complete token format, see the [ITM][techman]. But note that in GV2 (Z/G), scope routine tokens contain routine addresses and preposition tokens contain dict addresses; the token data is therefore word-sized. In GV1/3, these token values are bytes; the addresses must be looked up in the (misnamed) "preaction" and "adjective" tables respectively.
+
 # Debug file format { #debugformat }
 
 The `-k` switch generates a `gameinfo.dbg` file which describes the compiled game. The [Inform Technical Manual][techman] (§12.5) documents a binary format ("Version 0") for this file. However, that format is no longer used. As of Inform 6.33, a more verbose XML format ("Version 1") is generated; this section describes it.
