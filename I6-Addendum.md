@@ -236,6 +236,12 @@ If this is 1, Inform sets dict flag 6 for any dict word which is truncated; that
 
 If this is 0, dict flag 6 is set for all verbs (equivalent to dict flag 1). This is legacy behavior dating back to early versions of Inform, but no current library code depends on it.
 
+**$GRAMMAR_META_FLAG**
+
+If this is 1, you can mark individual actions as being meta (rather than relying on the flags in the verb dict word). See `Verb` in "[Directives](#directives)", below.
+
+In this mode, action values are sorted so that all meta actions occur before all non-meta actions. The constant `#highest_meta_action_number` allows you to distinguish them. (If there are no meta actions, this constant is -1.)
+
 **$GRAMMAR_VERSION**
 
 Sets the grammar table format to the given version. This is equivalent to setting the `Grammar__Version` constant at the beginning of your source. The default is 1 in Z-code, 2 in Glulx; but the standard library uses version 2 on both platforms. (Added in 6.43.)
@@ -719,6 +725,26 @@ This leaves the `Const` symbol undefined. If `Const` was never defined, this doe
 [[When tested with the `Ifdef` directive, a constant is considered undefined only *after* the `Undef` directive, just as it is considered defined only *after* its original declaration. This is somewhat inconsistent with Inform's handling of constants in expressions (routine code), where they can freely be used before or after being declared.]]
 
 [[`Undef`'ing constants which are forward-declared leads to confusing behavior. It is best to consider `Undef` purely as an adjunct to `Ifdef`.]]
+
+**Verb**
+
+If `$GRAMMAR_META_FLAG=1`, the `Verb` directive supports marking actions as meta at the grammar line level:
+
+	Verb 'load'
+		* noun -> Push
+		* 'game' -> Restore meta;
+
+This allows a single verb to have both meta and non-meta action grammars. To distinguish these, compare the action value to `#highest_meta_action_number`. (Added in 6.43.)
+
+(The `Extend` directive can also mark actions as meta in this way.)
+
+The old syntax is still supported:
+
+	Verb meta 'score'
+		* -> Score
+		* 'full' -> FullScore;
+
+This implicitly marks all named actions as meta. (It also marks the verb dict word meta, as is traditional.)
 
 **Version**
 
