@@ -48,7 +48,7 @@ This is a high-level view of I6 releases and their most important features. For 
 - **6.40** (Jul 2022): Command-line arguments streamlined; modules and temp-file compilation removed; dead-code stripping.
 - **6.41** (Jul 2022): Bug fixes.
 - **6.42** (Feb 2024): Unlimited identifier length; unlimited abbreviation length; inline bytes assembly.
-- **6.43** (unreleased): Singular (`//s`) dict flag and `$DICT_IMPLICIT_SINGULAR`; truncation dict flag and `$DICT_TRUNCATE_FLAG`.
+- **6.43** (unreleased): Singular (`//s`) dict flag and `$DICT_IMPLICIT_SINGULAR`; truncation dict flag and `$DICT_TRUNCATE_FLAG`; `$GRAMMAR_META_FLAG`; `$GRAMMAR_VERSION` and grammar version 3.
 
 ## Language versus library
 
