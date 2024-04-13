@@ -738,6 +738,26 @@ This leaves the `Const` symbol undefined. If `Const` was never defined, this doe
 
 **Verb**
 
+As of 6.43, we accept two verb definitions for the same verb:
+
+	Verb 'take'
+		* 'inventory' -> Inv
+		* noun -> Take;
+		
+	Verb 'take'
+		* 'note' -> WriteNote;
+
+This is equivalent to an `Extend last` declaration:
+
+	Extend 'take' last
+		* 'note' -> WriteNote;
+
+The `Extend` form is preferred, so doing this displays a warning.
+
+[[This usage supports the Inform 7 compiler, which generates code like this in some situations. (In particular, when the user defines two verbs which compile to the same dict word.) Consider this form deprecated for everybody except I7, which suppresses warnings.]]
+
+[[If the second declaration contains *multiple* verbs, they must all refer to the same original grammar. There is no equivalent to `Extend only` in this form.]]
+
 If `$GRAMMAR_META_FLAG=1`, the `Verb` directive supports marking actions as meta at the grammar line level:
 
 	Verb 'load'
