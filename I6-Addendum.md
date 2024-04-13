@@ -119,7 +119,7 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 *New since the DM4:*
 
-`-a2`: As of 6.40, this displays assembly encoding of functions (like `-a`) plus byte encoding of the assembly opcodes. (Prior to 6.40, this was the `-t` option.)
+`-a2`: As of 6.40, this displays assembly encoding of functions (like `-a`) plus byte encoding of the assembly opcodes. (Prior to 6.40, this was the `-t` option.) See also the `$!ASM` trace option.
 
 `-B`: In Z-code versions 6 and 7 (only), use different offset values for the packed addresses of routines and strings. In this mode, strings are distinguished by having odd (packed) addresses, whereas routines are even. This allows the game file to contain more executable code. (The default is `-~B`, where the routine and string segments use the same offset value, so string and routine values have different ranges.)
 
@@ -141,7 +141,7 @@ Classic options begin with a dash -- the traditional style of command-line tools
 
 `-k`: Output debugging information to a file `gameinfo.dbg`. This switch is documented in the DM4 (§7), but the output format has changed. As of 6.33, it is an extremely verbose XML format; see [below](#debugformat). Also, as of 6.35, the `-k` switch no longer automatically sets `-D`.
 
-`-g3`: Trace calls to all functions. The DM4 documents `-g2` as doing this, but as of 6.21, `-g2` does not trace veneer functions. As of 6.35, `-g3` traces everything.
+`-g3`: Trace calls to all functions. The DM4 documents `-g2` as doing this, but as of 6.21, `-g2` does not trace veneer functions. As of 6.35, `-g3` traces everything. See also the `$!RUNTIME` trace option.
 
 [[Note that `-g2` and above will cause runtime errors in Glulx games, due to printing trace information when no output window is available.]]
 
