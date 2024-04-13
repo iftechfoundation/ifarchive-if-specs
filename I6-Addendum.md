@@ -48,7 +48,7 @@ This is a high-level view of I6 releases and their most important features. For 
 - **6.40** (Jul 2022): Command-line arguments streamlined; modules and temp-file compilation removed; dead-code stripping.
 - **6.41** (Jul 2022): Bug fixes.
 - **6.42** (Feb 2024): Unlimited identifier length; unlimited abbreviation length; inline bytes assembly.
-- **6.43** (unreleased): Singular (`//s`) dict flag and `$DICT_IMPLICIT_SINGULAR`; truncation dict flag and `$DICT_TRUNCATE_FLAG`; `$GRAMMAR_META_FLAG`; `$GRAMMAR_VERSION` and grammar version 3.
+- **6.43** (unreleased): Singular (`//s`) dict flag and `$DICT_IMPLICIT_SINGULAR`; truncation dict flag and `$DICT_TRUNCATE_FLAG`; `$GRAMMAR_META_FLAG`; `$GRAMMAR_VERSION` and grammar version 3 (experimental).
 
 ## Language versus library
 
@@ -370,9 +370,9 @@ The trace option system is new as of 6.40. In prior versions, much of this infor
 
 **$!ACTIONS**
 
-Show actions and fake-actions as they are defined.
+Show a table of actions and fake-actions. `$!ACTIONS=2` will name them as they are defined.
 
-(Prior to 6.40, this information was displayed by the `-n` switch.)
+(Prior to 6.43, the only option was to name them as they were defined -- now level 2. Prior to 6.40, that information was displayed by the `-n` switch.)
 
 **$!ASM** (same as `-a`)
 
