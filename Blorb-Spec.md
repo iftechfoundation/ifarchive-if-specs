@@ -545,6 +545,10 @@ For sounds: 'WAV ', 'MIDI', 'MP3 '.
 
 ADRIFT Blorb files should use MIME type <code>application/x-blorb;profile="adrift"</code>. The filename suffix should be ".blorb" or ".adriftblorb". [["A" or "AD" is unfortunately not a unique prefix when it comes to IF systems!]]
 
+The ADRIFT 5 Blorb generator unfortunately writes the wrong length for the top-level FORM chunk. See [discussion][adriftblorbbug]. The length is too short, possibly referring only to the length of the game file chunk. Tools may wish to ignore the FORM length when handling ADRIFT Blorb files.
+
+[adriftblorbbug]: https://intfiction.org/t/multi-interpreters-which-could-handle-adrift-5-going-forward/59823/25
+
 ## The IFF Format
 
 A description of the IFF format can be found at
