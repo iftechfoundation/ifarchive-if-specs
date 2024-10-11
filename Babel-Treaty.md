@@ -2781,6 +2781,11 @@ guidelines of this document. If it does, it will print
 
 	<IFID> conforms to iFiction style guidelines
 
+If there are nonfatal problems, it will list them and then print
+
+	<IFID> does not conform to guidelines
+
+If there are errors, neither of the above messages will appear.
 
 ```
 babel -complete <storyfile> <ifictionfile>
