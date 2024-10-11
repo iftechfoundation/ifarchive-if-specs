@@ -274,7 +274,7 @@ this:
 
 (Recall that I7 uses a UUID-generating algorithm to create IFIDs.)
 The IFID is the string between the slashes, which will consist of
-digits, upper-case letters, and dashes.
+digits, capital letters, and hyphens.
 This text is written in a character array in byte-accessible memory.
 Its location cannot be guaranteed, so the whole of byte-accessible
 memory must be scanned for the pattern `UUID://..//`.
@@ -326,7 +326,7 @@ to verify that your file validates without warnings.)
 
 #### The IFID for other file formats
 
-Other formats include executable files, game files from systems not
+This includes executable files, game files from systems not
 described in this agreement, and other document formats (including
 plain text).
 
@@ -335,8 +335,9 @@ described [above](#embed-formats):
 
 	UUID://1974A053-7DB0-4103-93A1-767C1382C0B7//
 
-Only digits, upper-case letters, and dashes are permitted between the
-slashes.
+Only digits, capital letters, and hyphens are permitted between the
+slashes. The sequence may occur anywhere in the file, but for the sake of
+efficient scanning, it is better to place it near the beginning.
 
 If the file does not contain this sequence, or if the file format precludes
 storing it in this form, then the IFID is the file's MD5 hash code. This
