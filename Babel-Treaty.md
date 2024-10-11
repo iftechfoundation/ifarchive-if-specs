@@ -265,7 +265,7 @@ games, then there is a risk of releasing two different works with the
 same IFID. The documentation goes on to explain how to duplicate a
 project so that this will not occur.)
 
-#### The IFID for a game format that embeds an IFID {: id="embed-formats" }
+#### Game formats that embed an IFID {: id="embed-formats" }
 
 Modern Z-code and Glulx game files may be branded with a text such as
 this:
@@ -273,6 +273,8 @@ this:
 	UUID://1974A053-7DB0-4103-93A1-767C1382C0B7//
 
 (Recall that I7 uses a UUID-generating algorithm to create IFIDs.)
+The IFID is the string between the slashes, which will consist of
+digits, upper-case letters, and dashes.
 This text is written in a character array in byte-accessible memory.
 Its location cannot be guaranteed, so the whole of byte-accessible
 memory must be scanned for the pattern `UUID://..//`.
@@ -284,6 +286,10 @@ hyphens are themselves obfuscated (and become "A"s).
 
 Adrift 5 story files contain an embedded iFiction record which specify the
 IFID of the story file. Note that this IFID is not a valid UUID.
+
+Alan story files may include the `UUID://...//` byte sequence. Note that
+the IFID may be stored using lower-case hexadecimal digits in the Alan file.
+These should be converted to upper case when reading the IFID.
 
 #### The IFID for an HTML story file
 
@@ -324,12 +330,18 @@ Other formats include executable files, game files from systems not
 described in this agreement, and other document formats (including
 plain text).
 
-Such a file may include the text `UUID://...//` as a literal byte
-sequence. If it does not, then the IFID is the file's MD5 hash code,
-with hexadecimal characters a to f written in upper case, A to F.
+Such a file may include the IFID as a literal ASCII byte sequence, as
+described [above](#embed-formats):
 
-If the file format precludes storing the `UUID://...//` sequence, then
-the IFID is always the MD5 hash code.
+	UUID://1974A053-7DB0-4103-93A1-767C1382C0B7//
+
+Only digits, upper-case letters, and dashes are permitted between the
+slashes.
+
+If the file does not contain this sequence, or if the file format precludes
+storing it in this form, then the IFID is the file's MD5 hash code. This
+will contain only hexadecimal digits, with the characters `a` to `f` written
+in upper case, `A` to `F`.
 
 #### IFIDs for legacy projects
 
