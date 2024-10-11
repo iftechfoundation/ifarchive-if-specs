@@ -2777,7 +2777,9 @@ babel -lint <ifictionfile>
 ```
 
 As "-verify", but also checks for compliance with the stylistic
-guidelines of this document.
+guidelines of this document. If it does, it will print
+
+	<IFID> conforms to iFiction style guidelines
 
 
 ```
