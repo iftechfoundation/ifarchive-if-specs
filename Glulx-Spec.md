@@ -855,6 +855,10 @@ div L1 L2 S1
 
 Compute (L1 / L2), and store the result in S1. This is signed integer division.
 
+Division by zero is of course an error. So is dividing the value -0x80000000 by -1.
+
+[[The latter case was not considered an error until 2024. However, interpreters have never handled it consistently; the correct answer 0x80000000 cannot be represented as a Glulx signed integer. At least one implementation has crashed trying to perform the operation. Therefore we will consider it as always having been an error.]]
+
 ```
 mod L1 L2 S1
 ```
