@@ -430,7 +430,7 @@ A sufficient algorithm to determine the IFID is therefore:
 1.	Look at the start of the serial code. If the serial code
 	begins "8" or "9" or "00" to "05", go to step 3.
 2.	Scan byte-accessible memory for the pattern of ASCII characters
-	UUID://...//, where "..." is a sequence of letters, numbers and
+	`UUID://...//`, where "..." is a sequence of letters, numbers and
 	hyphens. If this is found, that's the IFID. Otherwise continue.
 3.	Start with "ZCODE-", the release number, "-".
 4.	Copy the six characters of the serial code, converting
@@ -2151,7 +2151,7 @@ The suggested dimensions of the game's display. `<width>` and `<height>`
 are optional, but if one is defined, the other must be as well.
 Interpreters are free to disregard this entirely. It is suggested that
 interpreters constrain their display size to reflect the aspect ratio
-indicated by these values -- though they should not force the user to use
+indicated by these values - though they should not force the user to use
 these exact dimensions. These exact values may be used to set the initial
 size of the display if possible (though they should be scaled to not exceed
 the size of the user's screen).
