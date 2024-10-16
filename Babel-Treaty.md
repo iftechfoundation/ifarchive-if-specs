@@ -48,11 +48,11 @@ have compiled even basic bibliographic data into their story files -
 the author and title, for instance. Only one major design system has
 approached this problem systematically (TADS 3), though others have
 implemented partial solutions, or incorporate data into story files
-which - though not intended to be read externally - can allow the
+which – though not intended to be read externally – can allow the
 title or author's name to be found.
 
 Most serious works of IF written since 1990 have been placed at the
-IF-archive, a community project which - subject to copyright issues -
+IF-archive, a community project which – subject to copyright issues -
 aims to preserve the whole corpus of IF, making it available to
 players of the present and future. Other web-based databases of IF
 exist, such as IFDB, which catalogue reviews and bibliographic
@@ -69,7 +69,7 @@ systematic way to do this imposes considerable work on the librarians.
 We might say that bibliographic data for IF can be provided at three
 levels:
 
-- "internally", that is, it can be printed out by the work of IF - for
+- "internally", that is, it can be printed out by the work of IF – for
 instance in the game banner, or in response to a typed VERSION command;
 - "locally", that is, it can be read and used by the run-time software
 playing the story file (the "interpreter"), or by other programs which
@@ -86,7 +86,7 @@ key/value pairs. As of 2006, Inform 7 makes similar arrangements.
 Inform 6 is typical of other 1990s design systems in that it
 provides at best patchy local metadata: the Z-machine story files it
 compiles expose release numbers and compilation dates at certain
-well-defined byte offsets in the file - but not the author's name,
+well-defined byte offsets in the file – but not the author's name,
 or the title. Prior to this treaty, no design system generated
 metadata intended for external use.
 
@@ -155,8 +155,8 @@ with basic bibliographic information (or "metadata"). At minimum,
 this will be the name of the author and the title of the work,
 but a variety of other annotations are also possible. The treaty
 provides for a common core of data which can be used and shared
-between all tools - for instance, the author, or the date of first
-publication - but it does not limit the design system's ability to
+between all tools – for instance, the author, or the date of first
+publication – but it does not limit the design system's ability to
 provide more, or to provide annotations of its own which are
 entirely specific to that system. In addition, the treaty makes
 no requirement on the design system to store the information in any
@@ -842,8 +842,8 @@ Babel examines an object file in two stages:
 
 	Read file   -->   Look at wrapper if any   -->   Look at format
 
-It may well be that what Babel needs to find - the cover image, for
-instance - is provided by the wrapper. If so, it may not get to the
+It may well be that what Babel needs to find – the cover image, for
+instance – is provided by the wrapper. If so, it may not get to the
 second stage of looking at the format of the story file inside.
 
 Code to handle wrappers is the responsibility of the maintainer of
@@ -880,7 +880,7 @@ int32 SYSTEM_treaty(int32 selector,
 
 where the prefix "SYSTEM_" is "tads3_", "zcode_", etc., as appropriate.
 (When other design systems are added, these prefixes should coincide
-with the `<format>` value used in iFiction - see [*](#the-ifiction-format).)
+with the `<format>` value used in iFiction – see [*](#the-ifiction-format).)
 The implementation may create as many other routines, constants, etc.,
 as it chooses, provided their names have the same prefix.
 
@@ -1093,7 +1093,7 @@ extension is considered as providing a clue, so:
 	with `CLAIM_STORY_FILE_SEL`; then to each unlikely format in turn.
 	The first to claim the story file is the winner. If no format
 	claims it, then the format is "unknown".
--	(iii) Within each list - the likely and unlikely lists, that is -
+-	(iii) Within each list – the likely and unlikely lists, that is -
 	the formats are checked in popularity order, i.e., in order of
 	the size of the published corpus for the formats: so probably
 	zcode, then tads2, then any others which may provide treaty
@@ -1106,9 +1106,9 @@ An "interpreter" is a program which plays the story file: for some
 design systems a single "run-time" program is provided; for others
 a variety of rival interpreters exist. A "browser" is a program which
 manages and offers a choice of story files. One may imagine an
-interpreter which is not a browser - it would only play a single
+interpreter which is not a browser – it would only play a single
 story file; and one may imagine a browser which is not an
-interpreter - it would play story files by calling an external
+interpreter – it would play story files by calling an external
 application (i.e., an interpreter for the given format). But it is
 also possible to write tools which are both browsers and interpreters.
 
@@ -1139,7 +1139,7 @@ the XYZ home page.
 (e) If possible, to allow the user to edit the metadata of games
 in their collection (in a way which does _not_ involve alteration to
 the story file, but simply editing of the interpreter's own copy
-of the metadata for its archive of games - see below);
+of the metadata for its archive of games – see below);
 
 (f) If possible, given an object with no metadata, or no obvious
 file type, to attempt to fetch metadata and/or cover art for it
@@ -1177,7 +1177,7 @@ make a neat way for interpreters to point to reviews, etc., on a game.
 A story file may be uploaded as a single object, such as
 "Henrietta.zblorb" or "DDD.gam", or as a zipped archive such as
 "Bronze.zip", which contains both the story file and its associated
-external resources - manuals, maps, etc., typically in plain text
+external resources – manuals, maps, etc., typically in plain text
 or PDF format, and might expand to a short set of files as follows:
 
 	Bronze.zblorb
@@ -1326,7 +1326,7 @@ treaty revises the format substantially from that original state.
 The metadata associated with a story file will be called its "iFiction
 record". If we compare the story file to the pages of a book written
 by the author, then the iFiction record is the text printed on the
-cover, title and imprint pages - the part of a book normally put
+cover, title and imprint pages – the part of a book normally put
 together by the publisher. The content is comparable with the release
 information handed out to distributors by record companies, or the
 Neilson book database which feeds Amazon and similar sites.
@@ -1778,7 +1778,7 @@ for instance, might qualify.
 - The distinction between "Surreal" and "Other" is that "Surreal" works
 contain at least some semblance of narrative, whereas "Other" is
 intended for works which "abuse" the format to present some entirely
-different sort of game - Tetris, say, or Minesweeper.
+different sort of game – Tetris, say, or Minesweeper.
 - A suitable default value is "Fiction", but there is no need to give
 this tag at all.
 
@@ -2050,7 +2050,7 @@ cover art: it's the number of the picture which is used as the cover.
 
 TADS 2 and TADS 3 story files are entirely different in format, and
 for purposes of the Treaty are considered independent. However,
-their format-specific sections - `<tads2>` and `<tads3>` - have the
+their format-specific sections – `<tads2>` and `<tads3>` – have the
 same contents.
 
 This section contains only optional tags.
@@ -2151,7 +2151,7 @@ The suggested dimensions of the game's display. `<width>` and `<height>`
 are optional, but if one is defined, the other must be as well.
 Interpreters are free to disregard this entirely. It is suggested that
 interpreters constrain their display size to reflect the aspect ratio
-indicated by these values - though they should not force the user to use
+indicated by these values – though they should not force the user to use
 these exact dimensions. These exact values may be used to set the initial
 size of the display if possible (though they should be scaled to not exceed
 the size of the user's screen).
@@ -2170,8 +2170,8 @@ definition by Campbell Wild on behalf of ADRIFT.
 ### Releases
 
 The `<releases>` section is optional. It is important to stress that the
-bulk of an iFiction record - and in particular its `<identification>` and
-`<bibliographic>` sections - document a work of IF throughout all the
+bulk of an iFiction record – and in particular its `<identification>` and
+`<bibliographic>` sections – document a work of IF throughout all the
 editions it has, not any individual release of that work.
 
 Information about specific releases may be placed in this section:
@@ -2199,7 +2199,7 @@ The `<attached>` tag is optional. It may only exist in an iFiction record
 attached to a specific story file. So, for instance, a compiler of a
 story file is entitled to write about the `<attached>` release: but the
 IF-archive, when serving an iFiction record to the public based on an
-IFID alone, must not serve `<attached>` - it contains data which is not
+IFID alone, must not serve `<attached>` – it contains data which is not
 determined by the IFID.
 
 `<history>` is optional, and can legally be served by the IF-archive.
@@ -2631,7 +2631,7 @@ Examines the named story file and prints output as follows:
 	IFID: 1974A053-7DB0-4103-93A1-767C1382C0B7
 
 Note that babel must determine the IFID using the algorithm in 2.2
-above - in particular, falling back on MD5 if all else fails. It is
+above – in particular, falling back on MD5 if all else fails. It is
 therefore not possible for this usage to fail to print a IFID (so
 long as the file is not a zip archive, no file-system accidents
 occur, etc.). If more than one IFID is recorded, because the story
@@ -2745,7 +2745,7 @@ babel -fish <storyfilename> [-to <directory>]
 ```
 
 A sort of super-extractor, this fishes out both the cover art and the
-iFiction record - where present - printing output as in -ifiction and
+iFiction record – where present – printing output as in -ifiction and
 -cover above. _However_, in the event that the story file records
 multiple IFIDs, copies are created for each IFID present, not simply
 for the first. Thus, for instance:
