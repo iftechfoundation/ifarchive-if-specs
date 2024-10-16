@@ -135,7 +135,7 @@ by design systems now obsolete or fallen into disuse.
 The URL for the Treaty of Babel document and its associated resources,
 such as the Babel software, is:
 
-	http://babel.ifarchive.org/
+	https://babel.ifarchive.org/
 
 Discussion of Treaty issues, including questions and proposals, may
 be sent to the Babel mailing list:
@@ -1941,7 +1941,7 @@ likely that they will be valid for an indefinite period of time.
 #### `<url>`
 
 The `<url>` tag is optional. It must be a valid, absolute URL, and
-the protocol must be "http://".
+the protocol must be "http://" or "https://".
 
 
 #### `<authoremail>`
@@ -3256,6 +3256,6 @@ babel-get -cover <IFID> -url <url> [-to <directory>]
 
 Downloads `<IFID>.jpg` from the given server.
 
-`<url>` should be an http://, ftp:// or file:// style URL.
+`<url>` should be an http://, https://, ftp:// or file:// style URL.
 
 
