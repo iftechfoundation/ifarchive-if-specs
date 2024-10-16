@@ -265,6 +265,31 @@ games, then there is a risk of releasing two different works with the
 same IFID. The documentation goes on to explain how to duplicate a
 project so that this will not occur.)
 
+#### Game formats that embed an IFID {: id="embed-formats" }
+
+Modern Z-code and Glulx game files may be branded with a text such as
+this:
+
+	UUID://1974A053-7DB0-4103-93A1-767C1382C0B7//
+
+(Recall that I7 uses a UUID-generating algorithm to create IFIDs.)
+The IFID is the string between the slashes, which will consist of
+digits, capital letters, and hyphens.
+This text is written in a character array in byte-accessible memory.
+Its location cannot be guaranteed, so the whole of byte-accessible
+memory must be scanned for the pattern `UUID://..//`.
+
+Some Hugo story files contain an embedded UUID IFID, however the text is
+obfuscated by 20 being added to the value of each byte. The IFID can be
+located by looking for hyphens in the right pattern, though note that the
+hyphens are themselves obfuscated (and become "A"s).
+
+Adrift 5 story files contain an embedded iFiction record which specify the
+IFID of the story file. Note that this IFID is not a valid UUID.
+
+Alan story files may include the `UUID://...//` byte sequence. Note that
+the IFID may be stored using lower-case hexadecimal digits in the Alan file.
+These should be converted to upper case when reading the IFID.
 
 #### The IFID for an HTML story file
 
@@ -299,18 +324,40 @@ to verify that your file validates without warnings.)
 
 [rdfavalid]: https://www.w3.org/2012/pyRdfa/Validator.html
 
+#### The IFID for other file formats
+
+This includes executable files, game files from systems not
+described in this agreement, and other document formats (including
+plain text).
+
+Such a file may include the IFID as a literal ASCII byte sequence, as
+described [above](#embed-formats):
+
+	UUID://1974A053-7DB0-4103-93A1-767C1382C0B7//
+
+Only digits, capital letters, and hyphens are permitted between the
+slashes. The sequence may occur anywhere in the file, but for the sake of
+efficient scanning, it is better to place it near the beginning.
+
+If the file does not contain this sequence, or if the file format precludes
+storing it in this form, then the IFID is the file's MD5 hash code. This
+will contain only hexadecimal digits, with the characters `a` to `f` written
+in upper case, `A` to `F`.
 
 #### IFIDs for legacy projects
 
+A "legacy" story file is one which pre-dates the present standard;
+that is, it does not incorporate an IFID in one of the ways described
+above. 
+
 A design system may provide an algorithm to determine a IFID for a
-"legacy" story file, i.e., one which pre-dates the present standard.
+legacy story file.
 The method should be reasonably straight-forward and documented
 here. Moreover, the design system should then provide an implementation
 of this algorithm in portable C: see [*](#the-babel-tool) below.
 
 Legacy story files not covered by such algorithms have IFIDs equal to
-their MD5 hashes, as in 
-[*](#ifids-for-projects-falling-outside-this-agreement) below.
+their MD5 hashes, as described above.
 
 
 ##### The IFID for a legacy Z-code story file
@@ -323,16 +370,9 @@ to get out, and therefore it is possible that interpreters or other
 such tools will see "loose" Z-code story files in the wild, even for
 I7 projects.
 
-Such story files can be recognised because I7 brands them with the
-text such as this:
-
-	UUID://1974A053-7DB0-4103-93A1-767C1382C0B7//
-
-(Recall that I7 uses a UUID-generating algorithm to create IFIDs.)
-This text is written in a character array in byte-accessible memory.
-Its location cannot be guaranteed, so the whole of byte-accessible
-memory must be scanned for the pattern UUID://..//. Note that this
-is unnecessary for story files pre-dating 2006.
+Such story files can be recognised because I7 brands them with a
+`UUID://..//` string in byte-accessible memory. Note that searching
+for this is unnecessary for story files pre-dating 2006.
 
 In the absence of an IFID found branded into the story file itself,
 Z-code story files can nevertheless be uniquely identified using numbers
@@ -473,10 +513,8 @@ a to f written in upper case, A to F.
 
 ##### The IFID for a legacy Hugo story file
 
-Some Hugo story files contain an embedded UUID IFID, however the text is
-obfuscated by 20 being added to the value of each byte. The IFID can be
-located by looking for hyphens in the right pattern, though note that the
-hyphens are themselves obfuscated (and become "A"s).
+Some Hugo story files contain an embedded UUID IFID as described
+[above](#embed-formats).
 
 The IFID for a legacy Hugo story file is derived from the file header and
 has the following form:
@@ -497,8 +535,8 @@ Example:
 
 ##### The IFID for a legacy Adrift story file
 
-Adrift 5 story files contain an embedded iFiction record which specify the
-IFID of the story file. Note that this IFID is not a valid UUID.
+Adrift 5 story files contain an embedded iFiction record as described
+[above](#embed-formats).
 
 The IFID for a legacy ".taf" Adrift story file is the prefix "ADRIFT-",
 followed by the version number as decoded from the story file, followed
@@ -683,13 +721,14 @@ Otherwise, the IFID for a legacy HTML story file is "HTML-" followed by
 the MD5 checksum of the file.
 
 
-##### The IFID for an executable file
+##### The IFID for other legacy file formats
 
-"Executable file" is an inherently vague definition. Any file which
-isn't in a known format should be presumptively identified as an
-unknown flavour of executable.
+The concept of "executable file" is itself something of a legacy. There
+are many possible "executable" formats, and this document does not need
+to distinguish them.
 
-For the executable formats listed below, the IFID takes the form:
+For the recognized executable formats listed below, the IFID takes the
+form:
 
 FORMAT-MD
 
@@ -702,17 +741,10 @@ identifier for the particular flavor of executable:
 	AMIGA   AmigaOS executable
 	SCRIPT  Unix-style shell script
 	MACHO   MacOS X or GNU/Hurd Mach-O binary
-	MAC     Pre-MaxOS X Macintosh binary
+	MAC     Pre-MacOS X Macintosh binary
 
-For other executable formats, the IFID is the MD5 checksum.
-
-
-#### IFIDs for projects falling outside this agreement
-
-The IFID for a story file, or an executable program, not covered in
-the rest of [*](#the-ifid-unique-identifier) above or in subsections
-below, is by definition its md5 hash code, with hexadecimal characters
-a to f written in upper case, A to F.
+For other file formats, including text documents, the IFID is the MD5
+checksum.
 
 
 #### The IFID for a blorbed story file
@@ -2745,8 +2777,15 @@ babel -lint <ifictionfile>
 ```
 
 As "-verify", but also checks for compliance with the stylistic
-guidelines of this document.
+guidelines of this document. If it does, it will print
 
+	<IFID> conforms to iFiction style guidelines
+
+If there are nonfatal problems, it will list them and then print
+
+	<IFID> does not conform to guidelines
+
+If there are errors, neither of the above messages will appear.
 
 ```
 babel -complete <storyfile> <ifictionfile>
