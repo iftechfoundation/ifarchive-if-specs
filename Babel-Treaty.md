@@ -3211,7 +3211,7 @@ Where struct XMLTag is defined as:
 ### The babel-get program
 
 babel-get is a utility to retrieve metadata for a story. It requires
-that "curl" ([http://curl.haxx.se/](http://curl.haxx.se/)) be installed.
+that "curl" ([https://curl.se/](https://curl.se/)) be installed.
 
 Usage:
 
