@@ -44,7 +44,7 @@ of 2006) which treat all formats equally.
 
 One obstacle to the creation of software for playing and archiving IF
 in a format-independent way is that few design systems, up to 2006,
-have compiled even basic bibliographic data into their story files -
+have compiled even basic bibliographic data into their story files –
 the author and title, for instance. Only one major design system has
 approached this problem systematically (TADS 3), though others have
 implemented partial solutions, or incorporate data into story files
@@ -52,7 +52,7 @@ which – though not intended to be read externally – can allow the
 title or author's name to be found.
 
 Most serious works of IF written since 1990 have been placed at the
-IF-archive, a community project which – subject to copyright issues -
+IF-archive, a community project which – subject to copyright issues –
 aims to preserve the whole corpus of IF, making it available to
 players of the present and future. Other web-based databases of IF
 exist, such as IFDB, which catalogue reviews and bibliographic
@@ -443,7 +443,7 @@ A sufficient algorithm to determine the IFID is therefore:
 The serial code characters are held in bytes 0x12 to 0x17 of a story
 file; the release number is an unsigned integer in bytes 0x02 and 0x03,
 the checksum similarly in bytes 0x1C and 0x1D. Thus, for instance, for
-Savoir-Faire release 8, the header bytes of the story file include -
+Savoir-Faire release 8, the header bytes of the story file include –
 
 	0x02	0x00
 	0x03	0x08
@@ -810,7 +810,7 @@ story file, for instance, is the same as that for a zcode story file.
 
 By "wrapper" is meant a format which takes a story file, bundles it
 up with associated material, and results in a single object in the
-player's computer. To qualify as a wrapper format, a format should -
+player's computer. To qualify as a wrapper format, a format should –
 
 -	(i) be used natively by one or more interpreters or browsers;
 -	(ii) include a story file in a format which can also exist and
@@ -1093,7 +1093,7 @@ extension is considered as providing a clue, so:
 	with `CLAIM_STORY_FILE_SEL`; then to each unlikely format in turn.
 	The first to claim the story file is the winner. If no format
 	claims it, then the format is "unknown".
--	(iii) Within each list – the likely and unlikely lists, that is -
+-	(iii) Within each list – the likely and unlikely lists, that is –
 	the formats are checked in popularity order, i.e., in order of
 	the size of the published corpus for the formats: so probably
 	zcode, then tads2, then any others which may provide treaty
@@ -1129,7 +1129,7 @@ tabulated using their bibliographic data;
 
 (d) If possible, to be able to show previews and to browse story
 files compiled by any design system signing up to the standard,
-though probably "playing" them by launching an external application -
+though probably "playing" them by launching an external application –
 the run-time for the design system in question; failing that, to
 display a message such as "Lady Eustace's Diamonds appears to be
 a work of interactive fiction in XYZ format. You will need to
@@ -1497,7 +1497,7 @@ of an old Inform 6-compiled story file: the I7 IFID comes first.
 
 In all cases of doubt, if a single IFID must be extracted, the first
 one occurring in the story file should be used. Note that the first
-IFID in the example for "Sorcerer", above, is the final release -
+IFID in the example for "Sorcerer", above, is the final release –
 the best one to have.
 
 
