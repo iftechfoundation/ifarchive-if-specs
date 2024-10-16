@@ -3247,14 +3247,14 @@ and prints it.
 babel-get -cover [<IFID>] -story <storyfile> [-to <directory>]
 ```
 
-Creates <IFID>.jpg or <IFID>.png, containing the cover art for
+Creates `<IFID>.jpg` or `<IFID>.png`, containing the cover art for
 the specified file.
 
 ```
 babel-get -cover <IFID> -url <url> [-to <directory>]
 ```
 
-Downloads <IFID>.jpg from the given server.
+Downloads `<IFID>.jpg` from the given server.
 
 `<url>` should be an http://, ftp:// or file:// style URL.
 
