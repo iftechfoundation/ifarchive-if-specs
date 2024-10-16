@@ -17,7 +17,7 @@ This document and further Blorb information can be found at: [https://github.com
 
 This is a formal specification for a common format for storing resources associated with an interactive fiction game file. Resources are data which the game can invoke, such as sounds and pictures. In addition, the executable game file may itself be a resource in a resource file. This is a convenient way to package a game and all its resources together in one file.
 
-Blorb was originally designed solely for the Z-machine, which is capable of playing sounds (Z-machine versions 3 and up) and showing images (the V6 Z-machine). However, it has been extended for use with other IF systems. The Glk portable I/O library uses Blorb as a resource format, and therefore so does the Glulx virtual machine. (See [http://eblong.com/zarf/glk/](http://eblong.com/zarf/glk/) and [http://eblong.com/zarf/glulx/](http://eblong.com/zarf/glulx/).) ADRIFT 5 (see [http://www.adrift.org.uk/](http://www.adrift.org.uk/)) also uses Blorb, albeit with an extended format list.
+Blorb was originally designed solely for the Z-machine, which is capable of playing sounds (Z-machine versions 3 and up) and showing images (the V6 Z-machine). However, it has been extended for use with other IF systems. The Glk portable I/O library uses Blorb as a resource format, and therefore so does the Glulx virtual machine. (See [https://eblong.com/zarf/glk/](https://eblong.com/zarf/glk/) and [https://eblong.com/zarf/glulx/](https://eblong.com/zarf/glulx/).) ADRIFT 5 (see [http://www.adrift.org.uk/](http://www.adrift.org.uk/)) also uses Blorb, albeit with an extended format list.
 
 This format is named "Blorb" because it wraps your possessions up in a box, and because the common save file format was at one point named "Gnusto". That has been changed to "Quetzal", but I'm not going to let that stop me.
 
@@ -111,7 +111,7 @@ On the Z-machine, we must consider the problems of how the game knows the interp
 An AIFF (Audio IFF) file has chunk type 'FORM', and formtype 'AIFF'. AIFF is an uncompressed digital-sample format developed in the late 1980s. The AIFF format is available at these locations:
 
 - [http://www.digitalpreservation.gov/formats/fdd/fdd000005.shtml](http://www.digitalpreservation.gov/formats/fdd/fdd000005.shtml)
-- [http://eblong.com/zarf/ftp/aiff-c.9.26.91.ps](http://eblong.com/zarf/ftp/aiff-c.9.26.91.ps)
+- [https://eblong.com/zarf/ftp/aiff-c.9.26.91.ps](https://eblong.com/zarf/ftp/aiff-c.9.26.91.ps)
 
 ### Ogg Sounds
 
@@ -129,7 +129,7 @@ The formats are described here:
 
 - [http://www.digitalpreservation.gov/formats/fdd/fdd000126.shtml](http://www.digitalpreservation.gov/formats/fdd/fdd000126.shtml)
 
-This spec does not attempt to distinguish variations within the four supported formats. (".MOD" is particularly ill-defined, although I have saved comments on the original MOD format at [http://eblong.com/zarf/blorb/mod-spec.txt](mod-spec.txt).) Instead, we recommend that C implementations embed libmodplug, a public-domain tracker-playing library. Its home page is:
+This spec does not attempt to distinguish variations within the four supported formats. (".MOD" is particularly ill-defined, although I have saved comments on the original MOD format at [https://eblong.com/zarf/blorb/mod-spec.txt](mod-spec.txt).) Instead, we recommend that C implementations embed libmodplug, a public-domain tracker-playing library. Its home page is:
 
 - [http://modplug-xmms.sourceforge.net/](http://modplug-xmms.sourceforge.net/)
 
@@ -159,7 +159,7 @@ Each data file is stored as one chunk, with chunk type 'TEXT' or 'BINA' (denotin
 
 This feature was designed to support Glulx, but data resources can be accessed by any game format if the interpreter supports them.
 
-For Glulx games (and any other game format which uses the Glk API), the data format must follow the conventions described in the Glk spec. ([http://eblong.com/zarf/glk/](http://eblong.com/zarf/glk/), "Resource Streams".)
+For Glulx games (and any other game format which uses the Glk API), the data format must follow the conventions described in the Glk spec. ([https://eblong.com/zarf/glk/](https://eblong.com/zarf/glk/), "Resource Streams".)
 
 [[To summarize: if the data file is opened via glk_stream_open_resource(), then it will be read as a stream of bytes; text will be assumed to be encoded as Latin-1. If it is opened via glk_stream_open_resource_uni(), then a 'TEXT' chunk will be assumed to be a stream of characters encoded as UTF-8; 'BINA' will be assumed to be a stream of big-endian four-byte integers. If read by lines (glk_get_line_stream(), etc), resource text should use Unix line breaks in all cases.]]
 
@@ -212,7 +212,7 @@ For Z-code, the contents of the game identifier chunk are defined in the common 
 
 The "Initial PC" field of the IFhd chunk (bytes 10 through 12) has no meaning for resource files. It should be set to zero.
 
-For Glulx, the contents of the game identifier chunk are defined in the Glulx specification. This can be found at [http://eblong.com/zarf/glulx/](http://eblong.com/zarf/glulx/).
+For Glulx, the contents of the game identifier chunk are defined in the Glulx specification. This can be found at [https://eblong.com/zarf/glulx/](https://eblong.com/zarf/glulx/).
 
 ## The Color Palette Chunk
 
@@ -553,7 +553,7 @@ The ADRIFT 5 Blorb generator unfortunately writes the wrong length for the top-l
 
 A description of the IFF format can be found at
 
-- [http://eblong.com/zarf/blorb/iff.html](http://eblong.com/zarf/blorb/iff.html)
+- [https://eblong.com/zarf/blorb/iff.html](https://eblong.com/zarf/blorb/iff.html)
 
 In the interests of simplicity, this proposal does not use IFF LISTs or CATs, even though its purpose is to contain concatenated lists of data. Therefore, the format can be quickly described as follows:
 
