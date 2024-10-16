@@ -180,7 +180,7 @@ There should at most one chunk with usage 'Exec'. [[But see below.]] If present,
 - 'ADVS': AdvSys
 - 'EXEC': Native executable
 
-[[This list of formats is taken from the Babel format agreement. See [http://babel.ifarchive.org/](http://babel.ifarchive.org/) for more information. Most of these development systems do not support Blorb at the present time; the list is available for future use. Other executable formats may also be added in the future. As a convention, the chunk types should be taken from the Babel format name, converted to upper case and padded (if necessary) with spaces.]]
+[[This list of formats is taken from the Babel format agreement. See [https://babel.ifarchive.org/](https://babel.ifarchive.org/) for more information. Most of these development systems do not support Blorb at the present time; the list is available for future use. Other executable formats may also be added in the future. As a convention, the chunk types should be taken from the Babel format name, converted to upper case and padded (if necessary) with spaces.]]
 
 [[The EXEC (native) chunk type is not likely to be useful, because it is underspecified. Nothing (beyond the chunk data itself) indicates what CPU or operating system the executable is intended for. Again, it is defined here following the Babel format list.]]
 
@@ -285,7 +285,7 @@ Resource descriptions are not required, but they are recommended for significant
 
 Metadata is a contentious topic, with which the Blorb spec is not entirely unentangled. (The game identifier and frontispiece chunks are answers to small parts of the IF metadata problem.)
 
-Rather than entangle ourselves further, we will merely say that metadata will be stored as XML, in a chunk of type 'IFmd'. The XML structure is documented in the Babel format agreement; see [http://babel.ifarchive.org/](http://babel.ifarchive.org/).
+Rather than entangle ourselves further, we will merely say that metadata will be stored as XML, in a chunk of type 'IFmd'. The XML structure is documented in the Babel format agreement; see [https://babel.ifarchive.org/](https://babel.ifarchive.org/).
 
     4 bytes         'IFmd'          chunk ID
     4 bytes         n               chunk length
