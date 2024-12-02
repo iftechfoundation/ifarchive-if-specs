@@ -865,6 +865,10 @@ mod L1 L2 S1
 
 Compute (L1 % L2), and store the result in S1. This is the remainder from signed integer division.
 
+As with division, taking the remainder modulo zero is an error, as is -0x80000000 % -1.
+
+[[The result of -0x80000000 % -1 is zero, so representation is not a problem. But some compilers generate a combined divide/remainder instruction for this case; the divide may fail as noted above.]]
+
 In division and remainer, signs are annoying. Rounding is towards zero. The sign of a remainder equals the sign of the dividend. It is always true that (A / B) * B + (A % B) == A. Some examples (in decimal):
 
      11 /  2 =  5
