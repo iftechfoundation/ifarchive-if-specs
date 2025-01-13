@@ -1481,6 +1481,8 @@ ftonumn L1 S1
 
 Convert a float value to an integer, rounding towards the nearest integer. Again, overflows become 7FFFFFFF or 80000000.
 
+The rounding of half-integer values (0.5, etc) is implementation-dependent.
+
 ```
 fadd L1 L2 S1
 fsub L1 L2 S1
@@ -1617,6 +1619,8 @@ dtonumn L1 L2 S1
 ```
 
 Convert a double value L1:L2 to an integer, rounding towards the nearest integer. Again, overflows become 7FFFFFFF or 80000000.
+
+The rounding of half-integer values (0.5, etc) is implementation-dependent.
 
 ```
 ftod L1 S1 S2
