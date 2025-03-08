@@ -393,7 +393,7 @@ There are also a number of special codes, representing special keyboard keys, wh
 - keycode_Home
 - keycode_End
 - keycode_Func1, keycode_Func2, keycode_Func3, ... keycode_Func12 (twelve function keys)
-- keycode_Unknown (any key which has no Latin-1 or special code)
+- keycode_Unknown (any key which cannot otherwise be represented)
 
 Various implementations of Glk will vary widely in which characters the player can enter. The most obvious limitation is that some characters are mapped to others. For example, most keyboards return a control-I code when the tab key is pressed. The Glk library, if it can recognize this at all, will generate a keycode_Tab event (value 0xFFFFFFF7) when this occurs. Therefore, for these keyboards, *no* keyboard key will generate a control-I event (value 9.) The Glk library will probably map many of the control codes to the other special keycodes.
 
