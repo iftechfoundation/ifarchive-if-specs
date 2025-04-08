@@ -1,6 +1,6 @@
 # Glk: A Portable Interface Standard for IF {: .Title }
 
-API specification version 0.7.5
+API specification version 0.7.5 ###
 {: .VersionHeader }
 
 Maintained by IFTF: `<specs@ifarchive.org>`
@@ -1914,11 +1914,35 @@ This is similar to glk_image_draw(), but it scales the image to the given width 
 
 If width or height is zero, nothing is drawn. Since those arguments are unsigned integers, they cannot be negative. If you pass in a negative number, it will be interpreted as a very large positive number, which is almost certain to end badly.
 
+```
+extern glui32 glk_image_draw_scaled_ext(winid_t win, glui32 image, glsi32 val1, glsi32 val2, glui32 width, glui32 height, glui32 imagerule);
+```
+
+Another version of glk_image_draw(), with more options for image scaling.
+
+The imagerule option encodes a width rule and a height rule. (You must supply both when calling this function.)
+
+- imagerule_WidthOrig: Use the image's standard width. The width argument is ignored.
+- imagerule_WidthFixed: Use the width given in the width argument (as an integer).
+- imagerule_WidthRatio: The image width will be proportional to the window width. The proportion is given by the width argument, which in this case is a fixed-point fraction. $10000 (1.0) means that the image width will be 100% of the window width. $8000 (0.5) means 50% of the window width, and so on.
+
+- imagerule_HeightOrig: Use the image's standard height. The height argument is ignored.
+- imagerule_HeightFixed: Use the height given in the height argument (as an integer).
+- imagerule_AspectRatio: The image height will be a fixed aspect ratio compared to the width. (The width is as defined above.) The height argument, in this case, is a fixed-point fraction which is multiplied by the image's standard aspect ratio. $10000 (1.0) means that the image will always retain its original aspect ratio. $20000 (2.0) means that it will be stretched vertically by a factor of 2.
+
+[[Remember that imagerule_WidthRatio defines the image width relative to the window width. imagerule_AspectRatio defines the image height relative to the image width. The interpreter always figures out the width first, then the height.]]
+
+### and then maxwid
+
+[[If the window is resized, what happens? This depends on the window type. See below.]]
+
 ### Graphics in Graphics Windows { #graphics_graphics }
 
 A graphics window is a rectangular canvas of pixels, upon which you can draw images. The contents are entirely under your control. You can draw as many images as you like, at any positions – overlapping if you like. If the window is resized, you are responsible for redrawing everything. See [*](#window_graphics).
 
-If you call glk_image_draw() or glk_image_draw_scaled() in a graphics window, val1 and val2 are interpreted as X and Y coordinates. The image will be drawn with its upper left corner at this position.
+If you call glk_image_draw() or its cousins in a graphics window, val1 and val2 are interpreted as X and Y coordinates. The image will be drawn with its upper left corner at this position.
+
+The imagerule_WidthRatio option does *not* dynamically resize in a graphics window. The image size is computed when glk_image_draw_scaled_ext() is called, and then the image is painted to the canvas.
 
 It is legitimate for part of the image to fall outside the window; the excess is not drawn. Note that these are signed arguments, so you can draw an image which falls outside the left or top edge of the window, as well as the right or bottom.
 
@@ -1954,7 +1978,9 @@ You can also fill an entire graphics window with its background color by calling
 
 A text buffer is a linear text stream. You can draw images in-line with this text. If you are familiar with HTML, you already understand this model. You draw images with flags indicating alignment. The library takes care of scrolling, resizing, and reformatting text buffer windows.
 
-If you call glk_image_draw() or glk_image_draw_scaled() in a text buffer window, val1 gives the image alignment. The val2 argument is currently unused, and should always be zero.
+In a text buffer window, imagerule_WidthRatio is dynamically computed; the image width will always be relative to the *current* window width. If the text buffer window is resized (by the user or a window arrangement call), the image will resize too.
+
+If you call glk_image_draw() or its cousins in a text buffer window, val1 gives the image alignment. The val2 argument is currently unused, and should always be zero.
 
 - imagealign_InlineUp: The image appears at the current point in the text, sticking up. That is, the bottom edge of the image is aligned with the baseline of the line of text.
 - imagealign_InlineDown: The image appears at the current point, and the top edge is aligned with the top of the line of text.
