@@ -1,6 +1,6 @@
 # Glk: A Portable Interface Standard for IF {: .Title }
 
-API specification version 0.7.5 ###
+API specification version 0.7.6
 {: .VersionHeader }
 
 Maintained by IFTF: `<specs@ifarchive.org>`
