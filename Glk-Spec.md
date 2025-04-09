@@ -1924,11 +1924,16 @@ extern glui32 glk_image_draw_scaled_ext(winid_t win, glui32 image, glsi32 val1, 
 
 Another version of glk_image_draw(), with more options for image scaling.
 
-The imagerule option encodes a width rule and a height rule. (You must supply both when calling this function.)
+The imagerule option encodes a width rule and a height rule. (You must supply one of each when calling this function.)
+
+Width rules:
 
 - imagerule_WidthOrig: Use the image's standard width. The width argument is ignored.
 - imagerule_WidthFixed: Use the width given in the width argument (as an integer).
 - imagerule_WidthRatio: The image width will be proportional to the window width. The proportion is given by the width argument, which in this case is a fixed-point fraction. $10000 (1.0) means that the image width will be 100% of the window width. $8000 (0.5) means 50% of the window width, and so on.
+
+Height rules:
+
 - imagerule_HeightOrig: Use the image's standard height. The height argument is ignored.
 - imagerule_HeightFixed: Use the height given in the height argument (as an integer).
 - imagerule_AspectRatio: The image height will be a fixed aspect ratio compared to the width. (The width is as defined above.) The height argument, in this case, is a fixed-point fraction which is multiplied by the image's standard aspect ratio. $10000 (1.0) means that the image will always retain its original aspect ratio. $20000 (2.0) means that it will be stretched vertically by a factor of 2.
