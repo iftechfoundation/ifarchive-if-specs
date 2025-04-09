@@ -1915,7 +1915,7 @@ This is similar to glk_image_draw(), but it scales the image to the given width 
 If width or height is zero, nothing is drawn. Since those arguments are unsigned integers, they cannot be negative. If you pass in a negative number, it will be interpreted as a very large positive number, which is almost certain to end badly.
 
 ```
-extern glui32 glk_image_draw_scaled_ext(winid_t win, glui32 image, glsi32 val1, glsi32 val2, glui32 width, glui32 height, glui32 imagerule);
+extern glui32 glk_image_draw_scaled_ext(winid_t win, glui32 image, glsi32 val1, glsi32 val2, glui32 width, glui32 height, glui32 imagerule, glui32 maxwidth);
 ```
 
 Another version of glk_image_draw(), with more options for image scaling.
@@ -1930,11 +1930,14 @@ The imagerule option encodes a width rule and a height rule. (You must supply bo
 - imagerule_HeightFixed: Use the height given in the height argument (as an integer).
 - imagerule_AspectRatio: The image height will be a fixed aspect ratio compared to the width. (The width is as defined above.) The height argument, in this case, is a fixed-point fraction which is multiplied by the image's standard aspect ratio. $10000 (1.0) means that the image will always retain its original aspect ratio. $20000 (2.0) means that it will be stretched vertically by a factor of 2.
 
-[[Remember that imagerule_WidthRatio defines the image width relative to the window width. imagerule_AspectRatio defines the image height relative to the image width. The interpreter always figures out the width first, then the height.]]
+[[Remember that imagerule_WidthRatio defines the image width relative to the window width. imagerule_AspectRatio defines the image height relative to the image width.]]
 
-### and then maxwid
+The maxwidth argument applies an additional upper bound based on the window width. If nonzero, it is treated as fixed-point fraction of the window width. If the image is wider than this, it is reduced proportionally.
 
-[[If the window is resized, what happens? This depends on the window type. See below.]]
+[[Thus if you use imagerule_WidthFixed, width=600, maxwidth=$10000, then the image will appear with a width of 600 or the window width, whichever is smaller. If you use imagerule_WidthOrig, maxwidth=$8000, then the image will appear with its original width or half the window width, whichever is smaller.
+You can combine imagerule_AspectRatio with the above options. The interpreter always figures out the width first, then the height (again, imagerule_AspectRatio only controls height). Then it applies maxwidth, which may cause a proportional reduction (regardless of how height was determined).
+Note that applying *both* imagerule_WidthRatio and maxwidth is pointless. The larger constraint will be ignored.
+If the window is resized, what happens? This depends on the window type. See below.]]
 
 ### Graphics in Graphics Windows { #graphics_graphics }
 
