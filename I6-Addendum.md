@@ -582,6 +582,12 @@ As of 6.40, the `=` sign is optional when defining a global variable's initial v
 
 [[This brings `Global` into harmony with `Constant`, for which the `=` sign has always been optional.]]
 
+As of 6.43, it is safe to declare a global variable more than once. Earlier versions accepted this in some cases but were inconsistent about it.
+
+[[Redundant global declarations were accepted in Glulx but not Z-code, with the exception of built-in variables like `self`, which could always be redeclared.]]
+
+If a global is declared more than once, at most one declaration should give an initial value. It is also safe to give each declaration the *same* initial value, as long as the value is a compile-time constant. [[However, the definition of compile-time constant is a bit tricky, so it's better to only provide one initial value.]]
+
 In early versions of Inform, the `Global` directive could also be used to define arrays. This usage has been deprecated since at least Inform 6.0, but the compiler still recognized declarations like:
 
 	Global array --> 8;
