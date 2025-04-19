@@ -586,7 +586,7 @@ As of 6.43, it is safe to declare a global variable more than once. Earlier vers
 
 [[Redundant global declarations were accepted in Glulx but not Z-code, with the exception of built-in variables like `self`, which could always be redeclared.]]
 
-If a global is declared more than once, at most one declaration should give an initial value. It is also safe to give each declaration the *same* initial value, as long as the value is a compile-time constant. [[However, the definition of compile-time constant is a bit tricky, so it's better to only provide one initial value.]]
+If a global is declared more than once, at most one declaration should give an initial value. It is also safe to give each declaration the *same* initial value, as long as the value is a compile-time constant. [[However, the definition of compile-time constant is a bit tricky, so it's better to only provide one initial value. Before 6.43, this was not checked carefully; conflicting definitions could be silently ignored or cause internal errors.]]
 
 In early versions of Inform, the `Global` directive could also be used to define arrays. This usage has been deprecated since at least Inform 6.0, but the compiler still recognized declarations like:
 
