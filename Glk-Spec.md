@@ -2045,7 +2045,13 @@ To avoid this, you can perform a preprocessor test for the existence of GLK_MODU
 
     res = glk_gestalt(gestalt_DrawImage, windowtype);
 
-This returns 1 if images can be drawn in windows of the given type. If it returns 0, glk_image_draw() will fail and return FALSE (0). You should test wintype_Graphics and wintype_TextBuffer separately, since libraries may implement both, neither, or only one.
+This returns 1 if images can be drawn in windows of the given type. If it returns 0, glk_image_draw() will fail and return FALSE (0). This also applies to glk_image_draw_scaled(). You should test wintype_Graphics and wintype_TextBuffer separately, since libraries may implement both, neither, or only one.
+
+    res = glk_gestalt(gestalt_DrawImageScale, windowtype);
+
+The same, but for the glk_image_draw_scaled_ext() call.
+
+[[glk_image_draw_scaled_ext() was added in a later Glk specification, so it has a separate gestalt test.]]
 
     res = glk_gestalt(gestalt_GraphicsTransparency, 0);
 
