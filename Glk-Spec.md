@@ -1958,7 +1958,7 @@ A graphics window is a rectangular canvas of pixels, upon which you can draw ima
 
 If you call glk_image_draw() or its cousins in a graphics window, val1 and val2 are interpreted as X and Y coordinates. The image will be drawn with its upper left corner at this position.
 
-The imagerule_WidthRatio option does *not* dynamically resize in a graphics window. The image size is computed when glk_image_draw_scaled_ext() is called, and then the image is painted to the canvas.
+The imagerule_WidthRatio option does *not* dynamically resize in a graphics window. The image size is computed when glk_image_draw_scaled_ext() is called, and then the image is painted to the canvas. The maxwidth argument is ignored in graphics windows.
 
 It is legitimate for part of the image to fall outside the window; the excess is not drawn. Note that these are signed arguments, so you can draw an image which falls outside the left or top edge of the window, as well as the right or bottom.
 
