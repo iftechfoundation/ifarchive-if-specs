@@ -260,7 +260,7 @@ For an example of the gestalt mechanism, consider the selector gestalt_Version. 
 
 res will be set to a 32-bit number which encodes the version of the Glk spec which the library implements. The upper 16 bits stores the major version number; the next 8 bits stores the minor version number; the low 8 bits stores an even more minor version number, if any. [[So the version number 78.2.11 would be encoded as 0x004E020B.]]
 
-The current Glk specification version is 0.7.5, so this selector will return 0x00000705.
+The current Glk specification version is 0.7.6, so this selector will return 0x00000706.
 
     glui32 res;
     res = glk_gestalt_ext(gestalt_Version, 0, NULL, 0);
