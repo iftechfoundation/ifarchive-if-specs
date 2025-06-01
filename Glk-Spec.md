@@ -1922,7 +1922,7 @@ If width or height is zero, nothing is drawn. Since those arguments are unsigned
 extern glui32 glk_image_draw_scaled_ext(winid_t win, glui32 image, glsi32 val1, glsi32 val2, glui32 width, glui32 height, glui32 imagerule, glui32 maxwidth);
 ```
 
-Another version of glk_image_draw(), with more options for image scaling.
+Another version of glk_image_draw(), with more options for image scaling. This was added in Glk 0.7.6.
 
 The imagerule option encodes a width rule and a height rule. (You must supply one of each when calling this function.)
 
