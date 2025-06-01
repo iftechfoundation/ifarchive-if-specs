@@ -52,7 +52,7 @@ You can think of Glk as an IF virtual machine, without the virtual machine part.
 
 An IF virtual machine has been designed specifically to go along with Glk. This VM, called Glulx, uses Glk as its interface; each Glk call corresponds to an input/output opcode of the VM.
 
-For more discussion of this approach, see [*](#vmio). Glulx is documented at [http://eblong.com/zarf/glulx/](http://eblong.com/zarf/glulx/).
+For more discussion of this approach, see [*](#vmio). Glulx is documented at [https://eblong.com/zarf/glulx/](https://eblong.com/zarf/glulx/).
 
 Of course, Glk can be used with other IF systems. The advantage of Glulx is that it provides the game author with direct and complete access to the Glk API. Other IF systems typically have an built-in abstract I/O API, which maps only partially onto Glk. For these systems, Glk tends to be a least-common-denominator interface: highly portable, but not necessarily featureful. (Even if Glk has a feature, it may not be available through the layers of abstraction.)
 
@@ -1705,7 +1705,7 @@ You can open a stream which reads from (but not writes to) a resource file.
 
 [[Note that this FORM distinction was added to the Glk 0.7.4 spec in July 2012, several months after the spec went out. This is bad form, no pun intended, but I don't think it'll cause headaches. No games use the resource stream feature yet, as far as I know. A Glk library written in the interregnum of early 2012 will fail to recognize FORM chunks, and if a game tries to use one, glk_stream_open_resource will return NULL.]]
 
-[[If the running program is not associated with a Blorb file, the library may look for data files as actual files instead. These would be named "DATA1", "DATA2", etc, with a suffix distinguishing text and binary files. See "Other Resource Arrangements" in the Blorb spec: [http://eblong.com/zarf/blorb/](http://eblong.com/zarf/blorb/). The stream should always begin at the beginning of the file, in this case; there is no BINA/FORM distinction to worry about.]]
+[[If the running program is not associated with a Blorb file, the library may look for data files as actual files instead. These would be named "DATA1", "DATA2", etc, with a suffix distinguishing text and binary files. See "Other Resource Arrangements" in the Blorb spec: [https://eblong.com/zarf/blorb/](https://eblong.com/zarf/blorb/). The stream should always begin at the beginning of the file, in this case; there is no BINA/FORM distinction to worry about.]]
 
 ```
 strid_t glk_stream_open_resource(glui32 filenum, glui32 rock);
@@ -3000,7 +3000,7 @@ The quick summary: resources are identified by type (image, sound, etc) and by a
 
 For the complete Blorb specification and tools for Blorb file manipulation, see:
 
-[http://eblong.com/zarf/blorb/](http://eblong.com/zarf/blorb/)
+[https://eblong.com/zarf/blorb/](https://eblong.com/zarf/blorb/)
 
 #### How This Works
 
