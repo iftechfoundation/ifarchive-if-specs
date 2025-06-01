@@ -157,7 +157,7 @@ New features:
 - graphics windows can support character input.
 - specify that a Unicode file stream in text mode should use UTF-8.
 
-* version 0.7.6 (###, 2025)
+* version 0.7.6 (June 1, 2025)
 
 - added the glk_image_draw_scaled_ext() call.
 - glk_image_draw() and glk_image_draw_scaled() always scale down images if they would be drawn wider than the window width. (glk_image_draw_scaled_ext() can optionally do this too.)
