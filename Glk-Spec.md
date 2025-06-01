@@ -281,7 +281,7 @@ Some functions have pointer arguments, acting as "variable" or "reference" argum
 
 ## Character Encoding { #encoding }
 
-Glk has two separate, but parallel, APIs for managing text input and output. The basic functions deals entirely in 8-bit characters; their arguments are arrays of bytes (octets). These functions all assume the Latin-1 character encoding. Equivalently, they may be said to use code points U+00..U+FF of [http://unicode.org/](Unicode).
+Glk has two separate, but parallel, APIs for managing text input and output. The basic functions deals entirely in 8-bit characters; their arguments are arrays of bytes (octets). These functions all assume the Latin-1 character encoding. Equivalently, they may be said to use code points U+00..U+FF of [Unicode](https://home.unicode.org/).
 
 Latin-1 is an 8-bit character encoding; it maps numeric codes in the range 0 to 255 into printed characters. The values from 32 to 126 are the standard printable ASCII characters (' ' to '~'). Values 0 to 31 and 127 to 159 are reserved for control characters, and have no printed equivalent.
 
@@ -457,7 +457,7 @@ See the Unicode spec (chapter 3.13, chapter 4.2, etc) for the exact definitions 
 
 Comparing Unicode strings is difficult, because there can be several ways to represent a piece of text as a Unicode string. For example, the one-character string "è" (an accented "e") will be displayed the same as the two-character string containing "e" followed by Unicode character 0x0300 (COMBINING GRAVE ACCENT). These strings should be considered equal.
 
-Therefore, a Glk program that accepts line input should convert its text to a normalized form before parsing it. These functions offer those conversions. The algorithms are defined by the Unicode spec (chapter 3.7) and [http://www.unicode.org/reports/tr15/](Unicode Standard Annex #15).
+Therefore, a Glk program that accepts line input should convert its text to a normalized form before parsing it. These functions offer those conversions. The algorithms are defined by the Unicode spec (chapter 3.7) and [Unicode Standard Annex #15](http://www.unicode.org/reports/tr15/).
 
 ```
 glui32 glk_buffer_canon_decompose_uni(glui32 *buf, glui32 len, glui32 numchars);
