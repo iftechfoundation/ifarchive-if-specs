@@ -1904,7 +1904,7 @@ glui32 glk_image_draw(winid_t win, glui32 image, glsi32 val1, glsi32 val2);
 
 This draws the given image resource in the given window. The position of the image is given by val1 and val2, but their meaning varies depending on what kind of window you are drawing in. See [*](#graphics_graphics) and [*](#graphics_textbuf).
 
-If the image is wider than the window it is drawn in, it will be proportionally reduced to fit with window width. This is a behavior change in Glk 0.7.6.
+For buffer windows, if the image is wider than the window it is drawn in, it will be proportionally reduced to fit with window width. This is a behavior change in Glk 0.7.6.
 
 This function returns a flag indicating whether the drawing operation succeeded. [[A FALSE result can occur for many reasons. The image data might be corrupted; the library may not have enough memory to operate; there may be no image with the given identifier; the window might not support image display; and so on.]]
 
@@ -1914,7 +1914,7 @@ glui32 glk_image_draw_scaled(winid_t win, glui32 image, glsi32 val1, glsi32 val2
 
 This is similar to glk_image_draw(), but it scales the image to the given width and height, instead of using the image's standard size. (You can measure the standard size with glk_image_get_info().)
 
-If the image is wider than the window it is drawn in, it will be proportionally reduced to fit with window width. This is a behavior change in Glk 0.7.6.
+For buffer windows, if the image is wider than the window it is drawn in, it will be proportionally reduced to fit with window width. This is a behavior change in Glk 0.7.6.
 
 If width or height is zero, nothing is drawn. Since those arguments are unsigned integers, they cannot be negative. If you pass in a negative number, it will be interpreted as a very large positive number, which is almost certain to end badly.
 
@@ -1940,7 +1940,7 @@ Height rules:
 
 [[Remember that imagerule_WidthRatio defines the image width relative to the window width. imagerule_AspectRatio defines the image height relative to the image width.]]
 
-The maxwidth argument, if nonzero, applies an additional upper bound based on the window width. It is treated as fixed-point fraction of the window width. If the image is wider than this, it is reduced proportionally.
+The maxwidth argument, if nonzero, applies an additional upper bound based on the window width. It is treated as fixed-point fraction of the window width. In buffer windows, if the image is wider than this, it is reduced proportionally. The maxwidth argument is ignored in graphics windows.
 
 [[Thus if you use imagerule_WidthFixed, width=600, maxwidth=$10000, then the image will appear with a width of 600 or the window width, whichever is smaller. If you use imagerule_WidthOrig, maxwidth=$8000, then the image will appear with its original width or half the window width, whichever is smaller.]]
 
