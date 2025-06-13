@@ -48,7 +48,7 @@ Note that this is entirely separate from question of the I/O layer. Glulx uses t
 
 On the obverse, one could also extend the Glulx VM to use a different I/O system instead of Glk. One such extension is FyreVM, a commercial IF system developed by Textfyre. FyreVM is described at [https://www.ifwiki.org/FyreVM](https://www.ifwiki.org/FyreVM).
 
-Other extension projects, not yet solidified, are being developed by Dannii Willis. See [https://github.com/curiousdannii](https://github.com/curiousdannii).
+Other extension projects, not yet solidified, are being developed by Dannii Willis. See [https://curiousdannii.github.io/if/](https://curiousdannii.github.io/if/).
 
 This specification does not cover FyreVM and the other projects, except to note opcodes, gestalt selectors, and iosys values that are specific to them.
 
