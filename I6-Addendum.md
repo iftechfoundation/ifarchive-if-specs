@@ -1212,6 +1212,7 @@ An individual grammar table looks like this:
         ...each token in the line: {
             byte: token
         }
+        ...null byte padding to bring the token count to six
 		byte: action number
 	}
 	
