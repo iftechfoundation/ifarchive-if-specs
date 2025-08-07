@@ -1,15 +1,15 @@
 # Inform 6 Reference Addendum {: .Title }
 
-Language and compiler changes: releases 6.30 to 6.43 (in development)
+Language and compiler changes: releases 6.30 to 6.43
 {: .VersionHeader }
 
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: April 18, 2025)
+(Last update: August 7, 2025)
 {: .DateHeader }
 
-Copyright 2020-24 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
+Copyright 2020-2025 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
 
 Graham Nelson's [Inform 6][i6] is a system for creating adventure games, and _[The Inform Designer's Manual][dm4]_ is the book to read about it.
 
