@@ -246,7 +246,7 @@ In this mode, action values are sorted so that all meta actions occur before all
 
 Sets the grammar table format to the given version. This is equivalent to setting the `Grammar__Version` constant at the beginning of your source. The default is 1 in Z-code, 2 in Glulx; but the standard library uses version 2 on both platforms. (Added in 6.43.)
 
-As of 6.43, Z-code supports a new grammar version 3. (See "[Grammar table formats](#grammarformat)", below.) This is a more compact variation of version 2.
+As of 6.43, Z-code supports a new grammar version 3. (See "[Grammar table formats](#grammarformat)", below.) This is a more compact variation of version 2. [PunyInform 6.0][] uses GV3.
 
 [[GV1 is a historical relic from early Inform development. GV3 is most useful for saving a few bytes in Z-code v3 games. Glulx postdates the GV1 era, and is not meant for game-file shaving, so it only supports GV2.]]
 
