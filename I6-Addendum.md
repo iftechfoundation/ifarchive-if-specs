@@ -780,7 +780,7 @@ The old syntax is still supported:
 		* -> Score
 		* 'full' -> FullScore;
 
-This implicitly marks all named actions as meta. (It also marks the verb dict word meta, as is traditional.)
+This implicitly marks all named actions as meta. (It also marks the verb dict word meta, as is traditional.) However, if you `Extend` this verb, the actions named in the `Extend` directive do *not* inherit the meta flag by default.
 
 **Version**
 
