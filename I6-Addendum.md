@@ -50,6 +50,7 @@ This is a high-level view of I6 releases and their most important features. For 
 - **6.42** (Feb 2024): Unlimited identifier length; unlimited abbreviation length; inline bytes assembly.
 - **6.43** (Aug 2025): Singular (`//s`) dict flag and `$DICT_IMPLICIT_SINGULAR`; truncation dict flag and `$DICT_TRUNCATE_FLAG`; `$GRAMMAR_META_FLAG`; `$GRAMMAR_VERSION` and grammar version 3; peephole codegen optimizations.
 - **6.44** (Sep 2025): Command-line options override in-code options; bug fixes.
+- **6.45** (###): More branch optimizations.
 
 ## Language versus library
 
@@ -110,9 +111,7 @@ The options specified with `!%` must be at the *start* of the source file, with 
 
 Note that this section of the file is parsed before the source encoding is set. (Indeed, this section could specify the source encoding!) Therefore, options in this section must be plain ASCII.
 
-`!%` options take precedence over command-line options. Command-line options are read in order; later options (including `(file.icl)` inclusions) take precedence over earlier ones.
-
-[[It would be better if command-line options took precedence over `!%` options. This would allow one-off changes while recompiling existing source code. This change may be considered in the future.]]
+As of 6.44, command-line options take precedence over `!%` options. (Up through 6.43 it was the other way around.) Command-line options are read in order; later options (including `(file.icl)` inclusions) take precedence over earlier ones.
 
 ## Switch options (dash) { #switchopts }
 
