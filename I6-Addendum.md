@@ -6,7 +6,7 @@ Language and compiler changes: releases 6.30 to 6.43
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: August 8, 2025)
+(Last update: September 17, 2025)
 {: .DateHeader }
 
 Copyright 2020-2025 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
