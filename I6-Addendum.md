@@ -242,9 +242,15 @@ If this is 1, you can mark individual actions as being meta (rather than relying
 
 In this mode, action values are sorted so that all meta actions occur before all non-meta actions. The constant `#highest_meta_action_number` allows you to distinguish them. (If there are no meta actions, this constant is -1.)
 
+As of 6.45, you can also set this option by defining the `Grammar_Meta__Value` constant early in your source.
+
+[[Note that while the *option* should be set to 0 or 1, code should *test* for the option by checking `#ifdef GRAMMAR_META_FLAG`.]]
+
 **$GRAMMAR_VERSION**
 
-Sets the grammar table format to the given version. This is equivalent to setting the `Grammar__Version` constant at the beginning of your source. The default is 1 in Z-code, 2 in Glulx; but the standard library uses version 2 on both platforms. (Added in 6.43.)
+Sets the grammar table format to the given version. You can also set this option by defining the `Grammar__Version` constant early in your source. The default is 1 in Z-code, 2 in Glulx; but the standard library uses version 2 on both platforms. (Added in 6.43.)
+
+[[This option is traditionally set by the library, not the game. The library can set `Grammar__Version` in a header file.]]
 
 As of 6.43, Z-code supports a new grammar version 3. (See "[Grammar table formats](#grammarformat)", below.) This is a more compact variation of version 2. [PunyInform 6.0][PunyInform] uses GV3.
 
