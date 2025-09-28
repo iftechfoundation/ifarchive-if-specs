@@ -1017,9 +1017,21 @@ The byte size of one character in a dictionary word. This is controlled by the `
 
 This is defined as 1 if `$DICT_CHAR_SIZE` is 4. (Glulx-only.)
 
+**Grammar__Version**
+
+(Note double underscore.) Set this to a value to set the `$GRAMMAR_VERSION` option. See [above](#directives). This must be done before the first grammar declaration.
+
+**GRAMMAR_META_FLAG**
+
+This is defined if the `$GRAMMAR_META_FLAG` setting is used (nonzero).
+
+**Grammar_Meta__Value**
+
+(Note double underscore.) Set this to a value to set the `$GRAMMAR_META_FLAG` option. See [above](#directives). This must be done before the first grammar declaration.
+
 **OMIT_SYMBOL_TABLE**
 
-This is defined if the `$OMIT_SYMBOL_TABLE` setting is used.
+This is defined if the `$OMIT_SYMBOL_TABLE` setting is used (nonzero).
 
 **NUM_ATTR_BYTES**
 
