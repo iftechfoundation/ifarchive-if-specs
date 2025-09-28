@@ -951,6 +951,8 @@ The compiler defines various constants describing the game file. The game (and l
 
 [[Only a few of the compiler's `#` constants are documented here. The majority are intended to support Infix, and are available only in Z-code.]]
 
+[[Constant names are case-insensitive. The capitalizations listed here are traditional.]]
+
 Constants defined with no given value are typically meant to be checked with `#Ifdef`. They have the default value 0.
 
 **#version_number**
@@ -1027,7 +1029,7 @@ This is defined if the `$GRAMMAR_META_FLAG` setting is used (nonzero).
 
 **Grammar_Meta__Value**
 
-(Note double underscore.) Set this to a value to set the `$GRAMMAR_META_FLAG` option. See [above](#directives). This must be done before the first grammar declaration.
+(Note double underscore.) Set this to a value to set the `$GRAMMAR_META_FLAG` option. See [above](#directives). This must be done before the first grammar declaration. (Added in 6.45.)
 
 **OMIT_SYMBOL_TABLE**
 
