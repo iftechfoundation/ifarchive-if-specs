@@ -334,7 +334,7 @@ If this is set to 2, the compiler will display a warning for each routine in the
 
 **$ZALPHABET**
 
-This may be set to a string value of exactly 75 non-space characters. If so, it defines the Z-machine alphabet table -- three alphabets of 25 characters each. This is equivalent to the directive `Zcharacter "..." "..." "..."`.
+This may be set to a string of exactly 75 non-space characters. If so, it defines the Z-machine alphabet table -- three alphabets of 25 characters each. This is equivalent to the directive `Zcharacter "..." "..." "..."`.
 
 Example: as a header comment, this sets the standard Z-machine alphabet characters, albeit in a slightly different order:
 
@@ -355,6 +355,16 @@ As with the `Zcharacter` directive, Unicode characters `@{A0}` and above may be 
 (Added in 6.45.)
 
 **$ZCHAR_TABLE**
+
+This may be set to a string containing a list of characters. These characters (ignoring spaces) are placed in the Z-machine Unicode translation table. This is equivalent to the directive `Zcharacter table`.
+
+As with that directive, if the string starts with a `+`, the characters are added to the default Unicode set instead.
+
+Note that you may not supply multiple `$ZCHAR_TABLE` options to add multiple lists to the table. (The options system only recognizes one value per option.) Put all your characters on the same line.
+
+The characters may be `@`-escaped in the usual ways: `@@DEC`, `@{HEX}`, and accent codes such as `@:u`. Literal Unicode characters may *not* be used.
+
+(Added in 6.45.)
 
 **$ZCODE_FILE_END_PADDING**
 
