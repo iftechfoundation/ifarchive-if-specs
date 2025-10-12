@@ -6,7 +6,7 @@ Language and compiler changes: releases 6.30 to 6.45 (dev)
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: September 28, 2025)
+(Last update: October 12, 2025)
 {: .DateHeader }
 
 Copyright 2020-2025 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
@@ -360,7 +360,7 @@ This may be set to a string containing a list of characters. These characters (i
 
 As with that directive, if the string starts with a `+`, the characters are added to the default Unicode set instead.
 
-Note that you may not supply multiple `$ZCHAR_TABLE` options to add multiple lists to the table. (The options system only recognizes one value per option.) Put all your characters on the same line.
+Note that you may not supply multiple `$ZCHAR_TABLE` options to add multiple lists to the table. (The options system only recognizes one value per option.) Put all your characters on the same option line.
 
 The characters may be `@`-escaped in the usual ways: `@@DEC`, `@{HEX}`, and accent codes such as `@:u`. Literal Unicode characters may *not* be used.
 
