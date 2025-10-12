@@ -476,6 +476,16 @@ Show tokens as they are lexed. `$!TOKENS=2` will also show token types; `$!TOKEN
 
 The `$!TOKENS` trace level can be changed at any point in the code with the `Trace tokens` directive. 
 
+**$!UNICODE**
+
+Show the Z-machine Unicode translation table, if defined, when the game is complete. (See [Z-Spec 3.8.5.2][spec3-8]. Not used in Glulx.)
+
+[spec3-8]: https://www.inform-fiction.org/zmachine/standards/current/sect03.html#eight
+
+The table's characters will be shown as `${..}` hex escapes. If the `-Cu` (Unicode source) option is used, they will also be shown literally.
+
+(New in 6.45.)
+
 **$!VERBS**
 
 Show the verb grammar table when the game is complete.
