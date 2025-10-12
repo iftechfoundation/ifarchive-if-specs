@@ -340,9 +340,21 @@ If this is set to 1 (the default), the game file will be zero-padded to a length
 
 This sets the number of words in the Z-code header extension table. The default is 3. The `-W` setting does the same thing. (See Z-spec 1.0. This is only meaningful in Z-code.)
 
+**$ZCODE_HEADER_FLAGS_1**, **$ZCODE_HEADER_FLAGS_1_CLR**
+
+Flag bits to set or clear in the Flags 1 byte of the header (address `$1`). The compiler normally manages this field, but if you provide `$ZCODE_HEADER_FLAGS_1` (value 0-255), it will be ORed in bitwise. Similarly `$ZCODE_HEADER_FLAGS_1_CLR` will be negative-ANDed in. Use at your own risk.
+
+(Added in 6.45.) (These options, and the following ones, are only meaningful in Z-code.)
+
+**$ZCODE_HEADER_FLAGS_2**, **$ZCODE_HEADER_FLAGS_2_CLR**
+
+Flag bits to set or clear in the Flags 2 word of the header (address `$10-11`). Again, the compiler normally sets these flags based on the game features it sees used (color, sound, etc). But you can force bits on and off with these options (value 0-65535).
+
+(Added in 6.45.)
+
 **$ZCODE_HEADER_FLAGS_3**
 
-This is the value to store in the Flags 3 word of the header extension table. (See Z-spec 1.1. This is only meaningful in Z-code.)
+This is the value (0-65535) to store in the Flags 3 word of the header extension table. (See Z-spec 1.1.) The compiler sets this to zero by default, so there is no `_CLR` option for it.
 
 **$ZCODE_LESS_DICT_DATA**
 
@@ -484,7 +496,7 @@ Show the Z-machine Unicode translation table, if defined, when the game is compl
 
 The table's characters will be shown as `${..}` hex escapes. If the `-Cu` (Unicode source) option is used, they will also be shown literally.
 
-(New in 6.45.)
+(Added in 6.45.)
 
 **$!VERBS**
 
