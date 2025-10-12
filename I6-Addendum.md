@@ -50,7 +50,7 @@ This is a high-level view of I6 releases and their most important features. For 
 - **6.42** (Feb 2024): Unlimited identifier length; unlimited abbreviation length; inline bytes assembly.
 - **6.43** (Aug 2025): Singular (`//s`) dict flag and `$DICT_IMPLICIT_SINGULAR`; truncation dict flag and `$DICT_TRUNCATE_FLAG`; `$GRAMMAR_META_FLAG`; `$GRAMMAR_VERSION` and grammar version 3; peephole codegen optimizations.
 - **6.44** (Sep 2025): Command-line options override in-code options; bug fixes.
-- **6.45** (###): `$ZALPHABET` and `$ZCHAR_TABLE`; `$ZCODE_HEADER_FLAGS_1`, etc. More branch optimizations.
+- **6.45** (###): `$ZALPHABET` and `$ZCHAR_TABLE`; `$ZCODE_HEADER_FLAGS_1`, etc; more branch optimizations.
 
 ## Language versus library
 
