@@ -490,7 +490,7 @@ The `$!TOKENS` trace level can be changed at any point in the code with the `Tra
 
 **$!UNICODE**
 
-Show the Z-machine Unicode translation table, if defined, when the game is complete. (See [Z-Spec 3.8.5.2][spec3-8]. Not used in Glulx.)
+Show the Z-machine Unicode translation table, if defined, when the game is complete. (See [Z-spec 3.8.5.2][spec3-8]. Not used in Glulx.)
 
 [spec3-8]: https://www.inform-fiction.org/zmachine/standards/current/sect03.html#eight
 
@@ -841,7 +841,7 @@ All provided arguments are passed to the `R_Process()` function. The `Actor` val
 
 As of 6.40, the Glulx opcodes `@hasundo` and `@discardundo` (Glulx spec 3.1.3) are supported.
 
-As of 6.42, the Z-code opcodes `@set_true_colour` and `@buffer_screen` (Z-Spec 1.1) are supported.
+As of 6.42, the Z-code opcodes `@set_true_colour` and `@buffer_screen` (Z-spec 1.1) are supported.
 
 As of 6.42, assembly language (§41) allows you to specify bytes directly:
 
