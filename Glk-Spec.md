@@ -2934,6 +2934,7 @@ These values, and the values used for future Glk calls, are integers in the rang
 - 0x00E9: glk_window_erase_rect
 - 0x00EA: glk_window_fill_rect
 - 0x00EB: glk_window_set_background_color
+- 0x00EC: glk_image_draw_scaled_ext
 - 0x00F0: glk_schannel_iterate
 - 0x00F1: glk_schannel_get_rock
 - 0x00F2: glk_schannel_create
