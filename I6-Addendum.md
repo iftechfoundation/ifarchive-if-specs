@@ -6,10 +6,10 @@ Language and compiler changes: releases 6.30 to 6.45 (dev)
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-(Last update: October 12, 2025)
+(Last update: February 23, 2026)
 {: .DateHeader }
 
-Copyright 2020-2025 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
+Copyright 2020-2026 by the Interactive Fiction Technology Foundation. This document is licenced under a [Creative Commons Attribution-ShareAlike 4.0 International License][bysa].
 
 Graham Nelson's [Inform 6][i6] is a system for creating adventure games, and _[The Inform Designer's Manual][dm4]_ is the book to read about it.
 
@@ -138,6 +138,8 @@ Classic options begin with a dash -- the traditional style of command-line tools
 [[Normally the compiler works out the earliest version number compatible with the features used by your game. You can use this option to specify a later version.]]
 
 `-H`: In Glulx format, use Huffman encoding to compress strings. This is the default; to use uncompressed text, use `-~H`.
+
+`-i`: Suppress the `Switches` directive. This directive is obsolete and deprecated, so the `-i` switch is as well.
 
 `-k`: Output debugging information to a file `gameinfo.dbg`. This switch is documented in the DM4 (§7), but the output format has changed. As of 6.33, it is an extremely verbose XML format; see [below](#debugformat). Also, as of 6.35, the `-k` switch no longer automatically sets `-D`.
 
