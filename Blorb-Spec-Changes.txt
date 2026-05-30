@@ -27,4 +27,6 @@ Blorb spec -- change log
 2.0.4: (2014-03-02)
     Resource description chunk (alt text strings).
 
+2.0.5: (2026-05-30)
+    MP3 audio format.
 

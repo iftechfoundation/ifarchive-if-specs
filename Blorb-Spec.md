@@ -1,12 +1,12 @@
 # Blorb: An IF Resource Collection Format Standard {: .Title }
 
-Format specification version 2.0.4
+Format specification version 2.0.5
 {: .VersionHeader }
 
 Maintained by IFTF: `<specs@ifarchive.org>`
 {: .AuthorHeader }
 
-Copyright 2020-2024 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: [http://creativecommons.org/licenses/by-nc-sa/3.0][by-nc-sa]
+Copyright 2020-2026 by the [Interactive Fiction Technology Foundation][iftf]. This specification is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 3.0 Unported License: [http://creativecommons.org/licenses/by-nc-sa/3.0][by-nc-sa]
 
 [iftf]: https://iftechfoundation.org/
 [by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/3.0
@@ -102,7 +102,7 @@ In a Z-code game, a rectangle exists for the purposes of @picture_data and @eras
 
 ## Sound Resource Chunks
 
-Each sound is stored as one chunk, whose content is either an AIFF file, an Ogg file, a MOD file, or a song file. (Note that these are various possible formats for a single resource. It is not possible to have an AIFF sound and a MOD sound with the same sound resource number.)
+Each sound is stored as one chunk, whose content is either an AIFF file, am MP3 file, an Ogg file, a MOD file, or a song file. (Note that these are various possible formats for a single resource. It is not possible to have two sound chunks with different formats but the same sound resource number.)
 
 On the Z-machine, we must consider the problems of how the game knows the interpreter can play music, and how sampled sounds are played over music. See the section "Z-Machine Compatibility Issues" later in this document. (These issues are not relevant to Glk and Glulx.)
 
@@ -113,9 +113,15 @@ An AIFF (Audio IFF) file has chunk type 'FORM', and formtype 'AIFF'. AIFF is an 
 - [http://www.digitalpreservation.gov/formats/fdd/fdd000005.shtml](http://www.digitalpreservation.gov/formats/fdd/fdd000005.shtml)
 - [https://eblong.com/zarf/ftp/aiff-c.9.26.91.ps](https://eblong.com/zarf/ftp/aiff-c.9.26.91.ps)
 
+### MP3 Sounds
+
+An MP3 file has chunk type 'MP3 '. This is the most common lossy audio compression format.
+
+[[MP3 support was added to Blorb in spec version 2.0.5. It was omitted from earlier versions because of patent concerns, but these patents have expired as of mid-2017.]]
+
 ### Ogg Sounds
 
-An Ogg Vorbis file has chunk type 'OGGV'. This is a high-quality (but lossy) audio compression format, comparable to MP3 (but without the patent concerns that encumber MP3). The Ogg format is available at:
+An Ogg Vorbis file has chunk type 'OGGV'. This is a high-quality (but lossy) audio compression format, comparable to MP3. The Ogg format is available at:
 
 - [http://www.vorbis.com/](http://www.vorbis.com/)
 
@@ -642,11 +648,13 @@ As to other possibilities: GIF is a popular format, but was previously owned by 
 
 - So why does ADRIFT get a bye on these format decisions?
 
-Game authors and interpreters need to agree on what formats they will use. Z-code had no cross-platform agreement when Blorb was invented, and Glulx was created to use Blorb, so Blorb's role for them is normative. GIF and MP3 are not going to become standard Blorb format types.
+Game authors and interpreters need to agree on what formats they will use. Z-code had no cross-platform agreement when Blorb was invented, and Glulx was created to use Blorb, so Blorb's role for them is normative. GIF and WAV are not going to become standard Blorb format types.
 
 ADRIFT, in contrast, already had cross-platform interpreters when it adopted Blorb. Blorb can therefore be valuable to ADRIFT as a packaging and metadata format, while taking a descriptive role on media formats. (The alternative would be to disallow ADRIFT Blorb files, which seems silly.)
 
 [[It is worth noting, however, that IF interpreters are often ported by adapting existing IF display code. IF interpreter ports can also be based on Glk libraries and the Glk API. Both routes entail the Blorb standard media format list, to some extent. Therefore, game authors have some reason to consider sticking to those formats.]]
+
+[[In Blorb 2.0.5, MP3 was promoted from an ADRIFT-only format to a standard Blorb format. So I had to delete the comment about "MP3 is not going to become standard." Oops.]]
 
 - What is the Blorb Policy on Color Depth?
 
