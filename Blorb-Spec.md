@@ -102,7 +102,7 @@ In a Z-code game, a rectangle exists for the purposes of @picture_data and @eras
 
 ## Sound Resource Chunks
 
-Each sound is stored as one chunk, whose content is either an AIFF file, am MP3 file, an Ogg file, a MOD file, or a song file. (Note that these are various possible formats for a single resource. It is not possible to have two sound chunks with different formats but the same sound resource number.)
+Each sound is stored as one chunk, whose content is either an AIFF file, an MP3 file, an Ogg file, a MOD file, or a song file. (Note that these are various possible formats for a single resource. It is not possible to have two sound chunks with different formats but the same sound resource number.)
 
 On the Z-machine, we must consider the problems of how the game knows the interpreter can play music, and how sampled sounds are played over music. See the section "Z-Machine Compatibility Issues" later in this document. (These issues are not relevant to Glk and Glulx.)
 
@@ -529,7 +529,7 @@ The sound system is slightly more problematic. A game file can announce that it 
 
 There is also the question of overlapping sounds. The Z-Spec (9.4.2) says that starting a new sound effect automatically stops any current one. But it is not desirable that a sound effect such as footsteps should interrupt the playing of background music. Therefore, the interpreter should amend this rule, and consider sampled sounds and music to be in seperate "channels". Samples interrupt samples, and music interrupts music, but one form of sound does not interrupt the other.
 
-This is an actual variance in the behavior of the Z-machine, and worse, a variance which depends on data format. (One sound will either stop another, or not, depending on whether the sound is stored in AIFF (sampled) or Ogg/MOD (music) format.) We apologize for the ugliness.
+This is an actual variance in the behavior of the Z-machine, and worse, a variance which depends on data format. (One sound will either stop another, or not, depending on whether the sound is stored in AIFF (sampled) or Ogg/MP3/MOD (music) format.) We apologize for the ugliness.
 
 Again, future versions of the Z-machine may address this issue, and allow a more general system where any sound can be overlaid on any other sound, or interrupt it, as the game desires and regardless of storage format. (After all, there can be background <em>sounds</em> as well as background <em>music</em>.) Such a system would also allow the interpreter to announce its limitations and capabilities – whether it can play music, whether it can play two pieces of music at once, how many sampled sounds it can play at once, etc.
 
@@ -547,7 +547,7 @@ ADRIFT supports more media formats than Blorb, but has adopted Blorb as a packag
 
 For images: 'GIF '.
 
-For sounds: 'WAV ', 'MIDI', 'MP3 '.
+For sounds: 'WAV ', 'MIDI'.
 
 ADRIFT Blorb files should use MIME type <code>application/x-blorb;profile="adrift"</code>. The filename suffix should be ".blorb" or ".adriftblorb". [["A" or "AD" is unfortunately not a unique prefix when it comes to IF systems!]]
 
@@ -632,9 +632,9 @@ Therefore, we <em>do</em> insist that every interpreter be able to display all t
 
 It is very strongly suggested that an interpreter use standard open-source libraries for interpreting sound and image resources. To rely on OS services, while tempting, is a road paved with incompatibility problems.
 
-- Okay, then, why three sound formats?
+- Okay, then, why four sound formats?
 
-Because a sampled-sound format (like AIFF) can reproduce anything, and a compressed digital format (like Ogg) can reproduce large sounds efficiently.
+Because a sampled-sound format (like AIFF) can reproduce anything, and a compressed digital format (like Ogg) can reproduce large sounds efficiently. Ogg was the original Blorb compressed audio format, due to patent concerns around MP3. These concerns are now gone, and MP3 remains much more popular than Ogg, so it has been added out of pragmatism. 
 
 MOD can reproduce music even more efficiently, but it's really retained in the spec more for backwards compatibility than for any technical reason. Existing games use it, and while it's not very well standardized, it seems to work.
 
