@@ -1543,7 +1543,7 @@ inside, so that "`<format>blorb</format>`" is incorrect. The value of
 `<format>` may therefore be one of the following:
 
 	zcode, glulx, tads2, tads3, hugo, alan, adrift, level9, agt,
-	magscrolls, advsys, html, executable, quest
+	magscrolls, advsys, quest, html, executable
 
 No distinction is made here between sub-versions (e.g. v4 of the
 Z-machine vs. v8 of the Z-machine): the distinction between TADS 2
@@ -2035,8 +2035,8 @@ available, or when supporting nonvisual users.
 An iFiction record can, optionally, have one of the following:
 
 	<zcode>, <glulx>, <tads2>, <tads3>, <hugo>, <alan>, <adrift>,
-	<level9>, <agt>, <magscrolls>, <advsys>, <html>,
-	<executable>, <quest>
+	<level9>, <agt>, <magscrolls>, <advsys>, <quest>, <html>,
+	<executable>
 
 It may only have the tag which matches the `<format>` value in the
 `<identification>` section.
