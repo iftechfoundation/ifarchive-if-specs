@@ -3,13 +3,13 @@
 A community standard for IF bibliography
 {: .VersionHeader }
 
-Revision 12
+Revision 13
 {: .VersionHeader }
 
-16 October 2024
+18 September 2026
 {: .VersionHeader }
 
-Copyright 2006-2024 by the Interactive Fiction Technology Foundation.
+Copyright 2006-2026 by the Interactive Fiction Technology Foundation.
 This document is licenced under a
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][byncsa].
 You are free to share and adapt this material for noncommercial purposes,
