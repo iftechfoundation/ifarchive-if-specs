@@ -126,7 +126,8 @@ The following parties are the initial signatories:
 Current signatories now include:
 
 - the design system Twine;
-- the design system Alan.
+- the design system Alan;
+- the design system Quest.
 
 Other design systems and tools are welcome to join. It is important to
 note that the treaty also provides for support of works of IF produced
@@ -323,6 +324,23 @@ metadata tools require the prefix. Consider using [this validator][rdfavalid]
 to verify that your file validates without warnings.)
 
 [rdfavalid]: https://www.w3.org/2012/pyRdfa/Validator.html
+
+#### The IFID for a Quest story file
+
+Quest story files use the filename extension ".quest" and are ZIP
+archives. Newly published packages brand the IFID as a ZIP archive
+comment containing the literal ASCII sequence described
+[above](#embed-formats):
+
+	UUID://1974A053-7DB0-4103-93A1-767C1382C0B7//
+
+(ZIP archive comments are stored near the end of the file.)
+
+Newly published packages also contain an iFiction record as the ZIP
+member `metadata.iFiction`.
+
+For older Quest packages that lack these, see
+[*](#the-ifid-for-a-legacy-quest-story-file).
 
 #### The IFID for other file formats
 
@@ -720,6 +738,19 @@ the HTML:
 Otherwise, the IFID for a legacy HTML story file is "HTML-" followed by
 the MD5 checksum of the file.
 
+
+##### The IFID for a legacy Quest story file
+
+Legacy `.quest` files created with Quest 5.1 or later may lack a
+ZIP archive comment and `metadata.iFiction` member. Such a package is
+still a ZIP archive whose root contains a `game.aslx` file in XML. The
+IFID is the text of the `<gameid>` element within the `<game>` element
+within the root `<asl>` element of that file. Hexadecimal digits in the
+IFID should be converted to upper case when reading it.
+
+Older Quest story files were distributed as `.cas` or `.asl` files and
+do not contain an IFID. For these, the IFID is the prefix "QUEST-",
+followed by the MD5 hash of the file.
 
 ##### The IFID for other legacy file formats
 
@@ -1421,6 +1452,7 @@ We shall call these subdivisions "sections". The sections are:
 	<glulx>				optional*		design system
 	<hugo>				optional*		design system
 	<adrift>			optional*		design system
+	<quest>				optional*		design system
 
 \* Permitted only if the project belongs to this format, so that at most
 one of these can be given: but it is legal not to give it at all.
@@ -1511,7 +1543,7 @@ inside, so that "`<format>blorb</format>`" is incorrect. The value of
 `<format>` may therefore be one of the following:
 
 	zcode, glulx, tads2, tads3, hugo, alan, adrift, level9, agt,
-	magscrolls, advsys, html, executable
+	magscrolls, advsys, html, executable, quest
 
 No distinction is made here between sub-versions (e.g. v4 of the
 Z-machine vs. v8 of the Z-machine): the distinction between TADS 2
@@ -1533,6 +1565,13 @@ story file but a program for a physical machine: say, an old MS-DOS
 executable. There is therefore no applicable interpreter. This
 format is only likely to be seen in external metadata, at sites such
 as the IF-archive.
+
+The format "quest" means that this is a Quest package: a ZIP archive
+(with the usual ".quest" extension) containing a playable game
+together with associated resources. Newly published packages include
+an iFiction record as the member `metadata.iFiction`, and brand the
+IFID into the ZIP archive comment, as described
+[above](#the-ifid-for-a-quest-story-file).
 
 Other format values may be added in future revisions. A value not
 listed above may be assumed to be in informal use by the users of an
@@ -1997,7 +2036,7 @@ An iFiction record can, optionally, have one of the following:
 
 	<zcode>, <glulx>, <tads2>, <tads3>, <hugo>, <alan>, <adrift>,
 	<level9>, <agt>, <magscrolls>, <advsys>, <html>,
-	<executable>
+	<executable>, <quest>
 
 It may only have the tag which matches the `<format>` value in the
 `<identification>` section.
@@ -2166,6 +2205,34 @@ definition by Kent Tessman on behalf of Hugo.
 This section contains only optional tags, and is reserved for later
 definition by Campbell Wild on behalf of ADRIFT.
 
+
+#### `<quest>`
+
+This section contains only optional tags.
+
+	<quest>
+		<style>Text Adventure</style>
+		<version>1.0</version>
+		<coverleafname>black-cover.png</coverleafname>
+	</quest>
+
+##### `<style>`
+
+The style of the work. This must be either "Text Adventure" (a
+parser-based game) or "Gamebook" (a choice-based game).
+
+##### `<version>`
+
+A free-form version string for the work, such as "1.0". Unlike the
+`<version>` tag inside a `<release>` block (which must be a
+non-negative integer), this may contain any string.
+
+##### `<coverleafname>`
+
+When a `.quest` package contains cover art, this is the path of that
+image within the ZIP archive (for example, `cover.png` when the
+cover is stored at the archive root). The image format and dimensions
+are recorded in the standard `<cover>` section.
 
 ### Releases
 
