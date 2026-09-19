@@ -712,31 +712,14 @@ its IFID is "LEVEL9-" followed by the MD5 hash of the story file.
 
 ##### The IFID for a legacy AdvSys story file
 
-
 The IFID for a legacy AdvSys story file is "ADVSYS-" followed by the MD5
 checksum of the file.
 
 
 ##### The IFID for a legacy Alan story file
 
-
 The IFID for a legacy Alan story file is "ALAN-" followed by the MD5
 checksum of the file.
-
-
-##### The IFID for a legacy HTML story file
-
-
-HTML games that lack the `<meta>` tag described above may include the
-text `UUID://...//` in a literal string or comment in the HTML.
-
-Older Twine games may incorporate an IFID in a `<tw-storydata>` tag in
-the HTML:
-
-	<tw-storydata name="Title" creator="Twine" ifid="8665FC08-15CD-4BEC-B15A-7F72E34F4F51" ...>
-
-Otherwise, the IFID for a legacy HTML story file is "HTML-" followed by
-the MD5 checksum of the file.
 
 
 ##### The IFID for a legacy Quest story file
@@ -751,6 +734,21 @@ IFID should be converted to upper case when reading it.
 Older Quest story files were distributed as `.cas` or `.asl` files and
 do not contain an IFID. For these, the IFID is the prefix "QUEST-",
 followed by the MD5 hash of the file.
+
+
+##### The IFID for a legacy HTML story file
+
+HTML games that lack the `<meta>` tag described above may include the
+text `UUID://...//` in a literal string or comment in the HTML.
+
+Older Twine games may incorporate an IFID in a `<tw-storydata>` tag in
+the HTML:
+
+	<tw-storydata name="Title" creator="Twine" ifid="8665FC08-15CD-4BEC-B15A-7F72E34F4F51" ...>
+
+Otherwise, the IFID for a legacy HTML story file is "HTML-" followed by
+the MD5 checksum of the file.
+
 
 ##### The IFID for other legacy file formats
 
