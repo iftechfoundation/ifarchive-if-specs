@@ -52,11 +52,12 @@ There is one index entry for each resource. (But not for the optional chunks.) E
 
 The index entries should be in the same order as the resource chunks in the file.
 
-The usage field tells what kind of resource is being described. There are currently four values defined:
+The usage field tells what kind of resource is being described. There are currently five values defined:
 
 - 'Pict': Picture resource
 - 'Snd ': Sound resource
 - 'Data': Data file resource
+- 'Font': Font resource
 - 'Exec': Code resource
 
 The number field tells which resource is being described, from the game's point of view. For example, when a Z-code game calls @draw_picture with an argument of 3, the interpreter would find the index entry whose usage is 'Pict' and whose number is 3. For code chunks (usage 'Exec'), the number should contain 0.
@@ -168,6 +169,28 @@ This feature was designed to support Glulx, but data resources can be accessed b
 For Glulx games (and any other game format which uses the Glk API), the data format must follow the conventions described in the Glk spec. ([https://eblong.com/zarf/glk/](https://eblong.com/zarf/glk/), "Resource Streams".)
 
 [[To summarize: if the data file is opened via glk_stream_open_resource(), then it will be read as a stream of bytes; text will be assumed to be encoded as Latin-1. If it is opened via glk_stream_open_resource_uni(), then a 'TEXT' chunk will be assumed to be a stream of characters encoded as UTF-8; 'BINA' will be assumed to be a stream of big-endian four-byte integers. If read by lines (glk_get_line_stream(), etc), resource text should use Unix line breaks in all cases.]]
+
+## Font Resource Chunks
+
+Each font is stored as one chunk, whose content is a TrueType font file. A TrueType resource has a chunk type of 'TTF '.
+
+The chunk must contain exactly one font, with TrueType ('glyf') outlines. Font collections (".ttc" files) are not allowed; to include several fonts of a typeface (say, regular, bold, and italic), store each font as a separate font resource.
+
+The font may be a variable font: a TrueType font with font variations ('fvar' and 'gvar' tables), which contains a continuous range of designs, such as every weight from regular to black. A variable font is used through its instances, which are selected by the font description chunk (see below).
+
+The TrueType format is defined as part of the OpenType specification, available at:
+
+- [https://learn.microsoft.com/en-us/typography/opentype/spec/](https://learn.microsoft.com/en-us/typography/opentype/spec/)
+
+Each font resource must be described by an entry in the font description chunk (see "The Font Description Chunk", below), which gives it a family name, weight, width, and style. A font resource with no entry in the font description chunk should be ignored by the interpreter.
+
+Fonts are used via the CSS extension to the Glk API: the family name of a font resource may appear in a CSS 'font-family' declaration, just like the name of a font installed on the player's computer. Font resources take precedence over installed fonts with the same family name.
+
+The fonts in a Blorb file are for the use of the game that contains them. The interpreter should not make them available to other games or applications (for example, by installing them on the player's computer).
+
+The use of font resources by the Z-machine is not defined.
+
+[[Fonts are subject to licensing restrictions, just like any other creative work. Many open-source fonts, such as those licensed under the SIL Open Font License, allow embedding. Blorb authoring tools like Inform/inblorb should parse and inspect TrueType `fsType` metadata, refusing to embed fonts that restrict embedding, and generate a report that makes it easy for authors to read/review the licenses of embedded fonts.]]
 
 ## Executable Resource Chunks
 
@@ -286,6 +309,60 @@ There should be at most one entry for each resource – that is, each (usage, nu
 Resource descriptions are not required, but they are recommended for significant sounds and images. (Images used for decoration, such as window borders or text dividers, may not need textual descriptions.) Data and executable chunks do not need descriptions; if they appear in this chunk, the interpreter can ignore them.
 
 [[An interpreter with a web interface would apply the textual description of an image as an "alt" attribute on the `<img>` tag.]]
+
+## The Font Description Chunk
+
+This chunk names and describes the font resources in the file. The chunk type is 'FDes'. It is required if the file contains any 'Font' resources, and should not appear otherwise. At most one font description chunk should appear.
+
+    4 bytes         'FDes'          chunk ID
+    4 bytes         len             chunk length
+    4 bytes         num             number of entries
+                    ...             entries
+
+The entries are variable-length, and look like:
+
+    4 bytes         number          number of Font resource
+    2 bytes         weight          font weight (1 to 1000)
+    2 bytes         style           font style
+    2 bytes         width           font width (tenths of a
+                                      percent; 1000 is normal)
+    4 bytes         length          length of family name (bytes)
+    length bytes    family          family name (UTF-8,
+                                      not null-terminated)
+
+There must be at least one entry for each font resource. A font resource without variations should have exactly one entry. A variable font may have several entries, one for each instance the game will use (see "Variable Fonts", below). An entry whose number does not match a font resource should be ignored. An entry with an empty family name should be ignored.
+
+The weight is a number from 1 to 1000, as in the CSS 'font-weight' property: 400 is normal, and 700 is bold. If the weight is outside this range, the interpreter should treat it as 400.
+
+The style is one of these values:
+
+- 0: normal
+- 1: italic
+
+If the style has any other value, the interpreter should treat it as 0 (normal). (If we ever decide to add support for more font styles, we can add more values.)
+
+The width is the face's width relative to the family's normal width, in tenths of a percent, as in the CSS 'font-stretch' (or 'font-width') property: 1000 is normal (100%), 750 is condensed (75%), and 1250 is expanded (125%). If the width is 0, the interpreter should treat it as 1000.
+
+[[The CSS width keywords are ultra-condensed (500), extra-condensed (625), condensed (750), semi-condensed (875), normal (1000), semi-expanded (1125), expanded (1250), extra-expanded (1500), and ultra-expanded (2000). Tenths of a percent are needed to represent the keywords exactly. A game selects a width with the CSS 'font-stretch' property, if the interpreter supports it; an interpreter which does not will always ask for the normal width, and CSS font matching then prefers the faces closest to normal.]]
+
+The family name is the name by which the game refers to the font. It need not match the family name stored inside the font file; the interpreter should use the name given here, and should not make the font available under its internal name. Family names are compared case-insensitively.
+
+Each entry defines one font face. Several faces may share a family name, with different weights, widths, and styles. Together they form a single font family. When the game asks for a particular weight, width, and style of the family, the interpreter should select the closest available face, following the font matching rules of CSS. Two entries should not have the same family name, weight, width, and style.
+
+[[For example, a game might contain four resources, all with the family name "Old Manor" and width 1000: a regular face (weight 400, style 0), a bold face (weight 700, style 0), an italic face (weight 400, style 1), and a bold italic face (weight 700, style 1). If the game asks for bold text in "Old Manor", the interpreter uses the bold face. If only the regular face were present, the interpreter would use it for bold text too, perhaps synthesizing a bold appearance. A fifth resource with weight 400, style 0, and width 750 would add a condensed face, which the game could select with 'font-stretch: condensed'.]]
+
+### Variable Fonts
+
+When an entry describes a variable font, the face it defines is the instance of the font at the entry's weight, width, and style. The interpreter selects the instance by setting the font's variation axes:
+
+- 'wght' (weight): the entry's weight.
+- 'wdth' (width): the entry's width, as a percentage (that is, divided by 10).
+- 'ital' (italic): 1 if the entry's style is italic, otherwise 0.
+- 'slnt' (slant): -14 if the entry's style is italic and the font has no 'ital' axis, otherwise 0. (This is the default oblique angle in CSS: 14 degrees, slanted clockwise. This lets a font whose only slanted designs are on its 'slnt' axis provide an italic face.)
+
+Each value is clamped to the range the font supports for that axis. A font may lack any of these axes; any other axes keep their default values.
+
+[[For example, a game might contain one variable font resource with a 'wght' axis ranging from 400 to 900, described by two entries with the family name "Old Manor": weight 400 and weight 700, both style 0 and width 1000. These define a regular face and a bold face, exactly as if they were two separate resources. A web interpreter would declare two `@font-face` rules with the same font data; browsers set the 'wght' and 'wdth' axes from the rule's font-weight and font-stretch automatically.]]
 
 ## Metadata
 
@@ -586,12 +663,13 @@ When reading an IFF file, a program should always ignore any chunk it doesn't un
 
 It may be convenient for an interpreter to be able to access resources in formats other than a resource file. In particular, when developing a game, an author will want to load images and sounds from individual files, rather than having to re-package all the resources whenever any one of them changes.
 
-Such resource arrangements are platform-specific, and the details are left to the interpreter. However, one suggestion is to have a single directory which contains all the resources as files, with one file per resource. (PNG files for images, and so on. The contents of each file would be exactly the same as the contents of the equivalent chunk, minus the initial eight bytes of type/length information.) Files would be named something like "PIC1", "PIC2"..., "SND1", "SND2"..., "DATA1", "DATA2"..., and so on. An executable game file (if present) would be named "STORY". Other chunks would be named as follows:
+Such resource arrangements are platform-specific, and the details are left to the interpreter. However, one suggestion is to have a single directory which contains all the resources as files, with one file per resource. (PNG files for images, and so on. The contents of each file would be exactly the same as the contents of the equivalent chunk, minus the initial eight bytes of type/length information.) Files would be named something like "PIC1", "PIC2"..., "SND1", "SND2"..., "DATA1", "DATA2"..., "FONT1", "FONT2"..., and so on. An executable game file (if present) would be named "STORY". Other chunks would be named as follows:
 
 - "IDENT": game identifier chunk
 - "PALETTE": color palette
 - "FRONTIS": frontispiece identifier
 - "RESDESC": resource textual descriptions
+- "FONTDESC": font descriptions
 - "METADATA": metadata document
 - "RELEASE": release number
 - "RESOL": resolution chunk
@@ -645,6 +723,42 @@ MOD can reproduce music even more efficiently, but it's really retained in the s
 The PNG format is not burdened with patent restrictions; it is free; it's not lossy; and it can efficiently store many types of images, from 1-bit (monochrome) images up to 48-bit color images. JPEG is lossy and not optimal for images other than photographs, but compresses photographs well. Earlier versions of Blorb specified only PNG, but JPEG was a popular request, and the two formats should complement each other.
 
 As to other possibilities: GIF is a popular format, but was previously owned by twits who restricted its use. (Life has improved, but we have PNG now and we will stick with it.) TIFF has been suggested, but it seems to be overly baroque. Blorb is likely to stay with PNG and JPEG for the foreseeable future.
+
+- Why TTF for fonts?
+
+The same reasoning applies to fonts as to images: we must insist that every interpreter which supports fonts can display every font format in the standard, so we want exactly one format, and it should be the one that is easiest to support everywhere.
+
+Every major operating system and every browser can render TrueType natively. FreeType (the standard open-source font library) has supported it for decades. The patents on TrueType have been expired since at least 2010.
+
+- Why not other font formats?
+
+WOFF and WOFF2 are compressed wrappers around TrueType (or OpenType) data, designed for delivery over the web. Web browsers support them natively, but desktop font libraries often do not; WOFF2 in particular requires Brotli decompression, which FreeType only supports when it is built with an optional dependency.
+
+It is easy for an author (or an authoring tool) to convert a WOFF or WOFF2 font into a TrueType file before packaging it.
+
+OpenType fonts (`.otf`) with PostScript (CFF or CFF2) outlines are widely supported, but allowing them would mean two required font formats instead of one, with no benefit for screen display. CFF2 (the variable-font form of CFF) is also not supported everywhere; GDI on Windows cannot load it. Fonts with PostScript outlines can be converted to TrueType outlines before packaging.
+
+TrueType collections (`.ttc`) are not supported in web browsers.
+
+- Why support variable fonts?
+
+A variable font is still a TrueType font, and every platform that renders TrueType also renders variable TrueType fonts: FreeType, the major operating systems, and every modern browser. Many typefaces are now distributed primarily (or only) as variable fonts, and one variable font is often much smaller than the separate fonts it replaces.
+
+The font description chunk handles variable fonts without any new structure: each entry names one instance, and an author lists only the instances the game needs. Interpreters still select among a small, fixed set of faces, just as they do for separate fonts. They don't need to synthesize arbitrary designs on demand.
+
+- Why do we need the font description chunk? Can't we just parse the TTF?
+
+We could parse the TTF at runtime, but there are three reasons not to.
+
+First, it's crucial that the author use the correct family name to refer to their font; it's very common for authors to know the file name of a font but not its embedded family name.
+
+CSS's approach is to allow authors to override the name of the font, and to use the overridden font name as close as possible to where it's declared. We're doing the same thing here, embedding the (possibly overridden) font family name along with the font itself.
+
+Second, it's surprisingly common for TTF metadata to be incorrect, e.g. you can have a 'MyFont-Italic.ttf' that contains the italic version of a font, but doesn't have its 'italic' bit set properly. If we need to override those settings, those overrides need to be embedded, too.
+
+Third, IDEs like Inform are in the best position to parse TTFs, to verify that they're being used correctly, and to generate a report of warnings/errors on incorrect metadata or incorrect usage. If Inform's going to do all of that work, it might as well embed its computed metadata in the Blorb so interpreters don't have to reimplement it.
+
+By relying on the Blorb's font metadata, we eliminate the possibility of font-rendering bugs that affect only some TTF parsers but not others.
 
 - So why does ADRIFT get a bye on these format decisions?
 
